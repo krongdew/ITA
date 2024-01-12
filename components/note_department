@@ -1,0 +1,40 @@
+ <!-- <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <div style="padding: 20px;">
+              <?php
+              // แสดงข้อมูลในตาราง HTML
+              // if ($stmt->rowCount() > 0) {
+              //   echo '<table id="myTable" class="table align-items-center mb-0">';
+              //   echo '<thead>';
+              //   echo '<tr>';
+              //   echo '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Department</th>';
+              //   echo '<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Owner</th>';
+              //   echo '<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date modified</th>';
+              //   echo '<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>';
+              //   echo '</tr>';
+              //   echo '</thead>';
+              //   echo '<tbody>';
+
+              //   while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+              //     echo '<tr>';
+              //     echo '<td>' . $row['department_name'] . '</td>';
+              //     echo '<td>' . $row['owner_name'] . '</td>';
+              //     echo '<td>' . $row['timestamp'] . '</td>';
+              //     echo '<td>';
+              //     echo '<a href="edit.php?id=' . $row['ID'] . '" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">Edit</a>     ';
+              //     echo '<a href="delete.php?id=' . $row['ID'] . '" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Delete user">Del</a>';
+              //     echo '</td>';
+              //     echo '</tr>';
+              //   }
+
+              //   echo '</tbody>';
+              //   echo '</table>';
+              // } else {
+              //   echo 'No records found';
+              // }
+              // // ปิดการเชื่อมต่อ
+              // $conn = null;
+              ?>
+            </div>
+          </div>
+        </div> -->
