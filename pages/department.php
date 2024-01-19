@@ -46,12 +46,12 @@
 
   <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+  <!-- <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script> -->
   <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script> -->
   <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.css"> -->
   <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.js"></script> -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap">
-
+  <script src="../pages/vfs_fonts.js"></script>
 </head>
 <style>
   body {
@@ -255,28 +255,54 @@
   </script>
 
   <script>
-    
+
     pdfMake.fonts = {
       thaiFont: {
-        normal: '../assets/fonts/THSarabun.ttf',
-        bold: '../assets/fonts/THSarabun Bold.ttf',
-        italics: '../assets/fonts/THSarabun Italic.ttf',
-        bolditalics: '../assets/fonts/THSarabun BoldItalic.ttf'
+        normal: 'THSarabun.ttf',
+        bold: 'THSarabun-Bold.ttf',
+        italics: 'THSarabun-Italic.ttf',
+        bolditalics: 'THSarabun-BoldItalic.ttf'
       }
     };
+
+
 
     $(document).ready(function() {
       var table = $('#myTable').DataTable({
         responsive: true,
         dom: 'lBfrtip',
+        columns: [{
+            data: "column1",
+            title: "Column 1"
+          },
+          {
+            data: "column2",
+            title: "Column 2"
+          },
+          {
+            data: "column3",
+            title: "Column 3"
+          },
+          {
+            data: "column4",
+            title: "Column 4"
+          },
+          // เพิ่มคอลัมน์ตามต้องการ
+        ],
         buttons: [
           'copyHtml5',
           'excelHtml5',
           {
             extend: 'pdfHtml5',
+            exportOptions: {
+              columns: [0, 1, 2, 3] // ระบุคอลัมน์ที่จะ export (index 0, 1, 2)
+            },
             customize: function(doc) {
-              // Set default font to 'thaiFont'
-              doc.defaultStyle.font = 'thaiFont';
+              doc.defaultStyle.font = 'thaiFont'; // หรือใช้ชื่อ font ที่คุณต้องการ
+              doc.defaultStyle.fontSize = 16; // ตั้งค่าขนาดตัวอักษรที่นี่ (เป็นตัวเลข)
+
+              // ... รายละเอียดอื่น ๆ
+
             }
           }
         ],
@@ -380,6 +406,7 @@
         });
 
       });
+      
 
       // Event listener สำหรับปุ่ม Delete
       $('#myTable').on('click', '.delBtn', function() {
