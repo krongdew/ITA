@@ -1,3 +1,20 @@
+<?php
+session_start();
+include '../action/connect.php';
+
+if (!isset($_SESSION['user'])) {
+    // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
+    header("Location: http://localhost:8080/index.php");
+    
+}
+
+// ดึงข้อมูลผู้ใช้จาก session
+$user = $_SESSION['user'];
+
+// ดึงข้อมูลผู้ใช้จาก session
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -52,7 +69,13 @@
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">
- <?php include '../components/sidebar.php' ?>
+ <?php // เรียกใช้ Sidebar ตาม UserType
+    if ($user['UserType'] === "admin") {
+   
+        include '../components/sidebar_admin.php';
+    } else {
+        include '../components/sidebar.php';
+    } ?>
  <?php include '../components/navbar.php' ?>
    
  <div class="container-fluid py-4">

@@ -1,0 +1,492 @@
+<?php
+session_start();
+include '../action/connect.php';
+
+if (!isset($_SESSION['user'])) {
+    // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
+    header("Location: http://localhost:8080/index.php");
+}
+
+// ดึงข้อมูลผู้ใช้จาก session
+$user = $_SESSION['user'];
+
+// ดึงข้อมูลผู้ใช้จาก session
+
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+
+    <title>
+        ระบบ ITA
+    </title>
+    <!--     Fonts and icons     -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+    <!-- Nucleo Icons -->
+    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <!-- CSS Files -->
+    <link id="pagestyle" href="../assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@500&family=Kanit&family=Mitr:wght@300&display=swap" rel="stylesheet">
+    <!-- เพิ่ม link ไปยัง SweetAlert2 CSS ตรงนี้ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- เพิ่ม link ไปยัง SweetAlert2 JavaScript ตรงนี้ -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <!-- datatables -->
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+
+    <link rel="stylesheet" href="../assets/DataTables/datatables.css" />
+    <link rel="stylesheet" href="../assets/DataTables/Responsive-2.5.0/css/responsive.dataTables.css" />
+    <link rel="stylesheet" href="../assets/DataTables/Buttons-2.4.2/css/buttons.dataTables.css" />
+
+    <script src="../assets/DataTables/datatables.js"></script>
+    <script src="../assets/DataTables/Responsive-2.5.0/js/dataTables.responsive.js"></script>
+
+    <script src="../assets/DataTables/Buttons-2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="../assets/DataTables/Buttons-2.4.2/js/dataTables.buttons.js"></script>
+    <script src="../assets/DataTables/Buttons-2.4.2/js/buttons.html5.min.js"></script>
+
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <!-- <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script> -->
+    <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script> -->
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.css"> -->
+    <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.js"></script> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap">
+    <script src="../pages/vfs_fonts.js"></script>
+</head>
+<style>
+    body {
+        font-family: 'Mitr', sans-serif;
+    }
+
+    .editBtn {
+        background-color: #fca400;
+        color: white;
+        border-radius: 10px;
+        border: 0px;
+        padding: 4px;
+    }
+
+    .delBtn {
+        background-color: #ff3a24;
+        color: white;
+        border-radius: 10px;
+        border: 0px;
+        padding: 4px;
+    }
+
+    .saveBtn {
+        background-color: #009103;
+        color: white;
+        border-radius: 10px;
+        border: 0px;
+        padding: 4px;
+    }
+
+    .buttons-html5 {
+        font-size: 12px;
+        /* ปรับขนาดตามที่คุณต้องการ */
+        padding: 6px 10px;
+        /* ปรับขนาดตามที่คุณต้องการ */
+    }
+
+    label {
+        margin-right: 20px;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+</style>
+
+<body class="g-sidenav-show   bg-gray-100">
+    <?php  // เรียกใช้ Sidebar ตาม UserType
+    if ($user['UserType'] === "admin") {
+
+        include '../components/sidebar_admin.php';
+    } else {
+        include '../components/sidebar.php';
+    }
+    ?>
+    <?php include '../components/navbar.php' ?>
+    <? include '../action/connect.php';
+
+    // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
+    // $sql = "SELECT * FROM sa_department";
+    // $stmt = $conn->prepare($sql);
+    // $stmt->execute();
+    ?>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+
+                <div class="card mb-4">
+                    <div class="card-header pb-0">
+                        <h6>ระบบจัดการแบบประเมินความพึงพอใจ</h6>
+                        <br>
+                        <!-- <button class="badge badge-sm bg-gradient-success" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">เพิ่ม Services</button> -->
+                        <!-- <button class="badge badge-sm bg-gradient-warning" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">สร้างแบบประเมินความพึงพอใจ</button> -->
+                    </div>
+
+                    <div class="card-body px-0 pt-0 pb-2">
+
+
+
+                        <div style="padding: 20px;">
+                            <table id="myTable" class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No.</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ชื่อแบบประเมิน</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ชื่อบริการ</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ผู้สร้าง</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">สถานะ</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">การอนุมัติ</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">วันที่สร้าง</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">URL</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">QR-CODE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php include '../components/footer.php' ?>
+    </div>
+    </main>
+
+    <?php include '../components/setting.php'; ?>
+    <!--   Core JS Files   -->
+    <?php include '../components/script.php'; ?>
+
+    <script>
+        pdfMake.fonts = {
+            thaiFont: {
+                normal: 'THSarabun.ttf',
+                bold: 'THSarabun-Bold.ttf',
+                italics: 'THSarabun-Italic.ttf',
+                bolditalics: 'THSarabun-BoldItalic.ttf'
+            }
+        };
+
+
+
+        $(document).ready(function() {
+            var table;
+            var globaluserData; // ประกาศตัวแปรที่ถูกส่งเข้าไปนอกฟังก์ชัน success
+            // ดึงข้อมูลจาก sa_department
+
+            var globalUnitData; // Add a global variable for unit data
+
+            // Fetch department data
+            $.ajax({
+                url: "../action/get_assessment_data.php",
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+                    globaluserData = response;
+
+                    // Fetch unit data
+                    $.ajax({
+                        url: "../action/get_service_data.php", // Adjust the URL accordingly
+                        type: "GET",
+                        dataType: "json",
+                        success: function(unitResponse) {
+                            globalUnitData = unitResponse;
+
+                            // Initialize DataTable after fetching both department and unit data
+                            initializeDataTable();
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('Error fetching unit data:', errorThrown);
+                        }
+                    });
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error fetching department data:', errorThrown);
+                }
+            });
+
+            function initializeDataTable() {
+
+                        var table = $('#myTable').DataTable({
+                            responsive: true,
+                            dom: 'lBfrtip',
+                            columns: [{
+                                    data: "column1",
+                                    title: "Column 1"
+                                },
+                                {
+                                    data: "column2",
+                                    title: "Column 2"
+                                },
+                                {
+                                    data: "column3",
+                                    title: "Column 3"
+                                },
+                                {
+                                    data: "column4",
+                                    title: "Column 4"
+                                },
+                                {
+                                    data: "column5",
+                                    title: "Column 5"
+                                },
+                                {
+                                    data: "column6",
+                                    title: "Column 6"
+                                },
+                                {
+                                    data: "column7",
+                                    title: "Column 7"
+                                },
+                                {
+                                    data: "column8",
+                                    title: "Column 8"
+                                },
+                                {
+                                    data: "column9",
+                                    title: "Column 9"
+                                },
+                                {
+                                    data: "column10",
+                                    title: "Column 10"
+                                },
+                               
+                                // เพิ่มคอลัมน์ตามต้องการ
+                            ],
+                            buttons: [
+                                'copyHtml5',
+                                'excelHtml5',
+                                {
+                                    extend: 'pdfHtml5',
+                                    exportOptions: {
+                                        columns: [0, 1, 2, 3, 4, 5,6,7,8,9,10] // ระบุคอลัมน์ที่จะ export (index 0, 1, 2)
+                                    },
+                                    customize: function(doc) {
+                                        doc.defaultStyle.font = 'thaiFont'; // หรือใช้ชื่อ font ที่คุณต้องการ
+                                        doc.defaultStyle.fontSize = 16; // ตั้งค่าขนาดตัวอักษรที่นี่ (เป็นตัวเลข)
+
+                                        // ... รายละเอียดอื่น ๆ
+
+                                    }
+                                }
+                            ],
+                            "autoWidth": false,
+                            "lengthMenu": [10, 25, 50, 75, 100],
+                            "pageLength": 10,
+                            "serverSide": true,
+                            "ajax": {
+                                "url": "../action/get_assessment_server.php",
+                                "type": "POST",
+                                "dataType": "json",
+                            },
+                            "columns": [{
+                                    "data": null,
+                                    "render": function(data, type, row) {
+                                        return '<a href="../pages/add_question.php?ID=' + data.AssessmentID  + '"><button class="saveBtn">สร้างข้อคำถาม</button></a> <a href="../pages/edit_service.php?ID=' + data.AssessmentID + '"><button class="editBtn">Edit</button></a>  <button class="delBtn">Delete</button>';
+                                    },
+                                    "orderable": false
+                                },
+                                {
+                                    "data": null,
+                                    "render": function(data, type, row, meta) {
+                                        return meta.settings._iDisplayStart + meta.row + 1;
+                                    }
+                                },
+                                {
+                                    "data": "AssessmentName",
+                                    "className": "editable"
+                                },
+                                {
+                                    "data": "service_id",
+                                    "className": "editable",
+                                    render: function(data) {
+                                        // ให้หาข้อมูล department_name จาก globalDepartmentData แล้วแสดง
+                                        var serviceData = globalUnitData.find(function(dep) {
+                                            return dep.ID === data;
+                                        });
+                                        return serviceData ? serviceData.service_name : '';
+                                    },
+                                },
+                                {
+
+                                    data: "CreatorUserID",
+                                    className: "editable",
+                                    render: function(data) {
+                                        // ให้หาข้อมูล department_name จาก globalDepartmentData แล้วแสดง
+                                        var userData = globaluserData.find(function(dep) {
+                                            return dep.ID === data;
+                                        });
+                                        return userData ? userData.name_surname : '';
+                                    },
+                                },
+                                {
+                                    "data": "AssessmentStatus",
+                                    "className": "editable"
+                                },
+                                {
+                                    "data": "ApprovalStatus",
+                                    "className": "editable",
+                                    // "render": function(data, type, row, meta) {
+                                    //     // หากค่าของ data เป็น 1 ให้แทนค่าด้วยคำว่า "ON" ถ้าเป็น 0 ให้แทนด้วย "OFF"
+                                    //     return data == 1 ? "ON" : "OFF";
+                                    // }
+                                },
+
+                                {
+                                    "data": "CreationDate",
+                                },
+
+                                {
+                                    "data": "AssessmentURL",
+                                },
+
+                                {
+                                    "data": "QrCodeImageName",
+                                },
+                            ],
+                            order: [
+                        [0, 'asc'],
+                    ],
+                })
+            }
+            
+
+
+            // Event listener สำหรับปุ่ม Delete
+            $('#myTable').on('click', '.delBtn', function() {
+                var data = $('#myTable').DataTable().row($(this).parents('tr')).data();
+                var servicesID = data.ID;
+
+                // แสดง SweetAlert 2 สำหรับยืนยันการลบ
+                Swal.fire({
+                    title: 'คุณต้องการลบข้อมูลหรือไม่?',
+                    text: "หากคุณลบที่นี่ จะลบทั้งบริการหลักและบริการย่อยทั้งหมด",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'ใช่, ลบ!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // ทำการลบในฐานข้อมูลด้วย Ajax
+                        $.ajax({
+                            url: '../action/delete_services.php',
+                            type: 'POST',
+                            data: {
+                                servicesID: servicesID
+                            },
+                            dataType: 'json', // รับข้อมูลเป็น JSON
+                            success: function(response) {
+                                if (response.status === 'success') {
+
+                                    Swal.fire(
+                                        'ลบข้อมูลเรียบร้อย!',
+                                        'ข้อมูลถูกลบออกจากระบบแล้ว.',
+                                        'success'
+                                    ).then((result) => {
+                                        if (result.isConfirmed) {
+                                            // ทำการ reload ข้อมูล
+                                            $('#myTable').DataTable().ajax.reload();
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'เกิดข้อผิดพลาด!',
+                                        'เกิดข้อผิดพลาดในการลบข้อมูล.',
+                                        'error'
+                                    );
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+       
+        
+     
+    </script>
+
+
+</body>
+
+</html>

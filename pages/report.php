@@ -634,7 +634,7 @@ $user = $_SESSION['user'];
               {
                 "data": null,
                 "render": function(data, type, row) {
-                  return '<a href="../pages/add_assessment.php?ID=' + data.ID + '"><button class="badge badge-sm bg-gradient-warning" style="border: 0px;" onMouseOver="this.style.color=red" onMouseOut="this.style.color=white" >สร้างแบบประเมิน</button> </a>';
+                  return '<a href="../pages/add_report.php?ID=' + data.ID + '"><button class="badge badge-sm bg-gradient-warning" style="border: 0px;" onMouseOver="this.style.color=red" onMouseOut="this.style.color=white" >บันทึกจำนวนผู้ใช้บริการ</button> </a>';
                 },
                 "orderable": false
               }

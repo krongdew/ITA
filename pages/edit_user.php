@@ -1,3 +1,19 @@
+<?php
+session_start();
+include '../action/connect.php';
+
+if (!isset($_SESSION['user'])) {
+    // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
+    header("Location: http://localhost:8080/index.php");
+}
+
+// ดึงข้อมูลผู้ใช้จาก session
+$user = $_SESSION['user'];
+
+// ดึงข้อมูลผู้ใช้จาก session
+
+
+?>
 <!DOCTYPE html>
 <html lang="th">
 
@@ -128,7 +144,12 @@ if (isset($_GET['ID'])) {
 ?>
 
             <body class="g-sidenav-show   bg-gray-100">
-                <?php include '../components/sidebar.php' ?>
+                <?php if ($user['UserType'] === "admin") {
+
+                    include '../components/sidebar_admin.php';
+                } else {
+                    include '../components/sidebar.php';
+                }  ?>
                 <?php include '../components/navbar.php' ?>
                 <? include '../action/connect.php';
 
@@ -146,7 +167,7 @@ if (isset($_GET['ID'])) {
                                     <h6>แก้ไข User</h6>
                                     <br>
                                     <button class="badge badge-sm bg-gradient-success" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">เปลี่ยน password</button>
-                                        <!-- <div class="form-group">
+                                    <!-- <div class="form-group">
                                                                             <label for="example-text-input" class="form-control-label">แก้ไข Password*: </label>
                                                                             <input id="ipassword" class="form-control" type="password" name="Password" placeholder="Password" required>
                                                                             <input type="checkbox" onclick="showpassword()">
@@ -171,7 +192,7 @@ if (isset($_GET['ID'])) {
                                                         <div class="card-header pb-0">
                                                             <div class="d-flex align-items-center">
                                                                 <p class="mb-0">แก้ไข (User) ของกองกิจการนักศึกษา</p>
-                                                               
+
                                                             </div>
                                                         </div>
                                                         <div class="card-body">
@@ -203,7 +224,7 @@ if (isset($_GET['ID'])) {
 
                                                                             // ตรวจสอบว่ามีข้อมูลหรือไม่
                                                                             if (count($departments) > 0) {
-                                                                                echo '<select name="department_id" class="form-select" required onchange="getUnits(this.value)">';
+                                                                                echo '<select name="department_id"  id="department_id"  class="form-select" required onchange="getUnits(this.value)">';
                                                                                 foreach ($departments as $department) {
                                                                                     $selected = ($user['department'] == $department['ID']) ? 'selected' : '';
                                                                                     echo '<option value="' . $department['ID'] . '" ' . $selected . '>' . $department['department_name'] . '</option>';
@@ -236,7 +257,7 @@ if (isset($_GET['ID'])) {
 
                                                                         <label for="example-text-input" class="form-control-label">รูปถ่าย*: </label><br>
                                                                         <img src="<?php echo $user['image']; ?>" width="100px" height="100px"><br><br>
-                                                                        <input class="form-control" type="file" name="image" id="imageInput" accept="image/*" >
+                                                                        <input class="form-control" type="file" name="image" id="imageInput" accept="image/*">
                                                                         <div id="fileSizeError" style="color: red; font-size: small;"></div>
                                                                         <div id="fileTypeError" style="color: red; font-size: small;"></div>
                                                                     </div>
@@ -265,9 +286,9 @@ if (isset($_GET['ID'])) {
 
                                                                                 // ตรวจสอบว่ามีข้อมูลหรือไม่
                                                                                 if ($units) {
-                                                                                   
-                                                                                    echo '<input class="form-control" type="text" name="unit_old" value="'.$units['unit_name'].'" disabled>';
-                                                                                    echo '<input type="hidden" name="unit_old_id" value="'.$user['unit'].'" disabled>';
+
+                                                                                    echo '<input class="form-control" type="text" name="unit_old" value="' . $units['unit_name'] . '" disabled>';
+                                                                                    echo '<input type="hidden" name="unit_old_id" value="' . $user['unit'] . '" >';
                                                                                 } else {
                                                                                     echo '<p>ไม่พบข้อมูลหน่วยที่สังกัด</p>';
                                                                                 }
@@ -276,8 +297,10 @@ if (isset($_GET['ID'])) {
                                                                             }
                                                                             ?>
                                                                         </label>
-                                                                        
-                                                                        <div id="unitSelect"></div>
+                                                                        <label>หากต้องการเปลี่ยนแปลงหน่วย เลือกหน่วยใหม่ที่นี่</label>
+                                                                        <select class="form-select" name="unit_id" id="unit_id">
+                                                                            <option></option>
+                                                                        </select>
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label for="example-text-input" class="form-control-label">ตำแหน่งบริหาร (ถ้ามี): </label>
@@ -295,7 +318,7 @@ if (isset($_GET['ID'])) {
 
                                                             </div>
                                                             <button type="submit" class="btn btn-primary btn-sm ms-auto">edit</button>
-                                                            <button type="reset" class="btn btn-primary btn-sm ms-auto">Cancel</button>
+                                                            <a href="../pages/user.php"><button type="button" class="btn btn-primary btn-sm ms-auto">Cancel</button></a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -356,27 +379,45 @@ if (isset($_GET['ID'])) {
                     }
                 </script>
                 <script>
-                    function getUnits(departmentId) {
-                        // ตรวจสอบว่า departmentId ไม่ใช่ค่าว่าง
-                        if (departmentId !== "") {
-                            // ใช้ XMLHttpRequest หรือ Fetch API สำหรับสร้าง request ไปยัง get_unit.php
-                            var xhr = new XMLHttpRequest();
+                    $(document).ready(function() {
+                        // Fetch product options based on selected company and plant
+                        $('#department_id').on('change', function() {
+                            var selectedDepartment = $(this).val();
 
-                            // กำหนด method และ URL ที่จะส่ง request
-                            xhr.open("GET", "../action/get_unit.php?department_id=" + departmentId, true);
-
-                            // กำหนด callback function ที่จะทำงานเมื่อ request เสร็จสิ้น
-                            xhr.onreadystatechange = function() {
-                                if (xhr.readyState == 4 && xhr.status == 200) {
-                                    // นำข้อมูลที่ได้มาแสดงผลใน element ที่มี id เท่ากับ "unitSelect"
-                                    document.getElementById("unitSelect").innerHTML = xhr.responseText;
+                            $.ajax({
+                                url: '../action/get_unit2.php',
+                                type: 'POST',
+                                data: {
+                                    department_id: selectedDepartment
+                                },
+                                success: function(data) {
+                                    $('#unit_id').html(data);
                                 }
-                            };
+                            });
+                        });
+                    })
 
-                            // ส่ง request
-                            xhr.send();
-                        }
-                    }
+                    // function getUnits(departmentId) {
+                    //     // ตรวจสอบว่า departmentId ไม่ใช่ค่าว่าง
+                    //     if (departmentId !== "") {
+                    //         // ใช้ XMLHttpRequest หรือ Fetch API สำหรับสร้าง request ไปยัง get_unit.php
+                    //         var xhr = new XMLHttpRequest();
+
+                    //         // กำหนด method และ URL ที่จะส่ง request
+                    //         xhr.open("GET", "../action/get_unit.php?department_id=" + departmentId, true);
+
+                    //         // กำหนด callback function ที่จะทำงานเมื่อ request เสร็จสิ้น
+                    //         xhr.onreadystatechange = function() {
+                    //             if (xhr.readyState == 4 && xhr.status == 200) {
+                    //                 // นำข้อมูลที่ได้มาแสดงผลใน element ที่มี id เท่ากับ "unitSelect"
+                    //                 document.getElementById("unitSelect").innerHTML = xhr.responseText;
+                    //             }
+                    //         };
+
+                    //         // ส่ง request
+                    //         xhr.send();
+                    //     }
+                    // }
                 </script>
 
 

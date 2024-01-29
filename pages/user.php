@@ -1,3 +1,20 @@
+<?php
+session_start();
+include '../action/connect.php';
+
+if (!isset($_SESSION['user'])) {
+    // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
+    header("Location: http://localhost:8080/index.php");
+    
+}
+
+// ดึงข้อมูลผู้ใช้จาก session
+$user = $_SESSION['user'];
+
+// ดึงข้อมูลผู้ใช้จาก session
+
+
+?>
 <!DOCTYPE html>
 <html lang="th">
 
@@ -108,7 +125,14 @@
 </style>
 
 <body class="g-sidenav-show   bg-gray-100">
-    <?php include '../components/sidebar.php' ?>
+    <?php  // เรียกใช้ Sidebar ตาม UserType
+    if ($user['UserType'] === "admin") {
+   
+        include '../components/sidebar_admin.php';
+    } else {
+        include '../components/sidebar.php';
+    }
+    ?> 
     <?php include '../components/navbar.php' ?>
     <? include '../action/connect.php';
 
@@ -175,7 +199,7 @@
                                                                     // ตรวจสอบว่ามีข้อมูลหรือไม่
                                                                     if (count($departments) > 0) {
 
-                                                                        echo '<select name="department_id" class="form-select" required onchange="getUnits(this.value)">';
+                                                                        echo '<select name="department_id" id="department_id" class="form-select" required >';
                                                                         echo '<option value="" disabled selected>กรุณาเลือกงาน</option>';
                                                                         foreach ($departments as $department) {
 
@@ -190,7 +214,7 @@
                                                                 }
                                                                 ?>
 
-                                                                <!-- <input class="form-control" type="text" name="department_id" placeholder="ชื่องานที่สังกัด" required> -->
+                                                              
 
                                                             </div>
                                                             <div class="form-group">
@@ -230,7 +254,9 @@
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="example-text-input" class="form-control-label">หน่วย*: </label>
-                                                                <div id="unitSelect"></div>
+                                                                <select class="form-select" name="unit_id" id="unit_id">
+                                                                    <option></option>
+                                                                </select>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="example-text-input" class="form-control-label">ตำแหน่งบริหาร (ถ้ามี): </label>
@@ -325,27 +351,45 @@
         }
     </script>
     <script>
-        function getUnits(departmentId) {
-            // ตรวจสอบว่า departmentId ไม่ใช่ค่าว่าง
-            if (departmentId !== "") {
-                // ใช้ XMLHttpRequest หรือ Fetch API สำหรับสร้าง request ไปยัง get_unit.php
-                var xhr = new XMLHttpRequest();
+        $(document).ready(function() {
+            // Fetch product options based on selected company and plant
+            $('#department_id').on('change', function() {
+                var selectedDepartment = $(this).val();
 
-                // กำหนด method และ URL ที่จะส่ง request
-                xhr.open("GET", "../action/get_unit.php?department_id=" + departmentId, true);
-
-                // กำหนด callback function ที่จะทำงานเมื่อ request เสร็จสิ้น
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        // นำข้อมูลที่ได้มาแสดงผลใน element ที่มี id เท่ากับ "unitSelect"
-                        document.getElementById("unitSelect").innerHTML = xhr.responseText;
+                $.ajax({
+                    url: '../action/get_unit2.php',
+                    type: 'POST',
+                    data: {
+                        department_id: selectedDepartment
+                    },
+                    success: function(data) {
+                        $('#unit_id').html(data);
                     }
-                };
+                });
+            });
+        })
 
-                // ส่ง request
-                xhr.send();
-            }
-        }
+        // function getUnits(departmentId) {
+        //     // ตรวจสอบว่า departmentId ไม่ใช่ค่าว่าง
+        //     if (departmentId !== "") {
+        //         // ใช้ XMLHttpRequest หรือ Fetch API สำหรับสร้าง request ไปยัง get_unit.php
+        //         var xhr = new XMLHttpRequest();
+
+        //         // กำหนด method และ URL ที่จะส่ง request
+        //         xhr.open("GET", "../action/get_unit.php?department_id=" + departmentId, true);
+
+        //         // กำหนด callback function ที่จะทำงานเมื่อ request เสร็จสิ้น
+        //         xhr.onreadystatechange = function() {
+        //             if (xhr.readyState == 4 && xhr.status == 200) {
+        //                 // นำข้อมูลที่ได้มาแสดงผลใน element ที่มี id เท่ากับ "unitSelect"
+        //                 document.getElementById("unitSelect").innerHTML = xhr.responseText;
+        //             }
+        //         };
+
+        //         // ส่ง request
+        //         xhr.send();
+        //     }
+        // }
     </script>
 
 
@@ -634,7 +678,7 @@
                     columns: [{
                             data: null,
                             render: function(data, type, row) {
-                                return '<a href="../pages/edit_user.php?ID='+ data.ID +'"><button class="editBtn">Edit</button></a> <button class="saveBtn" style="display:none;">Save</button> <button class="delBtn">Delete</button>';
+                                return '<a href="../pages/edit_user.php?ID=' + data.ID + '"><button class="editBtn">Edit</button></a> <button class="saveBtn" style="display:none;">Save</button> <button class="delBtn">Delete</button>';
                             },
                             orderable: false,
                         },

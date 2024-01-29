@@ -32,7 +32,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?php echo ($current_page == '') ? 'active' : 'assessment.php'; ?>" href="../pages/assessment.php">
+        <a class="nav-link <?php echo ($current_page == '') ? 'active' : 'assessment.php'; ?>" href="../pages/assessment.php">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-credit-card text-success text-sm opacity-10"></i>
             </div>
@@ -59,14 +59,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
           <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Account pages</h6>
         </li>
         <li class="nav-item">
-        <a class="nav-link <?php echo ($current_page == '') ? 'active' : 'profile.php'; ?>" href="../pages/profile.php">
+          <a class="nav-link <?php echo ($current_page == '') ? 'active' : 'profile.php'; ?>" href="../pages/profile.php">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-single-02 text-dark text-sm opacity-10"></i>
             </div>
             <span class="nav-link-text ms-1">Profile</span>
           </a>
         </li>
-        <!-- <li class="nav-item">
+        <li class="nav-item">
           <a class="nav-link <?php echo ($current_page == 'user.php') ? 'active' : ''; ?>" href="../pages/user.php">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-single-copy-04 text-warning text-sm opacity-10"></i>
@@ -81,7 +81,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
             <span class="nav-link-text ms-1">System management</span>
           </a>
-        </li> -->
+        </li>
         
         <!-- <li class="nav-item">
           <a class="nav-link " href="./pages/sign-up.html">

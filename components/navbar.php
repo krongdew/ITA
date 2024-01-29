@@ -20,7 +20,7 @@
             <li class="nav-item d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
                 <i class="fa fa-user me-sm-1"></i>
-                <span class="d-sm-inline d-none">Sign In</span>
+                <span id="logoutButton" class="d-sm-inline d-none"><? echo $user['name_surname']; ?>  &nbsp;  <a href="../action/logout.php"><button class="badge badge-sm bg-gradient-primary" style="border-color: white;">ออกจากระบบ</button></a> </span>
               </a>
             </li>
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -115,3 +115,13 @@
       </div>
     </nav>
     <!-- End Navbar -->
+    <!-- <script>
+    // เลือกปุ่ม LOGOUT ด้วย ID
+    var logoutButton = document.getElementById('logoutButton');
+
+    // เพิ่ม Event Listener สำหรับการคลิก
+    logoutButton.addEventListener('click', function() {
+        // ทำการ redirect หลังจากล็อคเอาท์
+        window.location.href = '../action/logout.php'; // เปลี่ยนเส้นทางไปยังไฟล์ที่มีโค้ด logout ที่เราได้เขียนไว้ก่อนหน้านี้
+    });
+</script> -->

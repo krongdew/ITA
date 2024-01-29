@@ -1,0 +1,350 @@
+
+   
+$(document).ready(function() {
+    // Populate customer names
+    $.ajax({
+        url: 'get_customer_names.php',
+        type: 'GET',
+        success: function(data) {
+            $('#tasai_customer_name').html(data);
+        }
+    });
+
+    $.ajax({
+        url: 'get_tasai_truck.php',
+        type: 'GET',
+        success: function(data) {
+            $('#truck_tasai').html(data);
+        }
+    });
+
+    // Populate customer plants based on customer name selection
+    $('#tasai_customer_name').on('change', function() {
+        var selectedCustomer = $(this).val();
+        $.ajax({
+            url: 'get_customer_plants.php',
+            type: 'POST',
+            data: { customer_name: selectedCustomer },
+            success: function(data) {
+                $('#tasai_customer_plant').html(data);
+                
+            }
+        });
+    });
+
+ // Populate products based on selected company and plant
+ $('#tasai_customer_name, #tasai_customer_plant').on('change', function() {
+        var selectedCompany = $('#tasai_customer_name').val();
+        var selectedPlant = $('#tasai_customer_plant').val();
+
+        // AJAX request to get products based on selected company and plant
+        $.ajax({
+            url: 'get_products_by_company_and_plant.php',
+            type: 'POST',
+            data: {
+                tasai_customer_name: selectedCompany,
+                tasai_customer_plant: selectedPlant
+            },
+            success: function(data) {
+                var productSelects = document.querySelectorAll("select[name='product[]']");
+                for (var i = 0; i < productSelects.length; i++) {
+                    productSelects[i].innerHTML = data;
+
+                    // Fetch price for the selected product
+                    var priceInput = productSelects[i].closest("tr").querySelector("input[name='price[]']");
+                    fetchProductPrice(productSelects[i], priceInput);
+                }
+            }
+        });
+    });
+
+
+    $('#tasai_customer_plant').on('change', function() {
+        var selectedCustomer = $('#tasai_customer_name').val();
+        var selectedPlant = $(this).val();
+        
+        // AJAX request to get product and price data based on company and plant
+        $.ajax({
+            url: 'get_products_and_prices.php',
+            type: 'POST',
+            data: { customer_name: selectedCustomer, customer_plant: selectedPlant },
+            success: function(data) {
+                var productsAndPrices = JSON.parse(data);
+
+                // Update the product and price cells
+                updateProductAndPriceCells(productsAndPrices);
+            }
+        });
+    });
+
+
+
+//     var firstProductSelect = document.querySelector("table#data-table tr:last-child select[name='product[]']");
+// $.ajax({
+//     url: 'get_products.php',
+//     type: 'GET',
+//     success: function(data) {
+//         firstProductSelect.innerHTML = data;
+//         // Fetch price for the selected product
+//         fetchProductPrice(firstProductSelect);
+//     }
+});
+// });
+
+        var rowCount = 1;
+        function addRow() {
+            rowCount++;
+
+            var table = document.getElementById("data-table");
+            var row = table.insertRow(-1);
+            var numberCell = row.insertCell(0);
+            var bookNoCell = row.insertCell(1);
+            var carNoCell = row.insertCell(2);
+            var productCell = row.insertCell(3);
+            var qtyCell = row.insertCell(4);
+            var priceCell = row.insertCell(5);
+            var tasaiTotalCell = row.insertCell(6);
+            var removeCell = row.insertCell(7);
+
+            
+
+            var numberInput = document.createElement("input");
+                numberInput.type = "text";
+                numberInput.name = "number[]";
+                numberInput.class = "form-control";
+                numberInput.size = "2";
+                numberInput.readOnly = true; 
+                numberInput.value = rowCount;
+                numberCell.appendChild(numberInput);
+
+                var bookNoInput = document.createElement("input");
+                bookNoInput.type = "text";
+                bookNoInput.name = "book_no[]";
+                bookNoInput.size = "10";
+                bookNoCell.appendChild(bookNoInput);
+                bookNoInput.focus(); // ตั้งค่า focus ให้กับ input นี้
+
+           
+                var carNoSelect = document.createElement("select");
+carNoSelect.className = "form-control";
+carNoSelect.name = "car_no[]";
+carNoCell.appendChild(carNoSelect);
+
+// ทำการเรียก get_tasai_truck.php และแทรกข้อมูลลงใน <select>
+$.ajax({
+    url: 'get_tasai_truck.php',
+    type: 'GET',
+    success: function(data) {
+        carNoSelect.innerHTML = data;
+    }
+});
+
+
+            // Create a new select element for the product
+            var productSelect = document.createElement("select");
+            productSelect.className = "form-control";
+            productSelect.name = "product[]";
+            productSelect.onchange = function() {
+                fetchProductPrice(this);
+            };
+            productCell.appendChild(productSelect);
+
+            // Fetch product options based on selected company and plant
+            var selectedCompany = $('#tasai_customer_name').val();
+            var selectedPlant = $('#tasai_customer_plant').val();
+            $.ajax({
+                url: 'get_products_by_company_and_plant.php',
+                type: 'POST',
+                data: {
+                    tasai_customer_name: selectedCompany,
+                    tasai_customer_plant: selectedPlant
+                },
+                success: function(data) {
+                    productSelect.innerHTML = data;
+                    // Fetch price for the selected product
+                    fetchProductPrice(productSelect);
+                }
+            });
+            qtyCell.innerHTML = '<input class="form-control" type="text" name="qty[]" size="5" onkeydown="handleInputKeyPress(event, this)" onkeyup="calculateTasaiTotal(this)">';
+            priceCell.innerHTML = '<input class="form-control" type="text" name="price[]" size="10" onkeyup="calculateTasaiTotal(this)">';
+            tasaiTotalCell.innerHTML = '<input class="form-control" type="text" name="tasai_total[]"  size="10" readonly>';
+            removeCell.innerHTML = '<button class="bt-danger" type="button" onclick="removeRow(this)">Remove</button>';
+
+            
+           
+        }
+
+        function handleKeyPress(event) {
+          if (event.key === 'Tab') {
+              addRow();
+              event.preventDefault();
+          }
+        }
+        
+
+        function removeRow(button) {
+            var row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);  
+            
+        }
+
+    function calculateTasaiTotal(input) {
+    var row = input.parentNode.parentNode;
+    var qty = parseFloat(row.querySelector("input[name='qty[]']").value);
+    var price = parseFloat(row.querySelector("input[name='price[]']").value);
+    var tasaiTotal = qty * price || 0;
+    row.querySelector("input[name='tasai_total[]']").value = tasaiTotal.toFixed(2);
+}
+
+
+function updateProductAndPriceCells(data) {
+    var rows = document.querySelectorAll("#data-table tr");
+    for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+        var productCell = rows[i].querySelector("input[name='product[]']");
+        var priceCell = rows[i].querySelector("input[name='price[]']");
+
+        if (data.length > 0) {
+            productCell.value = data[0].product_name;
+            priceCell.value = data[0].price;
+        } else {
+            productCell.value = '';
+            priceCell.value = '';
+        }
+    }
+}
+
+function fetchProductPrice(selectElement) {
+   var selectedProduct = $(selectElement).val();
+   var companySelect = $("#tasai_customer_name"); // Get the company select element
+   var plantSelect = $("#tasai_customer_plant"); // Get the plant select element
+   var priceInput = $(selectElement).closest("tr").find("input[name='price[]']");
+
+   $.ajax({
+      url: 'get_products_and_prices.php',
+      type: 'POST',
+      data: {
+         product_name: selectedProduct,
+         customer_name: companySelect.val(), // Get the selected company name
+         customer_plant: plantSelect.val() // Get the selected plant name
+      },
+      success: function(price) {
+         priceInput.val(price);
+         calculateTasaiTotal(priceInput); // Recalculate the total
+      }
+   });
+}
+
+
+function saveData() {
+    // Check if the date input is filled before proceeding
+    var tasiaDateInput = document.querySelector('input[name="tasia_date"]');
+    var tasiaDateValue = tasiaDateInput.value;
+
+    if (tasiaDateValue === '') {
+        alert("Please fill in the date field / กรุณากรอกข้อมูลในช่องวันที่");
+        return; // Stop execution if the date field is empty
+    }
+
+    // If the date field is filled, proceed to save the data
+    var formData = new FormData(document.querySelector('form'));
+
+    // Send form data using AJAX
+    $.ajax({
+        url: 'save_sell_data.php', // Replace with the appropriate URL to handle data saving
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            var responseData = JSON.parse(response);
+            if (responseData.status === 'success') {
+                alert("Data saved successfully / บันทึกข้อมูลเรียบร้อยแล้ว");
+                // You can perform further actions here, like updating the UI
+            } else {
+                alert("An error occurred while saving data: " + responseData.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            alert("An error occurred while saving data");
+        }
+    });
+}
+
+
+// Add an event listener to the whole document to capture key presses
+document.addEventListener("keydown", function (event) {
+  // Check if the key combination Ctrl + S is pressed
+  if (event.ctrlKey && event.key === "s") {
+    event.preventDefault(); // Prevent the default browser behavior (e.g., save page)
+    saveData(); // Call your save function here
+  }
+});
+
+
+
+// function calculateManually(button) {
+//     var row = button.parentNode;
+//     var qtyInput = row.querySelector("input[name='qty[]']");
+
+//     var userInput = prompt("กรอกตัวเลขเพื่อคำนวณ"); // แสดงหน้าต่างสำหรับกรอกตัวเลข
+
+//     if (userInput !== null && userInput !== "") {
+//         // Evaluate the expression using JavaScript's eval()
+//         try {
+//             var result = eval(userInput); // Evaluate the expression
+//             qtyInput.value = result.toFixed(2); // Display the result
+//             calculateTasaiTotal(qtyInput); // Recalculate the total
+//         } catch (error) {
+//             qtyInput.value = ""; // Clear the input if there's an error
+//             alert("กรุณากรอกตัวเลขให้ถูกต้อง"); // แสดงแจ้งเตือนกรณีข้อผิดพลาด
+//         }
+//     }
+// }
+// function calculateInput(button) {
+//     var row = button.parentNode.parentNode;
+//     var qtyInput = row.querySelector("input[name='qty[]']");
+//     var userInput = prompt("กรอกสมการทางคณิตศาสตร์:");
+    
+//     try {
+//         const result = math.evaluate(userInput);
+//         qtyInput.value = result;
+//         calculateTasaiTotal(qtyInput); // คำนวณผลรวมอีกครั้ง
+//     } catch (error) {
+//         alert("เกิดข้อผิดพลาดในการคำนวณ");
+//     }
+// }
+// function openCalculator(button) {
+//     var row = button.parentNode.parentNode;
+//     var qtyInput = row.querySelector("input[name='qty[]']");
+
+//     // สร้าง Modal ใหม่เป็นส่วนของ HTML
+//     var modalContent = `
+//         <div class="modal fade" id="calculatorModal" tabindex="-1" role="dialog" aria-labelledby="calculatorModalLabel" aria-hidden="true">
+//             <div class="modal-dialog" role="document">
+//                 <div class="modal-content">
+//                     <div class="modal-header">
+//                         <h5 class="modal-title" id="calculatorModalLabel">กรอกสมการทางคณิตศาสตร์</h5>
+//                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+//                             <span aria-hidden="true">&times;</span>
+//                         </button>
+//                     </div>
+//                     <div class="modal-body">
+//                         <input id="userInput" class="form-control" type="text" placeholder="กรอกสมการทางคณิตศาสตร์">
+//                     </div>
+//                     <div class="modal-footer">
+//                         <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+//                         <button type="button" class="btn btn-primary" onclick="calculateAndSetResult(this)">คำนวณ</button>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     `;
+
+//     // เพิ่ม Modal ในหน้าเว็บ
+//     $("body").append(modalContent);
+
+//     // เปิด Modal
+//     $("#calculatorModal").modal("show");
+// }
+
+// function calculateAndSetResul…

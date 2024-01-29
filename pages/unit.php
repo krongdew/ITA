@@ -1,3 +1,20 @@
+<?php
+session_start();
+include '../action/connect.php';
+
+if (!isset($_SESSION['user'])) {
+    // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
+    header("Location: http://localhost:8080/index.php");
+    
+}
+
+// ดึงข้อมูลผู้ใช้จาก session
+$user = $_SESSION['user'];
+
+// ดึงข้อมูลผู้ใช้จาก session
+
+
+?>
 <!DOCTYPE html>
 <html lang="th">
 
@@ -81,7 +98,8 @@
         border: 0px;
         padding: 4px;
     }
-    .cancelBtn{
+
+    .cancelBtn {
         background-color: #ff3a24;
         color: white;
         border-radius: 10px;
@@ -102,7 +120,12 @@
 </style>
 
 <body class="g-sidenav-show   bg-gray-100">
-    <?php include '../components/sidebar.php' ?>
+    <?php if ($user['UserType'] === "admin") {
+
+        include '../components/sidebar_admin.php';
+    } else {
+        include '../components/sidebar.php';
+    }  ?>
     <?php include '../components/navbar.php' ?>
     <? include '../action/connect.php';
 
@@ -402,7 +425,7 @@
             // ฟังก์ชัน Save
             $('#myTable tbody').on('click', 'button.saveBtn', function() {
                 var tr = $(this).closest('tr');
-                var data = table.row(tr).data(); 
+                var data = table.row(tr).data();
                 var unitName = tr.find('.editUnitName').val();
                 var departmentId = tr.find('.editDepartment').val();
 
@@ -417,17 +440,17 @@
                     },
                     dataType: 'json',
                     success: function(response) {
-                    if (response.status === 'success') {
-                      // Reload DataTable to display updated data
-                      table.ajax.reload();
-                    } else {
-                      Swal.fire(
-                        'เกิดข้อผิดพลาด!',
-                        'เกิดข้อผิดพลาดในการแก้ไขข้อมูล.',
-                        'error'
-                      );
+                        if (response.status === 'success') {
+                            // Reload DataTable to display updated data
+                            table.ajax.reload();
+                        } else {
+                            Swal.fire(
+                                'เกิดข้อผิดพลาด!',
+                                'เกิดข้อผิดพลาดในการแก้ไขข้อมูล.',
+                                'error'
+                            );
+                        }
                     }
-                  }
                 });
             });
 
