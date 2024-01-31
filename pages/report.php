@@ -194,9 +194,9 @@ $user = $_SESSION['user'];
 
         <div class="card mb-4">
           <div class="card-header pb-0">
-            <h6>เพิ่ม Services</h6>
+            <h6>เพิ่มจำนวนผู้เข้าใช้งานบริการต่าง ๆ</h6>
             <br>
-            <button class="badge badge-sm bg-gradient-success" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">เพิ่ม Services</button>
+            <!-- <button class="badge badge-sm bg-gradient-success" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">เพิ่ม Services</button> -->
             <!-- <button class="badge badge-sm bg-gradient-warning" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">สร้างแบบประเมินความพึงพอใจ</button> -->
           </div>
 
@@ -339,7 +339,7 @@ $user = $_SESSION['user'];
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">เจ้าของ</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">วันที่อัพเดท</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                
               </tr>
             </thead>
             <tbody>
@@ -358,101 +358,101 @@ $user = $_SESSION['user'];
   <!--   Core JS Files   -->
   <?php include '../components/script.php'; ?>
   <script>
-    function toggleAddForm() {
-      var addFormDiv = document.getElementById('add-form');
+    // function toggleAddForm() {
+    //   var addFormDiv = document.getElementById('add-form');
 
-      // Check if the form is already visible
-      if (addFormDiv.style.display === 'none' || addFormDiv.style.display === '') {
-        // Show the form
-        addFormDiv.style.display = 'block';
-      } else {
-        // Hide the form
-        addFormDiv.style.display = 'none';
-      }
+    //   // Check if the form is already visible
+    //   if (addFormDiv.style.display === 'none' || addFormDiv.style.display === '') {
+    //     // Show the form
+    //     addFormDiv.style.display = 'block';
+    //   } else {
+    //     // Hide the form
+    //     addFormDiv.style.display = 'none';
+    //   }
 
-      // Return false to prevent the default behavior of the button
-      return false;
-    }
+    //   // Return false to prevent the default behavior of the button
+    //   return false;
+    // }
   </script>
   <script>
-    $(document).ready(function() {
-      // Fetch product options based on selected company and plant
-      $('#department_id').on('change', function() {
-        var selectedDepartment = $(this).val();
-        $.ajax({
-          url: '../action/get_unit2.php',
-          type: 'POST',
-          data: {
-            department_id: selectedDepartment
-          },
-          success: function(data) {
-            $('#subservice_Access').html(data);
+    // $(document).ready(function() {
+    //   // Fetch product options based on selected company and plant
+    //   $('#department_id').on('change', function() {
+    //     var selectedDepartment = $(this).val();
+    //     $.ajax({
+    //       url: '../action/get_unit2.php',
+    //       type: 'POST',
+    //       data: {
+    //         department_id: selectedDepartment
+    //       },
+    //       success: function(data) {
+    //         $('#subservice_Access').html(data);
 
-          }
-        });
-      });
-    })
+    //       }
+    //     });
+    //   });
+    // })
 
 
-    // ฟังก์ชันเพิ่มแถวในตาราง
-    function addRow() {
-      // ดึงตารางมา
-      var table = document.getElementById("subservices");
+    // // ฟังก์ชันเพิ่มแถวในตาราง
+    // function addRow() {
+    //   // ดึงตารางมา
+    //   var table = document.getElementById("subservices");
 
-      // สร้างแถวใหม่
-      var newRow = table.insertRow(table.rows.length);
+    //   // สร้างแถวใหม่
+    //   var newRow = table.insertRow(table.rows.length);
 
-      // สร้างเซลล์ในแถว
-      var cell1 = newRow.insertCell(0);
-      var cell2 = newRow.insertCell(1);
-      var cell3 = newRow.insertCell(2);
-      var cell4 = newRow.insertCell(3);
-      var cell5 = newRow.insertCell(4);
+    //   // สร้างเซลล์ในแถว
+    //   var cell1 = newRow.insertCell(0);
+    //   var cell2 = newRow.insertCell(1);
+    //   var cell3 = newRow.insertCell(2);
+    //   var cell4 = newRow.insertCell(3);
+    //   var cell5 = newRow.insertCell(4);
 
-      // เพิ่ม HTML ลงในเซลล์
-      cell1.innerHTML = '<input class="form-control" type="text" name="subservice_name[]" placeholder="ชื่อบริการย่อย" required>';
-      cell2.innerHTML = '<input class="form-control" type="text" name="subservice_detail[]" placeholder="รายละเอียดของบริการย่อย">';
+    //   // เพิ่ม HTML ลงในเซลล์
+    //   cell1.innerHTML = '<input class="form-control" type="text" name="subservice_name[]" placeholder="ชื่อบริการย่อย" required>';
+    //   cell2.innerHTML = '<input class="form-control" type="text" name="subservice_detail[]" placeholder="รายละเอียดของบริการย่อย">';
 
-      // สร้าง select ใน cell3 และให้มี id เฉพาะ
-      // cell3.innerHTML = '<select class="form-select" name="subservice_Access[]" onchange="getUnits2(this)""></select>';
-      // Create a new select element for the product
-      var departmentSelect = document.createElement("select");
-      departmentSelect.className = "form-select";
-      departmentSelect.name = "subservice_Access[]";
-      // departmentSelect.onchange = function() {
-      //   getUnits2(this)
-      // };
-      cell3.appendChild(departmentSelect);
+    //   // สร้าง select ใน cell3 และให้มี id เฉพาะ
+    //   // cell3.innerHTML = '<select class="form-select" name="subservice_Access[]" onchange="getUnits2(this)""></select>';
+    //   // Create a new select element for the product
+    //   var departmentSelect = document.createElement("select");
+    //   departmentSelect.className = "form-select";
+    //   departmentSelect.name = "subservice_Access[]";
+    //   // departmentSelect.onchange = function() {
+    //   //   getUnits2(this)
+    //   // };
+    //   cell3.appendChild(departmentSelect);
 
-      // Fetch product options based on selected company and plant
-      var selecteddepartment = $('#department_id').val();
-      $.ajax({
-        url: '../action/get_unit2.php',
-        type: 'POST',
-        data: {
-          department_id: selecteddepartment
+    //   // Fetch product options based on selected company and plant
+    //   var selecteddepartment = $('#department_id').val();
+    //   $.ajax({
+    //     url: '../action/get_unit2.php',
+    //     type: 'POST',
+    //     data: {
+    //       department_id: selecteddepartment
 
-        },
-        success: function(data) {
-          departmentSelect.innerHTML = data;
-          // Fetch price for the selected product
-          // getUnits2(departmentSelect);
-        }
-      });
+    //     },
+    //     success: function(data) {
+    //       departmentSelect.innerHTML = data;
+    //       // Fetch price for the selected product
+    //       // getUnits2(departmentSelect);
+    //     }
+    //   });
 
-      // สร้าง select ใน cell4
-      cell4.innerHTML = '<select class="form-select" name="subservice_status[]"><option value="1">เปิด</option><option value="0">ปิด</option></select>';
+    //   // สร้าง select ใน cell4
+    //   cell4.innerHTML = '<select class="form-select" name="subservice_status[]"><option value="1">เปิด</option><option value="0">ปิด</option></select>';
 
-      // สร้างปุ่มลบใน cell5
-      cell5.innerHTML = '<button type="button" class="delBtn" onclick="deleteRow(this)" style="font-size: small;" >ลบแถว</button>';
+    //   // สร้างปุ่มลบใน cell5
+    //   cell5.innerHTML = '<button type="button" class="delBtn" onclick="deleteRow(this)" style="font-size: small;" >ลบแถว</button>';
 
-    }
+    // }
 
-    // ฟังก์ชันลบแถว
-    function deleteRow(row) {
-      var index = row.parentNode.parentNode.rowIndex;
-      document.getElementById("subservices").deleteRow(index);
-    }
+    // // ฟังก์ชันลบแถว
+    // function deleteRow(row) {
+    //   var index = row.parentNode.parentNode.rowIndex;
+    //   document.getElementById("subservices").deleteRow(index);
+    // }
   </script>
 
 
@@ -625,19 +625,14 @@ $user = $_SESSION['user'];
               {
                 "data": null,
                 "render": function(data, type, row) {
-                  return '<a href="../pages/edit_service.php?ID=' + data.ID + '"><button class="editBtn">Edit</button></a>  <button class="delBtn">Delete</button>';
-                },
-                "orderable": false
-              }
-              ,
 
-              {
-                "data": null,
-                "render": function(data, type, row) {
                   return '<a href="../pages/add_report.php?ID=' + data.ID + '"><button class="badge badge-sm bg-gradient-warning" style="border: 0px;" onMouseOver="this.style.color=red" onMouseOut="this.style.color=white" >บันทึกจำนวนผู้ใช้บริการ</button> </a>';
                 },
                 "orderable": false
-              }
+              } 
+              ,
+
+              
             ],
             order: [
               [0, 'asc'],

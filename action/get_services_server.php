@@ -9,7 +9,7 @@ $start = isset($_POST['start']) ? intval($_POST['start']) : 0;
 $length = isset($_POST['length']) ? intval($_POST['length']) : 10;
 
 // Order by
-$orderColumnIndex = isset($_POST['order'][0]['column']) ? intval($_POST['order'][0]['column']) : 2; // เปลี่ยนตำแหน่งของคอลัมน์ "timestamp"
+$orderColumnIndex = isset($_POST['order'][0]['column']) ? intval($_POST['order'][0]['column']) : 6; // เปลี่ยนตำแหน่งของคอลัมน์ "timestamp"
 
 if (array_key_exists($orderColumnIndex, $columns)) {
     $orderColumn = $columns[$orderColumnIndex];

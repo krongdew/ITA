@@ -434,12 +434,13 @@ $user = $_SESSION['user'];
             // Event listener สำหรับปุ่ม Delete
             $('#myTable').on('click', '.delBtn', function() {
                 var data = $('#myTable').DataTable().row($(this).parents('tr')).data();
-                var servicesID = data.ID;
+                var AssessmentID = data.AssessmentID;
+                console.log(AssessmentID)
 
                 // แสดง SweetAlert 2 สำหรับยืนยันการลบ
                 Swal.fire({
-                    title: 'คุณต้องการลบข้อมูลหรือไม่?',
-                    text: "หากคุณลบที่นี่ จะลบทั้งบริการหลักและบริการย่อยทั้งหมด",
+                    title: 'คุณต้องการลบแบบประเมินหรือไม่?',
+                    text: "หากคุณลบแบบประเมินนี้ จะทำการลบข้อมูลการทำแบบประเมินทั้งหมดด้วย",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -449,10 +450,10 @@ $user = $_SESSION['user'];
                     if (result.isConfirmed) {
                         // ทำการลบในฐานข้อมูลด้วย Ajax
                         $.ajax({
-                            url: '../action/delete_services.php',
+                            url: '../action/delete_assessment.php',
                             type: 'POST',
                             data: {
-                                servicesID: servicesID
+                                AssessmentID: AssessmentID
                             },
                             dataType: 'json', // รับข้อมูลเป็น JSON
                             success: function(response) {

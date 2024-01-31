@@ -564,8 +564,8 @@ if (isset($_GET['ID'])) {
 
                         // แสดง SweetAlert 2 สำหรับยืนยันการลบ
                         Swal.fire({
-                            title: 'คุณต้องการลบข้อมูลหรือไม่?',
-                            text: "ลบบริการย่อย",
+                            title: 'คุณต้องการลบบริการย่อยหรือไม่?',
+                            text: "หากลบบริการย่อย ข้อมูลสถิติของบริการย่อยนี้จะหายไปทั้งหมด",
                             icon: 'warning',
                             showCancelButton: true,
                             confirmButtonColor: '#3085d6',

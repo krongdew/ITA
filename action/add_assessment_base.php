@@ -31,7 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // ทำการเพิ่มข้อมูล
         $stmt->execute();
 
-        echo "Record added successfully";
+        echo "<script>alert('สร้างแบบประเมินสำเร็จ')</script>";
+        echo '<script>window.location.href = "../pages/assessment.php";</script>';
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
