@@ -518,6 +518,8 @@ $user = $_SESSION['user'];
     $(document).ready(function() {
       var table;
       var globalDepartmentData; // ประกาศตัวแปรที่ถูกส่งเข้าไปนอกฟังก์ชัน success
+      var userdepartment = <? echo $user['department']; ?>
+      
       // ดึงข้อมูลจาก sa_department
       $.ajax({
         url: "../action/get_department_data.php", // แก้ไข URL ให้ตรงกับที่เก็บโค้ด PHP ที่ดึงข้อมูล sa_department
@@ -583,6 +585,9 @@ $user = $_SESSION['user'];
               "url": "../action/get_services_server.php",
               "type": "POST",
               "dataType": "json",
+              data:{
+                userdepartment: userdepartment
+              }
             },
             "columns": [{
                 "data": null,

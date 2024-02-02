@@ -1,6 +1,8 @@
 <?php
 include 'connect.php';
 
+$userdepartment = isset($_POST['userdepartment']) ? $_POST['userdepartment'] : 0;
+
 // Columns
 $columns = array('service_name', 'service_detail', 'service_status','service_Access','updated_at');
 
@@ -32,10 +34,11 @@ if (!empty($searchValue)) {
     $searchQuery .= ")";
 }
 
-// SQL query
-// SQL query
-$sql = "SELECT * FROM sa_services WHERE 1 $searchQuery ORDER BY $orderColumn $orderDirection LIMIT $start, $length";
+// Additional condition based on userdepartment
+$userDepartmentCondition = ($userdepartment == 0) ? '' : " AND service_Access = $userdepartment";
 
+// SQL query
+$sql = "SELECT * FROM sa_services WHERE 1 $searchQuery $userDepartmentCondition ORDER BY $orderColumn $orderDirection LIMIT $start, $length";
 
 // Execute the query
 $result = $conn->query($sql);
@@ -50,7 +53,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 $totalRecords = $conn->query("SELECT COUNT(*) FROM sa_services")->fetchColumn();
 
 // Total filtered records (for pagination)
-$totalFiltered = $conn->query("SELECT COUNT(*) FROM sa_services WHERE 1 $searchQuery")->fetchColumn();
+$totalFiltered = $conn->query("SELECT COUNT(*) FROM sa_services WHERE 1 $searchQuery $userDepartmentCondition")->fetchColumn();
 
 // Convert the array to JSON
 $jsonData = array(

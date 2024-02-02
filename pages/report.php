@@ -3,9 +3,8 @@ session_start();
 include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
-    // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
-    
+  // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
+  header("Location: http://localhost:8080/index.php");
 }
 
 // ดึงข้อมูลผู้ใช้จาก session
@@ -172,13 +171,13 @@ $user = $_SESSION['user'];
 
 <body class="g-sidenav-show   bg-gray-100">
   <?php  // เรียกใช้ Sidebar ตาม UserType
-    if ($user['UserType'] === "admin") {
-   
-        include '../components/sidebar_admin.php';
-    } else {
-        include '../components/sidebar.php';
-    }
-    ?> 
+  if ($user['UserType'] === "admin") {
+
+    include '../components/sidebar_admin.php';
+  } else {
+    include '../components/sidebar.php';
+  }
+  ?>
   <?php include '../components/navbar.php' ?>
   <? include '../action/connect.php';
 
@@ -229,7 +228,7 @@ $user = $_SESSION['user'];
                                 <label for="example-text-input" class="form-control-label">สังกัดงาน : </label>
                                 <?php
                                 try {
-                                 
+
                                   // คำสั่ง SQL สำหรับดึงข้อมูล department
                                   $sql = "SELECT ID, department_name FROM sa_department";
 
@@ -339,7 +338,7 @@ $user = $_SESSION['user'];
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">เจ้าของ</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">วันที่อัพเดท</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
-                
+
               </tr>
             </thead>
             <tbody>
@@ -518,6 +517,7 @@ $user = $_SESSION['user'];
     $(document).ready(function() {
       var table;
       var globalDepartmentData; // ประกาศตัวแปรที่ถูกส่งเข้าไปนอกฟังก์ชัน success
+      var userdepartment = <? echo $user['department']; ?>
       // ดึงข้อมูลจาก sa_department
       $.ajax({
         url: "../action/get_department_data.php", // แก้ไข URL ให้ตรงกับที่เก็บโค้ด PHP ที่ดึงข้อมูล sa_department
@@ -564,7 +564,7 @@ $user = $_SESSION['user'];
               {
                 extend: 'pdfHtml5',
                 exportOptions: {
-                  columns: [0, 1, 2, 3,4,5] // ระบุคอลัมน์ที่จะ export (index 0, 1, 2)
+                  columns: [0, 1, 2, 3, 4, 5] // ระบุคอลัมน์ที่จะ export (index 0, 1, 2)
                 },
                 customize: function(doc) {
                   doc.defaultStyle.font = 'thaiFont'; // หรือใช้ชื่อ font ที่คุณต้องการ
@@ -583,6 +583,9 @@ $user = $_SESSION['user'];
               "url": "../action/get_services_server.php",
               "type": "POST",
               "dataType": "json",
+              data: {
+                userdepartment: userdepartment
+              }
             },
             "columns": [{
                 "data": null,
@@ -629,10 +632,9 @@ $user = $_SESSION['user'];
                   return '<a href="../pages/add_report.php?ID=' + data.ID + '"><button class="badge badge-sm bg-gradient-warning" style="border: 0px;" onMouseOver="this.style.color=red" onMouseOut="this.style.color=white" >บันทึกจำนวนผู้ใช้บริการ</button> </a>';
                 },
                 "orderable": false
-              } 
-              ,
+              },
 
-              
+
             ],
             order: [
               [0, 'asc'],
@@ -644,7 +646,7 @@ $user = $_SESSION['user'];
         }
       });
 
-      
+
       // Event listener สำหรับปุ่ม Delete
       $('#myTable').on('click', '.delBtn', function() {
         var data = $('#myTable').DataTable().row($(this).parents('tr')).data();

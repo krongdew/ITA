@@ -1,6 +1,9 @@
 <?php
 include 'connect.php';
 
+$userdepartment = isset($_POST['userdepartment']) ? $_POST['userdepartment'] : 0;
+
+
 // Columns
 $columns = array('AssessmentName', 'CreatorUserID ', 'ApprovalStatus','CreationDate','AssessmentURL','QrCodeImageName','service_id','AssessmentStatus');
 
@@ -32,9 +35,16 @@ if (!empty($searchValue)) {
     $searchQuery .= ")";
 }
 
+// Additional condition based on userdepartment
+$userDepartmentCondition = ($userdepartment == 0) ? '' : " AND service_Access = $userdepartment";
 // SQL query
 // SQL query
-$sql = "SELECT * FROM sa_assessment WHERE 1 $searchQuery ORDER BY $orderColumn $orderDirection LIMIT $start, $length";
+$sql = "SELECT sa_assessment.*, sa_services.service_Access 
+        FROM sa_assessment 
+        LEFT JOIN sa_services ON sa_assessment.service_id = sa_services.ID 
+        WHERE 1 $searchQuery $userDepartmentCondition 
+        ORDER BY $orderColumn $orderDirection 
+        LIMIT $start, $length";
 
 
 // Execute the query

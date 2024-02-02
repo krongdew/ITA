@@ -210,7 +210,7 @@ if (isset($_GET['ID'])) {
 
                             <div class="card mb-4">
                                 <div class="card-header pb-0">
-                                    <h6>เพิ่มจำนวนผู้เข้าใช้บริการ</h6>
+                                    <h6>เพิ่มจำนวนผู้เข้าใช้บริการ <b><?php echo $Assessment['service_name']; ?></b></h6>
                                     <br>
                                     <button class="badge badge-sm bg-gradient-success" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">เพิ่มจำนวนผู้เข้าใช้</button>
 

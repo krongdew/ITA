@@ -194,54 +194,41 @@ $user = $_SESSION['user'];
         <div class="card mb-4">
           <div class="card-header pb-0">
             <h6>รายงานสถิติจำนวนผู้เข้าใช้บริการ</h6>
-            <br>
+            
             <!-- <button class="badge badge-sm bg-gradient-success" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">เพิ่ม Services</button> -->
             <!-- <button class="badge badge-sm bg-gradient-warning" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">สร้างแบบประเมินความพึงพอใจ</button> -->
           </div>
 
-          <div class="card-body px-0 pt-0 pb-2">
-            <div id="add-form" style="display: none;">
-              <form method="post" action="../action/add_service.php">
-                <div class="container-fluid py-4">
-                  <div class="row">
-                    <div class="col-md-8">
-                      <div class="card">
-                        <div class="card-header pb-0">
-                          <div class="d-flex align-items-center">
-                            <p class="mb-0">เพิ่มบริการ (Services) ของกองกิจการนักศึกษา</p>
-
-                          </div>
-                        </div>
-
-                      </div>
-                    </div>
-
-                  </div>
-
-              </form>
-            </div>
-          </div>
-        </div>
 
         <div style="padding: 20px;">
+          <label for="yearFilter">เลือกปีที่ต้องการดูข้อมูล:</label>
+          <select id="yearFilter">
+            <!-- ตัวเลือกจะถูกเติมโดย JavaScript -->
+          </select>
+          <label for="startMonthFilter">หรือเลือกเดือนเริ่มต้น:</label>
+<input type="date" id="startMonthFilter">
+
+<label for="endMonthFilter">เลือกเดือนสิ้นสุด:</label>
+<input type="date" id="endMonthFilter">
+
+          <br><br>
           <table id="myTable" class="table align-items-center mb-0">
             <thead>
               <tr>
-
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ชื่อบริการ</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">หน่วยนับ</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ม.ค.</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ก.พ.</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">มี.ค.</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">เม.ย.</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">พ.ค.</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">มิ.ย.</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ก.ค.</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ส.ค.</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ก.ย.</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ต.ต.</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">พ.ย.</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ธ.ค.</th>
+                <th>งาน</th>
+                <th>ชื่อบริการ</th>
+                <th>ม.ค.</th>
+                <th>ก.พ.</th>
+                <th>มี.ค.</th>
+                <th>เม.ย.</th>
+                <th>พ.ค.</th>
+                <th>มิ.ย.</th>
+                <th>ก.ค.</th>
+                <th>ส.ค.</th>
+                <th>ก.ย.</th>
+                <th>ต.ค.</th>
+                <th>พ.ย.</th>
+                <th>ธ.ค.</th>
               </tr>
             </thead>
             <tbody>
@@ -260,56 +247,6 @@ $user = $_SESSION['user'];
   <!--   Core JS Files   -->
   <?php include '../components/script.php'; ?>
 
-
-
-
-  <!-- ส่วนที่เพิ่มเข้าไป -->
-  <script>
-    function updatedata() {
-      $('#myTable').DataTable().ajax.reload();
-    }
-
-
-    $(document).ready(function() {
-      // ให้ฟังก์ชันทำงานเมื่อมีการกด submit ฟอร์ม
-      $('form').submit(function(e) {
-        e.preventDefault(); // ป้องกันให้ฟอร์ม submit ตามปกติ
-
-        // ทำการส่งข้อมูลไปยังไฟล์ PHP ตาม URL ที่ระบุใน action
-        $.ajax({
-          type: 'POST',
-          url: '../action/add_services.php',
-          data: $(this).serialize(), // เพิ่ม CSRF Token ในข้อมูลที่ส่ง
-          success: function(response) {
-            // เมื่อเพิ่มข้อมูลเสร็จสิ้น, แสดง popup box
-            Swal.fire({
-              icon: 'success',
-              title: 'บันทึกข้อมูลสำเร็จ',
-              showConfirmButton: false,
-              timer: 1500,
-
-            }).then(function() {
-
-              // ล้างข้อมูลในฟอร์ม (ตรวจสอบว่าเขียนไว้ถูกหรือไม่)
-              $('form')[0].reset();
-
-              // เรียกใช้ฟังก์ชัน updatedata() เพื่อรีเฟรชตาราง
-              updatedata();
-            });
-          },
-          error: function(error) {
-            // กรณีเกิดข้อผิดพลาด
-            Swal.fire({
-              icon: 'error',
-              title: 'เกิดข้อผิดพลาด',
-              text: 'ไม่สามารถบันทึกข้อมูลได้'
-            });
-          }
-        });
-      });
-    });
-  </script>
-
   <script>
     pdfMake.fonts = {
       thaiFont: {
@@ -320,138 +257,187 @@ $user = $_SESSION['user'];
       }
     };
 
-
-
-    $(document).ready(function() {
-    var table;
-    var globalDepartmentData;
-
-    $.ajax({
-        url: "../action/get_service_data.php",
+    // สร้างฟังก์ชันเพื่อดึงข้อมูลแผนก
+    function getDeaprtmentData(callback) {
+      $.ajax({
+        url: "../action/get_service_access.php",
         type: "GET",
         dataType: "json",
         success: function(response) {
-            globalDepartmentData = response;
-            var table = $('#myTable').DataTable({
-                responsive: true,
-                dom: 'lBfrtip',
-                columns: [
-                    { data: "service_id", visible: false,
-                      render: function(data) {
-                                        // ให้หาข้อมูล department_name จาก globalDepartmentData แล้วแสดง
-                                        var serviceData = globalDepartmentData.find(function(dep) {
-                                            return dep.ID === data;
-                                           
-                                        });
-                                        return serviceData ? serviceData.service_name : '';
-                                    }, 
-                      
-                    },
-                    { data: "subservice_id" },
-                    { data: 'Jan' },
-                    { data: 'Feb' },
-                    { data: 'Mar' },
-                    { data: 'Apr' },
-                    { data: 'May' },
-                    { data: 'Jun' },
-                    { data: 'Jul' },
-                    { data: 'Aug' },
-                    { data: 'Sep' },
-                    { data: 'Oct' },
-                    { data: 'Nov' },
-                    { data: 'Dec' }
-                ],
-                buttons: [
-                    'copyHtml5',
-                    'excelHtml5',
-                    {
-                        extend: 'pdfHtml5',
-                        exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-                        },
-                        customize: function(doc) {
-                            doc.defaultStyle.font = 'thaiFont';
-                            doc.defaultStyle.fontSize = 16;
-                        }
-                    }
-                ],
-                autoWidth: false,
-                lengthMenu: [10, 25, 50, 75, 100],
-                pageLength: 10,
-                serverSide: true,
-                ajax: {
-                    url: "../action/get_report_server.php",
-                    type: "POST",
-                    dataType: "json",
-                },
-                drawCallback: function(settings) {
-                    var api = this.api();
-                    var rows = api.rows({ page: 'current' }).nodes();
-                    var lastServiceId = null;
-
-                    api.column(0, { page: 'current' }).data().each(function(serviceId, i) {
-                        if (lastServiceId !== serviceId) {
-                            $(rows).eq(i).before(
-                                '<tr class="group"><td colspan="14">service_id=' + serviceId + '</td></tr>'
-                            );
-                            lastServiceId = serviceId;
-                        }
-                    });
-                }
-            });
+          callback(response);
         },
-    });
+        error: function(xhr, status, error) {
+          console.error("Error fetching department data:", error);
+        }
+      });
+    }
 
+    $(document).ready(function() {
+      var table;
+      var globalDepartmentData;
+      var years = []; // เก็บปีที่มีอยู่ในข้อมูล
 
+      // เพิ่ม dropdown เลือกปี
+      $.ajax({
+        url: "../action/get_years.php",
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+          years = response;
 
-      // Event listener สำหรับปุ่ม Delete
-      $('#myTable').on('click', '.delBtn', function() {
-        var data = $('#myTable').DataTable().row($(this).parents('tr')).data();
-        var servicesID = data.ID;
+          // เติมตัวเลือกปีใน dropdown
+          var yearDropdown = $("#yearFilter");
+          years.forEach(function(year) {
+            yearDropdown.append("<option value='" + year + "'>" + year + "</option>");
+          });
 
-        // แสดง SweetAlert 2 สำหรับยืนยันการลบ
-        Swal.fire({
-          title: 'คุณต้องการลบข้อมูลหรือไม่?',
-          text: "หากคุณลบที่นี่ จะลบทั้งบริการหลักและบริการย่อยทั้งหมด",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'ใช่, ลบ!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // ทำการลบในฐานข้อมูลด้วย Ajax
-            $.ajax({
-              url: '../action/delete_services.php',
-              type: 'POST',
-              data: {
-                servicesID: servicesID
-              },
-              dataType: 'json', // รับข้อมูลเป็น JSON
-              success: function(response) {
-                if (response.status === 'success') {
+          // กำหนดการเรียกใช้ DataTables
+          initializeDataTable();
+        },
+        error: function(xhr, status, error) {
+          console.error("Error fetching years:", error);
+        }
+      });
 
-                  Swal.fire(
-                    'ลบข้อมูลเรียบร้อย!',
-                    'ข้อมูลถูกลบออกจากระบบแล้ว.',
-                    'success'
-                  ).then((result) => {
-                    if (result.isConfirmed) {
-                      // ทำการ reload ข้อมูล
-                      $('#myTable').DataTable().ajax.reload();
-                    }
-                  });
-                } else {
-                  Swal.fire(
-                    'เกิดข้อผิดพลาด!',
-                    'เกิดข้อผิดพลาดในการลบข้อมูล.',
-                    'error'
-                  );
-                }
-              }
-            });
-          }
+      function initializeDataTable() {
+        var selectedYear = $("#yearFilter").val();
+        var departmentData;
+        getDeaprtmentData(function(response) {
+          departmentData = response;
         });
+        var userdepartment = <? echo $user['department']; ?>
+      
+        table = $('#myTable').DataTable({
+          responsive: true,
+          dom: 'Brt',
+          columns: [{
+              data: "service_Access",
+              visible: false,
+              render: function(data) {
+                // หาข้อมูล department_name จาก departmentData แล้วแสดง
+                var departmentInfo = departmentData.find(function(dep) {
+                  return dep.ID === data;
+                });
+                return departmentInfo ? departmentInfo.department_name : '';
+
+              },
+            },
+            {data: "service_id"},
+            {data: 'Jan'},
+            {data: 'Feb'},
+            {data: 'Mar'},
+            {data: 'Apr'},
+            {data: 'May'},
+            {data: 'Jun'},
+            {data: 'Jul'},
+            {data: 'Aug'},
+            {data: 'Sep'},
+            {data: 'Oct'},
+            {data: 'Nov'},
+            {data: 'Dec'}
+          ],
+          buttons: [
+            'copyHtml5',
+            {
+              extend: 'excel',
+              text: 'Excel',
+              customize: function(xlsx) {
+                // ตรวจสอบและปรับแต่งข้อมูลก่อน export
+                var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                // กำหนดตำแหน่งหรือคอลัมน์ที่จะใช้ในการตรวจสอบและแทนที่ข้อมูล
+                var columnIndex = 1; // ตั้งค่าตำแหน่งหรือคอลัมน์ที่จะใช้
+                $('row c[r^="C"]', sheet).each(function() {
+                  // ตรวจสอบว่าตำแหน่งนี้เป็นข้อมูลหรือไม่
+                  var originalValue = $('t', this).text();
+
+                  // แทนที่เฉพาะข้อมูล text ไม่รวม HTML tags
+                  var departmentName = originalValue.replace(/<\/?t>/g, '');
+
+                  // ตรวจสอบและแทนที่ข้อมูลในตำแหน่งนี้
+                  if (departmentName !== originalValue) {
+                    $(this).html('<t>' + departmentName + '</t>');
+                  }
+                });
+              }
+            },
+            {
+              extend: 'pdfHtml5',
+              exportOptions: {
+                columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+              },
+              customize: function(doc) {
+                doc.defaultStyle.font = 'thaiFont';
+                doc.defaultStyle.fontSize = 16;
+                // ... รายละเอียดอื่น ๆ
+                // ตั้งค่ากระดาษ A4 แนวนอน
+                doc.pageSize = 'A4';
+                doc.pageOrientation = 'landscape';
+              }
+            }
+          ],
+          autoWidth: false,
+          lengthMenu: [10, 25, 50, 75, 100],
+          pageLength: 10,
+          serverSide: true,
+          ajax: {
+            url: "../action/get_report_server.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+              selectedYear: selectedYear,
+              userdepartment: userdepartment
+            }, // ส่งค่าปีที่เลือกไปด้วย
+          },
+          // ใช้ getDeaprtmentData เพื่อรับข้อมูลแผนกแล้วทำต่อไป
+          drawCallback: function(settings) {
+            var api = this.api();
+            var rows = api.rows({
+              page: 'current'
+            }).nodes();
+            var lastServiceAccess = null;
+
+            // เรียกใช้ getDeaprtmentData เพื่อรับข้อมูลแผนก
+            getDeaprtmentData(function(departmentData) {
+              api.column(0, {
+                page: 'current'
+              }).data().each(function(serviceAccess, i) {
+                if (lastServiceAccess !== serviceAccess) {
+                  // หาข้อมูลแผนกจาก departmentData แล้วแสดง
+                  var departmentInfo = departmentData.find(function(dep) {
+                    return dep.ID === serviceAccess;
+                  });
+
+                  var departmentName = departmentInfo ? departmentInfo.department_name : '';
+
+                  $(rows).eq(i).before(
+                    '<tr class="group" style="background-color:#dbdbd9; color:black;"><td colspan="14"><b>' + departmentName + '</b></td></tr>'
+                  );
+                  lastServiceAccess = serviceAccess;
+                }
+              });
+            });
+          },
+          initComplete: function () {
+      var api = this.api();
+      var startMonthInput = $("#startMonthFilter");
+      var endMonthInput = $("#endMonthFilter");
+
+      startMonthInput.add(endMonthInput).on("change", function () {
+        var startMonth = startMonthInput.val();
+        var endMonth = endMonthInput.val();
+
+        api.column(2).search(startMonth + '-' + endMonth).draw(); // 2 คือ index ของคอลัมน์ที่ต้องการกรอง (Jan)
+      });
+    },
+        });
+      }
+
+      // เมื่อมีการเปลี่ยนแปลงใน dropdown เลือกปี
+      $("#yearFilter").on("change", function() {
+        // เรียกใช้ DataTables ใหม่เมื่อมีการเปลี่ยนแปลงใน dropdown
+        table.destroy(); // ทำลาย DataTables เดิม
+        initializeDataTable(); // เรียกใช้ DataTables ใหม่
       });
     });
   </script>

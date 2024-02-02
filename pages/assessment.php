@@ -285,150 +285,154 @@ $user = $_SESSION['user'];
             });
 
             function initializeDataTable() {
+                var userdepartment = <? echo $user['department']; ?>
 
-                        var table = $('#myTable').DataTable({
-                            responsive: true,
-                            dom: 'lBfrtip',
-                            columns: [{
-                                    data: "column1",
-                                    title: "Column 1"
-                                },
-                                {
-                                    data: "column2",
-                                    title: "Column 2"
-                                },
-                                {
-                                    data: "column3",
-                                    title: "Column 3"
-                                },
-                                {
-                                    data: "column4",
-                                    title: "Column 4"
-                                },
-                                {
-                                    data: "column5",
-                                    title: "Column 5"
-                                },
-                                {
-                                    data: "column6",
-                                    title: "Column 6"
-                                },
-                                {
-                                    data: "column7",
-                                    title: "Column 7"
-                                },
-                                {
-                                    data: "column8",
-                                    title: "Column 8"
-                                },
-                                {
-                                    data: "column9",
-                                    title: "Column 9"
-                                },
-                                {
-                                    data: "column10",
-                                    title: "Column 10"
-                                },
-                               
-                                // เพิ่มคอลัมน์ตามต้องการ
-                            ],
-                            buttons: [
-                                'copyHtml5',
-                                'excelHtml5',
-                                {
-                                    extend: 'pdfHtml5',
-                                    exportOptions: {
-                                        columns: [0, 1, 2, 3, 4, 5,6,7,8,9,10] // ระบุคอลัมน์ที่จะ export (index 0, 1, 2)
-                                    },
-                                    customize: function(doc) {
-                                        doc.defaultStyle.font = 'thaiFont'; // หรือใช้ชื่อ font ที่คุณต้องการ
-                                        doc.defaultStyle.fontSize = 16; // ตั้งค่าขนาดตัวอักษรที่นี่ (เป็นตัวเลข)
+                var table = $('#myTable').DataTable({
+                    responsive: true,
+                    dom: 'lBfrtip',
+                    columns: [{
+                            data: "column1",
+                            title: "Column 1"
+                        },
+                        {
+                            data: "column2",
+                            title: "Column 2"
+                        },
+                        {
+                            data: "column3",
+                            title: "Column 3"
+                        },
+                        {
+                            data: "column4",
+                            title: "Column 4"
+                        },
+                        {
+                            data: "column5",
+                            title: "Column 5"
+                        },
+                        {
+                            data: "column6",
+                            title: "Column 6"
+                        },
+                        {
+                            data: "column7",
+                            title: "Column 7"
+                        },
+                        {
+                            data: "column8",
+                            title: "Column 8"
+                        },
+                        {
+                            data: "column9",
+                            title: "Column 9"
+                        },
+                        {
+                            data: "column10",
+                            title: "Column 10"
+                        },
 
-                                        // ... รายละเอียดอื่น ๆ
-
-                                    }
-                                }
-                            ],
-                            "autoWidth": false,
-                            "lengthMenu": [10, 25, 50, 75, 100],
-                            "pageLength": 10,
-                            "serverSide": true,
-                            "ajax": {
-                                "url": "../action/get_assessment_server.php",
-                                "type": "POST",
-                                "dataType": "json",
+                        // เพิ่มคอลัมน์ตามต้องการ
+                    ],
+                    buttons: [
+                        'copyHtml5',
+                        'excelHtml5',
+                        {
+                            extend: 'pdfHtml5',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] // ระบุคอลัมน์ที่จะ export (index 0, 1, 2)
                             },
-                            "columns": [{
-                                    "data": null,
-                                    "render": function(data, type, row) {
-                                        return '<a href="../pages/add_question.php?ID=' + data.AssessmentID  + '"><button class="saveBtn">สร้างข้อคำถาม</button></a> <a href="../pages/edit_service.php?ID=' + data.AssessmentID + '"><button class="editBtn">Edit</button></a>  <button class="delBtn">Delete</button>';
-                                    },
-                                    "orderable": false
-                                },
-                                {
-                                    "data": null,
-                                    "render": function(data, type, row, meta) {
-                                        return meta.settings._iDisplayStart + meta.row + 1;
-                                    }
-                                },
-                                {
-                                    "data": "AssessmentName",
-                                    "className": "editable"
-                                },
-                                {
-                                    "data": "service_id",
-                                    "className": "editable",
-                                    render: function(data) {
-                                        // ให้หาข้อมูล department_name จาก globalDepartmentData แล้วแสดง
-                                        var serviceData = globalUnitData.find(function(dep) {
-                                            return dep.ID === data;
-                                        });
-                                        return serviceData ? serviceData.service_name : '';
-                                    },
-                                },
-                                {
+                            customize: function(doc) {
+                                doc.defaultStyle.font = 'thaiFont'; // หรือใช้ชื่อ font ที่คุณต้องการ
+                                doc.defaultStyle.fontSize = 16; // ตั้งค่าขนาดตัวอักษรที่นี่ (เป็นตัวเลข)
 
-                                    data: "CreatorUserID",
-                                    className: "editable",
-                                    render: function(data) {
-                                        // ให้หาข้อมูล department_name จาก globalDepartmentData แล้วแสดง
-                                        var userData = globaluserData.find(function(dep) {
-                                            return dep.ID === data;
-                                        });
-                                        return userData ? userData.name_surname : '';
-                                    },
-                                },
-                                {
-                                    "data": "AssessmentStatus",
-                                    "className": "editable"
-                                },
-                                {
-                                    "data": "ApprovalStatus",
-                                    "className": "editable",
-                                    // "render": function(data, type, row, meta) {
-                                    //     // หากค่าของ data เป็น 1 ให้แทนค่าด้วยคำว่า "ON" ถ้าเป็น 0 ให้แทนด้วย "OFF"
-                                    //     return data == 1 ? "ON" : "OFF";
-                                    // }
-                                },
+                                // ... รายละเอียดอื่น ๆ
 
-                                {
-                                    "data": "CreationDate",
-                                },
+                            }
+                        }
+                    ],
+                    "autoWidth": false,
+                    "lengthMenu": [10, 25, 50, 75, 100],
+                    "pageLength": 10,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "../action/get_assessment_server.php",
+                        "type": "POST",
+                        "dataType": "json",
+                        data: {
+                            userdepartment: userdepartment
+                        }
+                    },
+                    "columns": [{
+                            "data": null,
+                            "render": function(data, type, row) {
+                                return '<a href="../pages/add_question.php?ID=' + data.AssessmentID + '"><button class="saveBtn">สร้างข้อคำถาม</button></a> <a href="../pages/edit_service.php?ID=' + data.AssessmentID + '"><button class="editBtn">Edit</button></a>  <button class="delBtn">Delete</button>';
+                            },
+                            "orderable": false
+                        },
+                        {
+                            "data": null,
+                            "render": function(data, type, row, meta) {
+                                return meta.settings._iDisplayStart + meta.row + 1;
+                            }
+                        },
+                        {
+                            "data": "AssessmentName",
+                            "className": "editable"
+                        },
+                        {
+                            "data": "service_id",
+                            "className": "editable",
+                            render: function(data) {
+                                // ให้หาข้อมูล department_name จาก globalDepartmentData แล้วแสดง
+                                var serviceData = globalUnitData.find(function(dep) {
+                                    return dep.ID === data;
+                                });
+                                return serviceData ? serviceData.service_name : '';
+                            },
+                        },
+                        {
 
-                                {
-                                    "data": "AssessmentURL",
-                                },
+                            data: "CreatorUserID",
+                            className: "editable",
+                            render: function(data) {
+                                // ให้หาข้อมูล department_name จาก globalDepartmentData แล้วแสดง
+                                var userData = globaluserData.find(function(dep) {
+                                    return dep.ID === data;
+                                });
+                                return userData ? userData.name_surname : '';
+                            },
+                        },
+                        {
+                            "data": "AssessmentStatus",
+                            "className": "editable"
+                        },
+                        {
+                            "data": "ApprovalStatus",
+                            "className": "editable",
+                            // "render": function(data, type, row, meta) {
+                            //     // หากค่าของ data เป็น 1 ให้แทนค่าด้วยคำว่า "ON" ถ้าเป็น 0 ให้แทนด้วย "OFF"
+                            //     return data == 1 ? "ON" : "OFF";
+                            // }
+                        },
 
-                                {
-                                    "data": "QrCodeImageName",
-                                },
-                            ],
-                            order: [
+                        {
+                            "data": "CreationDate",
+                        },
+
+                        {
+                            "data": "AssessmentURL",
+                        },
+
+                        {
+                            "data": "QrCodeImageName",
+                        },
+                    ],
+                    order: [
                         [0, 'asc'],
                     ],
                 })
             }
-            
+
 
 
             // Event listener สำหรับปุ่ม Delete
@@ -482,9 +486,6 @@ $user = $_SESSION['user'];
                 });
             });
         });
-       
-        
-     
     </script>
 
 
