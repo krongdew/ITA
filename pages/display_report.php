@@ -24,7 +24,7 @@ $user = $_SESSION['user'];
   <link rel="icon" type="image/png" href="./assets/img/favicon.png">
 
   <title>
-    ระบบ ITA
+  รายงานสถิติจำนวนผู้เข้าใช้บริการ 
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -194,253 +194,275 @@ $user = $_SESSION['user'];
         <div class="card mb-4">
           <div class="card-header pb-0">
             <h6>รายงานสถิติจำนวนผู้เข้าใช้บริการ</h6>
-            
+
             <!-- <button class="badge badge-sm bg-gradient-success" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">เพิ่ม Services</button> -->
             <!-- <button class="badge badge-sm bg-gradient-warning" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">สร้างแบบประเมินความพึงพอใจ</button> -->
           </div>
 
 
-        <div style="padding: 20px;">
-          <label for="yearFilter">เลือกปีที่ต้องการดูข้อมูล:</label>
-          <select id="yearFilter">
-            <!-- ตัวเลือกจะถูกเติมโดย JavaScript -->
-          </select>
-          <label for="startMonthFilter">หรือเลือกเดือนเริ่มต้น:</label>
-<input type="date" id="startMonthFilter">
+          <div style="padding: 20px;">
+            <label for="yearFilter">เลือกปีที่ต้องการดูข้อมูล:</label>
+            <select id="yearFilter">
+              <!-- ตัวเลือกจะถูกเติมโดย JavaScript -->
+            </select>
+            <!-- <label for="startMonthFilter">หรือเลือกเดือนเริ่มต้น:</label>
+            <input type="month" id="startMonthFilter">
 
-<label for="endMonthFilter">เลือกเดือนสิ้นสุด:</label>
-<input type="date" id="endMonthFilter">
+            <label for="endMonthFilter">เลือกเดือนสิ้นสุด:</label>
+            <input type="month" id="endMonthFilter"> -->
 
-          <br><br>
-          <table id="myTable" class="table align-items-center mb-0">
-            <thead>
-              <tr>
-                <th>งาน</th>
-                <th>ชื่อบริการ</th>
-                <th>ม.ค.</th>
-                <th>ก.พ.</th>
-                <th>มี.ค.</th>
-                <th>เม.ย.</th>
-                <th>พ.ค.</th>
-                <th>มิ.ย.</th>
-                <th>ก.ค.</th>
-                <th>ส.ค.</th>
-                <th>ก.ย.</th>
-                <th>ต.ค.</th>
-                <th>พ.ย.</th>
-                <th>ธ.ค.</th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
+            <br><br>
+            <table id="myTable" class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th>งาน</th>
+                  <th>ชื่อบริการ</th>
+                  <th>ม.ค.</th>
+                  <th>ก.พ.</th>
+                  <th>มี.ค.</th>
+                  <th>เม.ย.</th>
+                  <th>พ.ค.</th>
+                  <th>มิ.ย.</th>
+                  <th>ก.ค.</th>
+                  <th>ส.ค.</th>
+                  <th>ก.ย.</th>
+                  <th>ต.ค.</th>
+                  <th>พ.ย.</th>
+                  <th>ธ.ค.</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+
         </div>
-
       </div>
+
+      <?php include '../components/footer.php' ?>
     </div>
+    </main>
 
-    <?php include '../components/footer.php' ?>
-  </div>
-  </main>
+    <?php include '../components/setting.php'; ?>
+    <!--   Core JS Files   -->
+    <?php include '../components/script.php'; ?>
 
-  <?php include '../components/setting.php'; ?>
-  <!--   Core JS Files   -->
-  <?php include '../components/script.php'; ?>
-
-  <script>
-    pdfMake.fonts = {
-      thaiFont: {
-        normal: 'THSarabun.ttf',
-        bold: 'THSarabun-Bold.ttf',
-        italics: 'THSarabun-Italic.ttf',
-        bolditalics: 'THSarabun-BoldItalic.ttf'
-      }
-    };
-
-    // สร้างฟังก์ชันเพื่อดึงข้อมูลแผนก
-    function getDeaprtmentData(callback) {
-      $.ajax({
-        url: "../action/get_service_access.php",
-        type: "GET",
-        dataType: "json",
-        success: function(response) {
-          callback(response);
-        },
-        error: function(xhr, status, error) {
-          console.error("Error fetching department data:", error);
+    <script>
+      pdfMake.fonts = {
+        thaiFont: {
+          normal: 'THSarabun.ttf',
+          bold: 'THSarabun-Bold.ttf',
+          italics: 'THSarabun-Italic.ttf',
+          bolditalics: 'THSarabun-BoldItalic.ttf'
         }
-      });
-    }
+      };
 
-    $(document).ready(function() {
-      var table;
-      var globalDepartmentData;
-      var years = []; // เก็บปีที่มีอยู่ในข้อมูล
-
-      // เพิ่ม dropdown เลือกปี
-      $.ajax({
-        url: "../action/get_years.php",
-        type: "GET",
-        dataType: "json",
-        success: function(response) {
-          years = response;
-
-          // เติมตัวเลือกปีใน dropdown
-          var yearDropdown = $("#yearFilter");
-          years.forEach(function(year) {
-            yearDropdown.append("<option value='" + year + "'>" + year + "</option>");
-          });
-
-          // กำหนดการเรียกใช้ DataTables
-          initializeDataTable();
-        },
-        error: function(xhr, status, error) {
-          console.error("Error fetching years:", error);
-        }
-      });
-
-      function initializeDataTable() {
-        var selectedYear = $("#yearFilter").val();
-        var departmentData;
-        getDeaprtmentData(function(response) {
-          departmentData = response;
+      // สร้างฟังก์ชันเพื่อดึงข้อมูลแผนก
+      function getDeaprtmentData(callback) {
+        $.ajax({
+          url: "../action/get_service_access.php",
+          type: "GET",
+          dataType: "json",
+          success: function(response) {
+            callback(response);
+          },
+          error: function(xhr, status, error) {
+            console.error("Error fetching department data:", error);
+          }
         });
-        var userdepartment = <? echo $user['department']; ?>
-      
-        table = $('#myTable').DataTable({
-          responsive: true,
-          dom: 'Brt',
-          columns: [{
-              data: "service_Access",
-              visible: false,
-              render: function(data) {
-                // หาข้อมูล department_name จาก departmentData แล้วแสดง
-                var departmentInfo = departmentData.find(function(dep) {
-                  return dep.ID === data;
-                });
-                return departmentInfo ? departmentInfo.department_name : '';
+      }
 
+      $(document).ready(function() {
+        var table;
+        var globalDepartmentData;
+        var years = []; // เก็บปีที่มีอยู่ในข้อมูล
+
+        var startMonthInput = $("#startMonthFilter");
+        var endMonthInput = $("#endMonthFilter");
+
+        // เพิ่ม dropdown เลือกปี
+        $.ajax({
+          url: "../action/get_years.php",
+          type: "GET",
+          dataType: "json",
+          success: function(response) {
+            years = response;
+
+            // เติมตัวเลือกปีใน dropdown
+            var yearDropdown = $("#yearFilter");
+            years.forEach(function(year) {
+              yearDropdown.append("<option value='" + year + "'>" + year + "</option>");
+            });
+
+            // กำหนดการเรียกใช้ DataTables
+            initializeDataTable();
+          },
+          error: function(xhr, status, error) {
+            console.error("Error fetching years:", error);
+          }
+        });
+
+        function initializeDataTable() {
+          var selectedYear = $("#yearFilter").val();
+          var departmentData;
+          
+          getDeaprtmentData(function(response) {
+            departmentData = response;
+          });
+          
+          var userdepartment = <? echo $user['department']; ?>
+
+          table = $('#myTable').DataTable({
+            responsive: true,
+            dom: 'Brt',
+            columns: [{
+                data: "service_Access",
+                visible: false,
+                render: function(data) {
+                  // หาข้อมูล department_name จาก departmentData แล้วแสดง
+                  var departmentInfo = departmentData.find(function(dep) {
+                    return dep.ID === data;
+                  });
+                  return departmentInfo ? departmentInfo.department_name : '';
+
+                },
               },
+              {
+                data: "service_id"
+              },
+              {
+                data: 'Jan'
+              },
+              {
+                data: 'Feb'
+              },
+              {
+                data: 'Mar'
+              },
+              {
+                data: 'Apr'
+              },
+              {
+                data: 'May'
+              },
+              {
+                data: 'Jun'
+              },
+              {
+                data: 'Jul'
+              },
+              {
+                data: 'Aug'
+              },
+              {
+                data: 'Sep'
+              },
+              {
+                data: 'Oct'
+              },
+              {
+                data: 'Nov'
+              },
+              {
+                data: 'Dec'
+              }
+            ],
+            buttons: [
+              'copyHtml5',
+              {
+                extend: 'excel',
+                text: 'Excel',
+                customize: function(xlsx) {
+                  // ตรวจสอบและปรับแต่งข้อมูลก่อน export
+                  var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                  // กำหนดตำแหน่งหรือคอลัมน์ที่จะใช้ในการตรวจสอบและแทนที่ข้อมูล
+                  var columnIndex = 1; // ตั้งค่าตำแหน่งหรือคอลัมน์ที่จะใช้
+                  $('row c[r^="C"]', sheet).each(function() {
+                    // ตรวจสอบว่าตำแหน่งนี้เป็นข้อมูลหรือไม่
+                    var originalValue = $('t', this).text();
+
+                    // แทนที่เฉพาะข้อมูล text ไม่รวม HTML tags
+                    var departmentName = originalValue.replace(/<\/?t>/g, '');
+
+                    // ตรวจสอบและแทนที่ข้อมูลในตำแหน่งนี้
+                    if (departmentName !== originalValue) {
+                      $(this).html('<t>' + departmentName + '</t>');
+                    }
+                  });
+                }
+              },
+              {
+                extend: 'pdfHtml5',
+                exportOptions: {
+                  columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                },
+                customize: function(doc) {
+                  doc.defaultStyle.font = 'thaiFont';
+                  doc.defaultStyle.fontSize = 16;
+                  // ... รายละเอียดอื่น ๆ
+                  // ตั้งค่ากระดาษ A4 แนวนอน
+                  doc.pageSize = 'A4';
+                  doc.pageOrientation = 'landscape';
+                }
+              }
+            ],
+            autoWidth: false,
+            lengthMenu: [10, 25, 50, 75, 100],
+            pageLength: 10,
+            serverSide: true,
+            ajax: {
+              url: "../action/get_report_server.php",
+              type: "POST",
+              dataType: "json",
+              data: {
+                selectedYear: selectedYear,
+                userdepartment: userdepartment,
+                startMonth: startMonthInput.val(), // เพิ่มนี้
+                endMonth: endMonthInput.val() // เพิ่มนี้
+              }, // ส่งค่าปีที่เลือกไปด้วย
             },
-            {data: "service_id"},
-            {data: 'Jan'},
-            {data: 'Feb'},
-            {data: 'Mar'},
-            {data: 'Apr'},
-            {data: 'May'},
-            {data: 'Jun'},
-            {data: 'Jul'},
-            {data: 'Aug'},
-            {data: 'Sep'},
-            {data: 'Oct'},
-            {data: 'Nov'},
-            {data: 'Dec'}
-          ],
-          buttons: [
-            'copyHtml5',
-            {
-              extend: 'excel',
-              text: 'Excel',
-              customize: function(xlsx) {
-                // ตรวจสอบและปรับแต่งข้อมูลก่อน export
-                var sheet = xlsx.xl.worksheets['sheet1.xml'];
+            // ใช้ getDeaprtmentData เพื่อรับข้อมูลแผนกแล้วทำต่อไป
+            drawCallback: function(settings) {
+              var api = this.api();
+              var rows = api.rows({
+                page: 'current'
+              }).nodes();
+              var lastServiceAccess = null;
 
-                // กำหนดตำแหน่งหรือคอลัมน์ที่จะใช้ในการตรวจสอบและแทนที่ข้อมูล
-                var columnIndex = 1; // ตั้งค่าตำแหน่งหรือคอลัมน์ที่จะใช้
-                $('row c[r^="C"]', sheet).each(function() {
-                  // ตรวจสอบว่าตำแหน่งนี้เป็นข้อมูลหรือไม่
-                  var originalValue = $('t', this).text();
+              // เรียกใช้ getDeaprtmentData เพื่อรับข้อมูลแผนก
+              getDeaprtmentData(function(departmentData) {
+                api.column(0, {
+                  page: 'current'
+                }).data().each(function(serviceAccess, i) {
+                  if (lastServiceAccess !== serviceAccess) {
+                    // หาข้อมูลแผนกจาก departmentData แล้วแสดง
+                    var departmentInfo = departmentData.find(function(dep) {
+                      return dep.ID.toString() === serviceAccess;
+                    });
 
-                  // แทนที่เฉพาะข้อมูล text ไม่รวม HTML tags
-                  var departmentName = originalValue.replace(/<\/?t>/g, '');
+                    var departmentName = departmentInfo ? departmentInfo.department_name : '';
 
-                  // ตรวจสอบและแทนที่ข้อมูลในตำแหน่งนี้
-                  if (departmentName !== originalValue) {
-                    $(this).html('<t>' + departmentName + '</t>');
+                    $(rows).eq(i).before(
+                      '<tr class="group" style="background-color:#dbdbd9; color:black;"><td colspan="14"><b>' + departmentName + '</b></td></tr>'
+                    );
+                    lastServiceAccess = serviceAccess;
                   }
                 });
-              }
-            },
-            {
-              extend: 'pdfHtml5',
-              exportOptions: {
-                columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-              },
-              customize: function(doc) {
-                doc.defaultStyle.font = 'thaiFont';
-                doc.defaultStyle.fontSize = 16;
-                // ... รายละเอียดอื่น ๆ
-                // ตั้งค่ากระดาษ A4 แนวนอน
-                doc.pageSize = 'A4';
-                doc.pageOrientation = 'landscape';
-              }
-            }
-          ],
-          autoWidth: false,
-          lengthMenu: [10, 25, 50, 75, 100],
-          pageLength: 10,
-          serverSide: true,
-          ajax: {
-            url: "../action/get_report_server.php",
-            type: "POST",
-            dataType: "json",
-            data: {
-              selectedYear: selectedYear,
-              userdepartment: userdepartment
-            }, // ส่งค่าปีที่เลือกไปด้วย
-          },
-          // ใช้ getDeaprtmentData เพื่อรับข้อมูลแผนกแล้วทำต่อไป
-          drawCallback: function(settings) {
-            var api = this.api();
-            var rows = api.rows({
-              page: 'current'
-            }).nodes();
-            var lastServiceAccess = null;
-
-            // เรียกใช้ getDeaprtmentData เพื่อรับข้อมูลแผนก
-            getDeaprtmentData(function(departmentData) {
-              api.column(0, {
-                page: 'current'
-              }).data().each(function(serviceAccess, i) {
-                if (lastServiceAccess !== serviceAccess) {
-                  // หาข้อมูลแผนกจาก departmentData แล้วแสดง
-                  var departmentInfo = departmentData.find(function(dep) {
-                    return dep.ID === serviceAccess;
-                  });
-
-                  var departmentName = departmentInfo ? departmentInfo.department_name : '';
-
-                  $(rows).eq(i).before(
-                    '<tr class="group" style="background-color:#dbdbd9; color:black;"><td colspan="14"><b>' + departmentName + '</b></td></tr>'
-                  );
-                  lastServiceAccess = serviceAccess;
-                }
               });
-            });
-          },
-          initComplete: function () {
-      var api = this.api();
-      var startMonthInput = $("#startMonthFilter");
-      var endMonthInput = $("#endMonthFilter");
+            },
+           
+          });
+        }
 
-      startMonthInput.add(endMonthInput).on("change", function () {
-        var startMonth = startMonthInput.val();
-        var endMonth = endMonthInput.val();
-
-        api.column(2).search(startMonth + '-' + endMonth).draw(); // 2 คือ index ของคอลัมน์ที่ต้องการกรอง (Jan)
-      });
-    },
+        // เมื่อมีการเปลี่ยนแปลงใน dropdown เลือกปี
+        $("#yearFilter, #startMonthFilter, #endMonthFilter").on("change", function() {
+          // เรียกใช้ DataTables ใหม่เมื่อมีการเปลี่ยนแปลง
+          table.destroy(); // ทำลาย DataTables เดิม
+          initializeDataTable(); // เรียกใช้ DataTables ใหม่
         });
-      }
-
-      // เมื่อมีการเปลี่ยนแปลงใน dropdown เลือกปี
-      $("#yearFilter").on("change", function() {
-        // เรียกใช้ DataTables ใหม่เมื่อมีการเปลี่ยนแปลงใน dropdown
-        table.destroy(); // ทำลาย DataTables เดิม
-        initializeDataTable(); // เรียกใช้ DataTables ใหม่
       });
-    });
-  </script>
+    </script>
 
 
 </body>

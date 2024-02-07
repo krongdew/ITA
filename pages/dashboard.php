@@ -40,6 +40,7 @@ $user = $_SESSION['user'];
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@500&family=Kanit&family=Mitr:wght@300&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <style>
   body{
@@ -62,6 +63,7 @@ $user = $_SESSION['user'];
     ?>
  <?php include '../components/navbar.php' ?>
 
+    
     <div class="container-fluid py-4">
       <div class="row">
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
@@ -70,14 +72,9 @@ $user = $_SESSION['user'];
               <div class="row">
                 <div class="col-8">
                   <div class="numbers">
-                    <p class="text-sm mb-0 text-uppercase font-weight-bold">ระบบสถิติ</p>
-                    <h5 class="font-weight-bolder">
-                      $53,000
-                    </h5>
-                    <p class="mb-0">
-                      <span class="text-success text-sm font-weight-bolder">+55%</span>
-                      since yesterday
-                    </p>
+                    <p class="text-sm mb-0 text-uppercase font-weight-bold">จำนวนผู้ทำแบบประเมินทั้งหมด</p>
+                    <h5 id="respondent-count" class="font-weight-bolder"><!-- จำนวนผู้ทำแบบประเมินจะแสดงที่นี่ --></h5>
+                    
                   </div>
                 </div>
                 <div class="col-4 text-end">
@@ -95,14 +92,14 @@ $user = $_SESSION['user'];
               <div class="row">
                 <div class="col-8">
                   <div class="numbers">
-                    <p class="text-sm mb-0 text-uppercase font-weight-bold">Today's Users</p>
+                    <p class="text-sm mb-0 text-uppercase font-weight-bold">จำนวนผู้ทำแบบประเมินวันนี้</p>
                     <h5 class="font-weight-bolder">
-                      2,300
+                      20
                     </h5>
-                    <p class="mb-0">
+                    <!-- <p class="mb-0">
                       <span class="text-success text-sm font-weight-bolder">+3%</span>
                       since last week
-                    </p>
+                    </p> -->
                   </div>
                 </div>
                 <div class="col-4 text-end">
@@ -120,14 +117,14 @@ $user = $_SESSION['user'];
               <div class="row">
                 <div class="col-8">
                   <div class="numbers">
-                    <p class="text-sm mb-0 text-uppercase font-weight-bold">New Clients</p>
+                    <p class="text-sm mb-0 text-uppercase font-weight-bold">จำนวนบริการทั้งหมด</p>
                     <h5 class="font-weight-bolder">
-                      +3,462
+                      10 <br>
                     </h5>
-                    <p class="mb-0">
+                    <!-- <p class="mb-0">
                       <span class="text-danger text-sm font-weight-bolder">-2%</span>
                       since last quarter
-                    </p>
+                    </p> -->
                   </div>
                 </div>
                 <div class="col-4 text-end">
@@ -145,13 +142,13 @@ $user = $_SESSION['user'];
               <div class="row">
                 <div class="col-8">
                   <div class="numbers">
-                    <p class="text-sm mb-0 text-uppercase font-weight-bold">Sales</p>
+                    <p class="text-sm mb-0 text-uppercase font-weight-bold">จำนวน Users </p>
                     <h5 class="font-weight-bolder">
-                      $103,430
+                      103,430
                     </h5>
-                    <p class="mb-0">
+                    <!-- <p class="mb-0">
                       <span class="text-success text-sm font-weight-bolder">+5%</span> than last month
-                    </p>
+                    </p> -->
                   </div>
                 </div>
                 <div class="col-4 text-end">
@@ -168,7 +165,7 @@ $user = $_SESSION['user'];
         <div class="col-lg-7 mb-lg-0 mb-4">
           <div class="card z-index-2 h-100">
             <div class="card-header pb-0 pt-3 bg-transparent">
-              <h6 class="text-capitalize">Sales overview</h6>
+              <h6 class="text-capitalize">ภาพรวมผู้ใช้งานของบริการ...</h6>
               <p class="text-sm mb-0">
                 <i class="fa fa-arrow-up text-success"></i>
                 <span class="font-weight-bold">4% more</span> in 2021
@@ -191,7 +188,7 @@ $user = $_SESSION['user'];
                     <div class="icon icon-shape icon-sm bg-white text-center border-radius-md mb-3">
                       <i class="ni ni-camera-compact text-dark opacity-10"></i>
                     </div>
-                    <h5 class="text-white mb-1">Get started with Argon</h5>
+                    <h5 class="text-white mb-1">ข่าวสารประชาสัมพันธ์</h5>
                     <p>There’s nothing I really wanted to do in life that I wasn’t able to get good at.</p>
                   </div>
                 </div>
@@ -201,7 +198,7 @@ $user = $_SESSION['user'];
                     <div class="icon icon-shape icon-sm bg-white text-center border-radius-md mb-3">
                       <i class="ni ni-bulb-61 text-dark opacity-10"></i>
                     </div>
-                    <h5 class="text-white mb-1">Faster way to create web pages</h5>
+                    <h5 class="text-white mb-1">ข่าวสารประชาสัมพันธ์</h5>
                     <p>That’s my skill. I’m not really specifically talented at anything except for the ability to learn.</p>
                   </div>
                 </div>
@@ -211,7 +208,7 @@ $user = $_SESSION['user'];
                     <div class="icon icon-shape icon-sm bg-white text-center border-radius-md mb-3">
                       <i class="ni ni-trophy text-dark opacity-10"></i>
                     </div>
-                    <h5 class="text-white mb-1">Share with us your design tips!</h5>
+                    <h5 class="text-white mb-1">ข่าวสารประชาสัมพันธ์</h5>
                     <p>Don’t be afraid to be wrong because you can’t learn anything from a compliment.</p>
                   </div>
                 </div>
@@ -228,7 +225,7 @@ $user = $_SESSION['user'];
           </div>
         </div>
       </div>
-      <div class="row mt-4">
+      <!-- <div class="row mt-4">
         <div class="col-lg-7 mb-lg-0 mb-4">
           <div class="card ">
             <div class="card-header pb-0 p-3">
@@ -434,7 +431,7 @@ $user = $_SESSION['user'];
               </ul>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       <?php include '../components/footer.php' ?>
     </div>
@@ -525,6 +522,30 @@ $user = $_SESSION['user'];
         },
       },
     });
+  </script>
+   <script>
+        $(document).ready(function(){
+            function getRespondentCount(){
+                $.ajax({
+                    url: '../action/get_respondent.php',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data){
+                        // อัพเดตจำนวนผู้ทำแบบประเมินในหน้า HTML
+                        $('#respondent-count').text(data.total_respondents);
+                    },
+                    error: function(xhr, status, error){
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+
+            // เรียกฟังก์ชั่นเพื่อดึงข้อมูลในครั้งแรกเมื่อหน้าเว็บโหลดเสร็จ
+            getRespondentCount();
+
+            // ทำให้ฟังก์ชั่นเรียก AJAX แบบเป็นระยะ
+            setInterval(getRespondentCount, 5000); // เรียกทุก 5 วินาที
+        });
   </script>
 </body>
 

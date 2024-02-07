@@ -27,8 +27,6 @@ $userdepartment = isset($_POST['userdepartment']) ? $_POST['userdepartment'] : 0
 // Additional condition based on userdepartment
 $userDepartmentCondition = ($userdepartment == 0) ? '' : " AND service_Access = $userdepartment";
 
-$startMonth = isset($_POST['startMonth']) ? $_POST['startMonth'] : null;
-$endMonth = isset($_POST['endMonth']) ? $_POST['endMonth'] : null;
 
 $columns = array('service_id', 'subservice_id', 'number_people', 'Date');
 
@@ -74,15 +72,15 @@ SUM(CASE WHEN MONTH(Date) = 11 THEN number_people ELSE 0 END) as Nov,
 SUM(CASE WHEN MONTH(Date) = 12 THEN number_people ELSE 0 END) as `Dec`
 FROM sa_number_of_people 
 INNER JOIN sa_services ON sa_number_of_people.service_id = sa_services.ID
-WHERE (YEAR(Date) = :selectedYear OR (MONTH(Date) BETWEEN MONTH(:startMonth) AND MONTH(:endMonth))) $userDepartmentCondition
+WHERE YEAR(Date) = :selectedYear $userDepartmentCondition
 GROUP BY sa_services.service_Access, sa_services.ID
 ORDER BY sa_services.service_Access, sa_services.ID";
+
+
 
     $stmt = $conn->prepare($query);
     // ที่เพิ่มเข้าไป
     $stmt->bindParam(':selectedYear', $selectedYear);
-    $stmt->bindParam(':startMonth', $startMonth);
-    $stmt->bindParam(':endMonth', $endMonth);
     $stmt->execute();
 
     $data = array();
@@ -108,6 +106,7 @@ ORDER BY sa_services.service_Access, sa_services.ID";
         );
     }
 
+
     $totalRecords = $conn->query("SELECT COUNT(*) FROM sa_number_of_people")->fetchColumn();
     $totalFiltered = $conn->query("SELECT COUNT(*) FROM sa_number_of_people WHERE 1 $searchQuery")->fetchColumn();
 
@@ -115,9 +114,7 @@ ORDER BY sa_services.service_Access, sa_services.ID";
         "draw"            => isset($_POST['draw']) ? intval($_POST['draw']) : 1,
         "recordsTotal"    => $totalRecords,
         "recordsFiltered" => $totalFiltered,
-        "data"            => $data,
-        "startMonth"      => $startMonth,
-        "endMonth"        => $endMonth
+        "data"            => $data
     );
 
     echo json_encode($jsonData);
@@ -126,4 +123,3 @@ ORDER BY sa_services.service_Access, sa_services.ID";
 }
 
 $conn = null;
-?>

@@ -46,22 +46,22 @@
                   <a class="dropdown-item border-radius-md" href="javascript:;">
                     <div class="d-flex py-1">
                       <div class="my-auto">
-                        <img src="../assets/img/team-2.jpg" class="avatar avatar-sm  me-3 ">
+                       
                       </div>
                       <div class="d-flex flex-column justify-content-center">
                         <h6 class="text-sm font-weight-normal mb-1">
-                          <span class="font-weight-bold">New message</span> from Laur
+                          <span class="font-weight-bold">ยังไม่มีการแจ้งเตือน</span> 
                         </h6>
-                        <p class="text-xs text-secondary mb-0">
+                        <!-- <p class="text-xs text-secondary mb-0">
                           <i class="fa fa-clock me-1"></i>
                           13 minutes ago
-                        </p>
+                        </p> -->
                       </div>
                     </div>
                   </a>
                 </li>
                 <li class="mb-2">
-                  <a class="dropdown-item border-radius-md" href="javascript:;">
+                  <!-- <a class="dropdown-item border-radius-md" href="javascript:;">
                     <div class="d-flex py-1">
                       <div class="my-auto">
                         <img src="../assets/img/small-logos/logo-spotify.svg" class="avatar avatar-sm bg-gradient-dark  me-3 ">
@@ -76,10 +76,10 @@
                         </p>
                       </div>
                     </div>
-                  </a>
+                  </a> -->
                 </li>
                 <li>
-                  <a class="dropdown-item border-radius-md" href="javascript:;">
+                  <!-- <a class="dropdown-item border-radius-md" href="javascript:;">
                     <div class="d-flex py-1">
                       <div class="avatar avatar-sm bg-gradient-secondary  me-3  my-auto">
                         <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -105,8 +105,8 @@
                           2 days
                         </p>
                       </div>
-                    </div>
-                  </a>
+                    </div> -->
+                  <!-- </a> -->
                 </li>
               </ul>
             </li>
