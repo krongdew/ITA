@@ -21,8 +21,8 @@ $user = $_SESSION['user'];
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/Mahidol_U.png">
+  <link rel="icon" type="image/png" href="../assets/img/Mahidol_U.png">
 
   <title>
     ระบบ ITA
@@ -630,7 +630,7 @@ $user = $_SESSION['user'];
               {
                 "data": null,
                 "render": function(data, type, row) {
-                  return '<a href="../pages/edit_service.php?ID=' + data.ID + '"><button class="editBtn">Edit</button></a>  <button class="delBtn">Delete</button>';
+                  return '<a href="../pages/edit_service.php?ID=' + data.ID + '"><button class="btn btn-link text-dark px-3 mb-0"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</button></a>  <button class="delBtn"><i class="far fa-trash-alt me-2" aria-hidden="true"></i>Delete</button>';
                 },
                 "orderable": false
               }

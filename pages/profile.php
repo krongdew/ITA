@@ -20,8 +20,8 @@ $user = $_SESSION['user'];
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/Mahidol_U.png">
+    <link rel="icon" type="image/png" href="../assets/img/Mahidol_U.png">
 
     <title>
         ระบบ ITA
@@ -48,25 +48,9 @@ $user = $_SESSION['user'];
     <!-- datatables -->
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 
-    <link rel="stylesheet" href="../assets/DataTables/datatables.css" />
-    <link rel="stylesheet" href="../assets/DataTables/Responsive-2.5.0/css/responsive.dataTables.css" />
-    <link rel="stylesheet" href="../assets/DataTables/Buttons-2.4.2/css/buttons.dataTables.css" />
-
-    <script src="../assets/DataTables/datatables.js"></script>
-    <script src="../assets/DataTables/Responsive-2.5.0/js/dataTables.responsive.js"></script>
-
-    <script src="../assets/DataTables/Buttons-2.4.2/js/dataTables.buttons.min.js"></script>
-    <script src="../assets/DataTables/Buttons-2.4.2/js/dataTables.buttons.js"></script>
-    <script src="../assets/DataTables/Buttons-2.4.2/js/buttons.html5.min.js"></script>
-
-    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <!-- <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script> -->
-    <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script> -->
-    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.css"> -->
-    <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.js"></script> -->
+    
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap">
-    <script src="../pages/vfs_fonts.js"></script>
+    
 </head>
 <style>
     body {
@@ -278,13 +262,70 @@ $user = $_SESSION['user'];
                 <div class="col-md-12">
                   <div class="form-group">
                     <label for="example-text-input" class="form-control-label">department</label>
-                    <input class="form-control" type="text" value="<? echo $user['department']; ?>">
+                    <?
+                    $department = $user['department'];
+                     try {
+                      // คำสั่ง SQL สำหรับดึงข้อมูล department
+                      $sql = "SELECT ID, department_name FROM sa_department WHERE ID = :department";
+
+                      // ใช้ Prepared Statement
+                      $stmt = $conn->prepare($sql);
+                      $stmt->bindParam(':department', $department);
+                      // ประมวลผลคำสั่ง SQL
+                      $stmt->execute();
+
+                      // ดึงผลลัพธ์
+                      $departments = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                      // ตรวจสอบว่ามีข้อมูลหรือไม่
+                      if ($departments) {
+                          
+                          
+                              echo '<input class="form-control" type="text" value="'.$departments['department_name'].'">';
+                          
+                      } else {
+                          echo '<p>No departments found</p>';
+                      }
+                  } catch (PDOException $e) {
+                      echo "Connection failed: " . $e->getMessage();
+                  }
+                  ?>
+                    
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group">
                     <label for="example-text-input" class="form-control-label">Unit</label>
-                    <input class="form-control" type="text" value="<? echo $user['unit']; ?>">
+                    
+                    <?
+                    
+                    $unit = $user['unit'];
+                     try {
+                      // คำสั่ง SQL สำหรับดึงข้อมูล department
+                      $sql = "SELECT ID, unit_name FROM sa_unit WHERE ID = :unit";
+
+                      // ใช้ Prepared Statement
+                      $stmt = $conn->prepare($sql);
+                      $stmt->bindParam(':unit', $unit);
+                      // ประมวลผลคำสั่ง SQL
+                      $stmt->execute();
+
+                      // ดึงผลลัพธ์
+                      $units = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                      // ตรวจสอบว่ามีข้อมูลหรือไม่
+                      if ($units) {
+                          
+                          
+                              echo '<input class="form-control" type="text" value="'.$units['unit_name'].'">';
+                          
+                      } else {
+                          echo '<p>No Unit found</p>';
+                      }
+                  } catch (PDOException $e) {
+                      echo "Connection failed: " . $e->getMessage();
+                  }
+                  ?>
                   </div>
                 </div>
                 <div class="col-md-4">

@@ -7,8 +7,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
   <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-      <a class="navbar-brand m-0" href="" target="_blank">
-        <img src="../assets/img/logo-ct-dark.png" class="navbar-brand-img h-100" alt="main_logo">
+      <a class="navbar-brand m-0" href="">
+        <img src="../assets/img/Mahidol_U.png" class="navbar-brand-img h-100" alt="main_logo">
         <span class="ms-1 font-weight-bold">SAITA Management</span>
       </a>
     </div>
@@ -26,23 +26,26 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <li class="nav-item">
           <a class="nav-link <?php echo ($current_page == 'services.php') ? 'active' : ''; ?>" href="../pages/services.php">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"></i>
+              <!-- <i class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"></i> -->
+              <i class="fa-solid fa-hand-holding-heart text-warning text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">Services management</span>
+            <span class="nav-link-text ms-1">จัดการบริการ</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?php echo ($current_page == 'assessment.php') ? 'active' : ''; ?>" href="../pages/assessment.php">
+        <a class="nav-link <?php echo ($current_page == 'assessment.php') ? 'active' : ''; ?>" href="../pages/assessment.php">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-credit-card text-success text-sm opacity-10"></i>
+              <i class="fa-solid fa-check-to-slot text-success text-sm opacity-10"></i>
+             
             </div>
-            <span class="nav-link-text ms-1">Satisfaction management</span>
+            <span class="nav-link-text ms-1">จัดการแบบประเมิน</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link <?php echo ($current_page == 'report.php') ? 'active' : ''; ?>" href="../pages/report.php">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-app text-info text-sm opacity-10"></i>
+              <i class="fa-solid fa-user-plus text-info text-sm opacity-10"></i>
+              
             </div>
             <span class="nav-link-text ms-1">เพิ่มจำนวนผู้เข้าใช้บริการ</span>
           </a>
@@ -50,9 +53,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <li class="nav-item">
           <a class="nav-link <?php echo ($current_page == 'display_report.php') ? 'active' : ''; ?>" href="../pages/display_report.php">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-app text-info text-sm opacity-10"></i>
+              <i class="fa-solid fa-scroll text-primary text-sm opacity-10"></i>
+              
             </div>
-            <span class="nav-link-text ms-1">Report</span>
+            <span class="nav-link-text ms-1">รายงานผล</span>
           </a>
         </li>
         <!-- <li class="nav-item">

@@ -5,8 +5,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/Mahidol_U.png">
+  <link rel="icon" type="image/png" href="./assets/img/Mahidol_U.png">
 
   <title>
     ระบบ ITA
@@ -31,7 +31,7 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg blur border-radius-lg top-0 z-index-3 shadow position-absolute mt-4 py-2 start-0 end-0 mx-4">
           <div class="container-fluid">
-            <a class="navbar-brand font-weight-bolder ms-lg-0 ms-3 " href="../pages/dashboard.html">
+            <a class="navbar-brand font-weight-bolder ms-lg-0 ms-3 ">
               ระบบ ITA กองกิจการนักศึกษา
             </a>
             <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,10 +99,10 @@
                     <div class="mb-3">
                       <input type="password" name="Password" class="form-control form-control-lg" placeholder="Password" aria-label="Password" required>
                     </div>
-                    <div class="form-check form-switch">
+                    <!-- <div class="form-check form-switch">
                       <input class="form-check-input" type="checkbox" id="rememberMe">
                       <label class="form-check-label" for="rememberMe">Remember me</label>
-                    </div>
+                    </div> -->
                     <?php if (isset($errorMessage)) : ?>
                       <div style="color: red;"><?php echo $errorMessage; ?></div>
                     <?php endif; ?>
@@ -120,7 +120,7 @@
               </div>
             </div>
             <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 end-0 text-center justify-content-center flex-column">
-              <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden" style="background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signin-ill.jpg');
+              <div class="position-relative bg-gradient-primary h-100 m-3 px-7  border-radius-lg d-flex flex-column justify-content-center overflow-hidden" style="background-image: url('assets/img/005-128.jpg');
           background-size: cover;">
                 <span class="mask bg-gradient-primary opacity-6"></span>
                 <!-- <h4 class="mt-5 text-white font-weight-bolder position-relative">"Attention is the new currency"</h4>

@@ -2,7 +2,7 @@
 session_start();
 include '../action/connect.php';
 
-if (!isset($_SESSION['user'])) {
+if (!isset($_SESSION['user']) || $_SESSION['user']['UserType'] !== "admin") {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
     header("Location: http://localhost:8080/index.php");
 }
@@ -21,8 +21,8 @@ $user = $_SESSION['user'];
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/Mahidol_U.png">
+    <link rel="icon" type="image/png" href="../assets/img/Mahidol_U.png">
 
     <title>
         ระบบ ITA
@@ -146,11 +146,16 @@ if (isset($_GET['ID'])) {
             <body class="g-sidenav-show   bg-gray-100">
                 <?php if ($user['UserType'] === "admin") {
 
-                    include '../components/sidebar_admin.php';
-                } else {
                     include '../components/sidebar.php';
-                }  ?>
+                    
+                } else {
+                    
+                    include '../components/sidebar_admin.php';
+                }  
+                ?>
+                
                 <?php include '../components/navbar.php' ?>
+                
                 <? include '../action/connect.php';
 
                 // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
@@ -164,7 +169,7 @@ if (isset($_GET['ID'])) {
 
                             <div class="card mb-4">
                                 <div class="card-header pb-0">
-                                    <h6>แก้ไข User</h6>
+                                    <h6>แก้ไขผู้ใช้งานระบบ</h6>
                                     <br>
                                     <button class="badge badge-sm bg-gradient-success" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">เปลี่ยน password</button>
                                     <!-- <div class="form-group">
@@ -191,7 +196,7 @@ if (isset($_GET['ID'])) {
                                                     <div class="card">
                                                         <div class="card-header pb-0">
                                                             <div class="d-flex align-items-center">
-                                                                <p class="mb-0">แก้ไข (User) ของกองกิจการนักศึกษา</p>
+                                                                <p class="mb-0">แก้ไขผู้ใช้งาน (User) ของกองกิจการนักศึกษา</p>
 
                                                             </div>
                                                         </div>

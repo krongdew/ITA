@@ -93,7 +93,7 @@ $user = $_SESSION['user'];
                 <a href="./department.php"><div class="menubox" style="background-color: #81cbfc; border-radius:15px;"><img src="../assets/img/icons/hierarchical-structure.png"> <br>Edit Department</div></a>
                 <a href="./unit.php"><div class="menubox" style="background-color: #8b81fc; border-radius:15px;">
                 <img src="../assets/img/icons/department.png"> <br>Edit Unit</div></a>
-                <a href="./user.php"><div class="menubox" style="background-color: #79d488; border-radius:15px;"><img src="../assets/img/icons/group.png"> <br>Edit User</div></a>
+                <!-- <a href="./user.php"><div class="menubox" style="background-color: #79d488; border-radius:15px;"><img src="../assets/img/icons/group.png"> <br>Edit User</div></a> -->
               </div>
               
             </div>
