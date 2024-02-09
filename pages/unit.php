@@ -2,7 +2,7 @@
 session_start();
 include '../action/connect.php';
 
-if (!isset($_SESSION['user'])) {
+if (!isset($_SESSION['user']) || $_SESSION['user']['UserType'] !== "admin") {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
     header("Location: http://localhost:8080/index.php");
     

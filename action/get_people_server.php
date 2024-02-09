@@ -18,7 +18,7 @@ if (array_key_exists($orderColumnIndex, $columns)) {
     $orderColumn = 'Date';
 }
 
-$orderDirection = isset($_POST['order'][0]['dir']) ? $_POST['order'][0]['dir'] : 'asc';
+$orderDirection = isset($_POST['order'][0]['dir']) ? $_POST['order'][0]['dir'] : 'desc';
 
 // Search
 $searchValue = $_POST['search']['value'];

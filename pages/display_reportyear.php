@@ -223,6 +223,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 <tr>
                   <th>งาน</th>
                   <th>ชื่อบริการ</th>
+                  <th>ต.ค.</th>
+                  <th>พ.ย.</th>
+                  <th>ธ.ค.</th>
                   <th>ม.ค.</th>
                   <th>ก.พ.</th>
                   <th>มี.ค.</th>
@@ -232,9 +235,6 @@ document.addEventListener("DOMContentLoaded", function() {
                   <th>ก.ค.</th>
                   <th>ส.ค.</th>
                   <th>ก.ย.</th>
-                  <th>ต.ค.</th>
-                  <th>พ.ย.</th>
-                  <th>ธ.ค.</th>
                 </tr>
               </thead>
               <tbody>
@@ -283,12 +283,11 @@ document.addEventListener("DOMContentLoaded", function() {
         var globalDepartmentData;
         var years = []; // เก็บปีที่มีอยู่ในข้อมูล
 
-        var startMonthInput = $("#startMonthFilter");
-        var endMonthInput = $("#endMonthFilter");
+       
 
         // เพิ่ม dropdown เลือกปี
         $.ajax({
-          url: "../action/get_years.php",
+          url: "../action/get_year_report.php",
           type: "GET",
           dataType: "json",
           success: function(response) {
@@ -337,6 +336,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 data: "service_id"
               },
               {
+                data: 'Oct'
+              },
+              {
+                data: 'Nov'
+              },
+              {
+                data: 'Dec'
+              },
+              {
                 data: 'Jan'
               },
               {
@@ -363,15 +371,7 @@ document.addEventListener("DOMContentLoaded", function() {
               {
                 data: 'Sep'
               },
-              {
-                data: 'Oct'
-              },
-              {
-                data: 'Nov'
-              },
-              {
-                data: 'Dec'
-              }
+             
             ],
             buttons: [
               'copyHtml5',
@@ -418,14 +418,13 @@ document.addEventListener("DOMContentLoaded", function() {
             pageLength: 10,
             serverSide: true,
             ajax: {
-              url: "../action/get_report_server.php",
+              url: "../action/get_report_server_year.php",
               type: "POST",
               dataType: "json",
               data: {
                 selectedYear: selectedYear,
                 userdepartment: userdepartment,
-                startMonth: startMonthInput.val(), // เพิ่มนี้
-                endMonth: endMonthInput.val() // เพิ่มนี้
+               
               }, // ส่งค่าปีที่เลือกไปด้วย
             },
             // ใช้ getDeaprtmentData เพื่อรับข้อมูลแผนกแล้วทำต่อไป
@@ -462,7 +461,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         // เมื่อมีการเปลี่ยนแปลงใน dropdown เลือกปี
-        $("#yearFilter, #startMonthFilter, #endMonthFilter").on("change", function() {
+        $("#yearFilter").on("change", function() {
           // เรียกใช้ DataTables ใหม่เมื่อมีการเปลี่ยนแปลง
           table.destroy(); // ทำลาย DataTables เดิม
           initializeDataTable(); // เรียกใช้ DataTables ใหม่

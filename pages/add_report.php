@@ -514,6 +514,14 @@ if (isset($_GET['ID'])) {
                                         },
                                         {
                                             "data": "Date",
+                                            "render": function(data, type, row) {
+                                                // แปลงวันที่ให้เป็นรูปแบบที่ต้องการ (เช่น "DD/MM/YYYY")
+                                                var date = new Date(data);
+                                                var formattedDate = date.toLocaleDateString('en-GB'); // เปลี่ยน 'en-GB' เป็นลำดับค่าที่ต้องการ
+                                                return formattedDate;
+                                                
+                                            },
+                                            
 
                                         },
                                         {
