@@ -17,7 +17,8 @@ $custom_page_names = array(
   'add_assessment.php' => 'สร้างแบบประเมินความพึงพอใจ',
   'department.php' => 'จัดการหน่วยงาน',
   'unit.php' => 'จัดการหน่วย',
-  'edit_user.php' => 'แก้ไขผู้ใช้งานระบบ'
+  'edit_user.php' => 'แก้ไขผู้ใช้งานระบบ',
+  'display_reportyear.php' => 'รายงานตามปีงบประมาณ'
 );
 
 // ตรวจสอบว่า $current_page มีอยู่ใน $custom_page_names หรือไม่

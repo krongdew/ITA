@@ -88,7 +88,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </a>
     <ul id="subMenu" class="sub-menu">
         <li class="nav-item">
-            <a class="nav-link <?php echo ($current_page == 'display_report.php') ? 'active' : ''; ?>" href="../pages/display_report.php">
+            <a class="nav-link <?php echo ($current_page == 'display_report.php') ? 'active' : ''; ?>" href="../pages/display_report.php?active_menu=display_report">
                 <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                     <i class="fa-solid fa-calendar-days text-info opacity-10" style="font-size: smaller;"></i>
                    

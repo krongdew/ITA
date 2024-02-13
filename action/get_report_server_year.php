@@ -61,6 +61,7 @@ try {
     // หากปีที่เลือกเป็นปีงบประมาณ ให้ใช้เงื่อนไขของปีงบประมาณ
     if ($selectedYear != date('Y')) {
         // หากปีที่เลือกไม่ใช่ปีปัจจุบัน ให้ใช้เงื่อนไขของปีงบประมาณ
+       
         $whereCondition = "WHERE (YEAR(Date) = $selectedYear-1 AND MONTH(Date) >= 10) OR (YEAR(Date) = $selectedYear  AND MONTH(Date) <= 9)";
     } else {
         // หากปีที่เลือกเป็นปีปัจจุบัน ให้ใช้เงื่อนไขของปีปัจจุบัน

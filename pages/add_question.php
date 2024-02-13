@@ -242,39 +242,25 @@ if (isset($_GET['ID'])) {
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
                                                                             <label for="example-text-input" class="form-control-label">คำถาม</label>
-                                                                            <input class="form-control" type="text" id="QuestionOrder" name="QuestionOrder" value="บริการที่ท่านเข้าใช้งาน">
-                                                                            <label for="example-text-input" class="form-control-label">ประเภทคำถาม</label>
-                                                                            <input class="form-control" type="text" id="QuestionOrder" name="choice" value="บริการที่ท่านเข้าใช้งาน">
+                                                                            <input class="form-control" type="text" id="QuestionText" name="QuestionText" value="บริการที่ท่านเข้าใช้งาน">
+                                                                           
+<!--                                                                             
+                                                                            <input class="form-control" type="text" id="QuestionOrder" name="choice" value="บริการที่ท่านเข้าใช้งาน"> -->
                                                                         </div>
                                                                        
                                                                     </div>
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label for="example-text-input" class="form-control-label">คำตอบ</label>
-                                                                            <input class="form-control" type="text" id="QuestionOrder" name="QuestionOrder" value="บริการที่ท่านเข้าใช้งาน">
+                                                                        <label for="example-text-input" class="form-control-label">ประเภทคำถาม</label>
+                                                                            <select class="form-select" name="QuestionType">
+                                                                                <option value="ans">คำตอบสั้น</option>
+                                                                                <option value="five">ระดับความพึงพอใจ</option>
+                                                                            </select>
                                                                         </div>
                                                                     </div>
 
 
                                                                    
-                                                                    <div class="col-md-12">
-                                                                        <div class="form-group">
-                                                                            <span for="example-text-input" class="form-control-label"><b>ส่วนของบริการย่อย :</b></span><br>
-                                                                            <!-- สร้าง input สำหรับรับค่าบริการย่อย -->
-                                                                            <div class="form-group">
-                                                                                <br>
-                                                                                <div class="form-group">
-                                                                                    <span for="example-text-input" class="form-control-label"><b>ชื่อแบบประเมิน :</b> </span>
-                                                                                    <input class="form-control" type="text" name="AssessmentName" placeholder="ชื่อแบบประเมิน" required>
-                                                                                </div>
-                                                                                <div class="form-group">
-                                                                                    <span for="example-text-input" class="form-control-label"><b>ชื่อผู้สร้างแบบประเมิน :</b> </span>
-                                                                                    <input class="form-control" type="text" name="name_surname " value="<? echo $user['name_surname']  ?> " disabled>
-                                                                                    <input class="form-control" type="hidden" name="CreatorUserID" value="<? echo $user['ID'] ?>">
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
                                                                 </div>
                                                                 <br>
                                                                 <button type="submit" class="btn btn-primary btn-sm ms-auto">สร้างข้อคำถาม</button>

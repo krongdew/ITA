@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var table;
         var globalDepartmentData;
         var years = []; // เก็บปีที่มีอยู่ในข้อมูล
-
+        var additionalNumber = 543;
         var startMonthInput = $("#startMonthFilter");
         var endMonthInput = $("#endMonthFilter");
 
@@ -297,7 +297,8 @@ document.addEventListener("DOMContentLoaded", function() {
             // เติมตัวเลือกปีใน dropdown
             var yearDropdown = $("#yearFilter");
             years.forEach(function(year) {
-              yearDropdown.append("<option value='" + year + "'>" + year + "</option>");
+              var yearAsNumber = parseInt(year);
+              yearDropdown.append("<option value='" + year + "'>" + (yearAsNumber + additionalNumber) + "</option>");
             });
 
             // กำหนดการเรียกใช้ DataTables

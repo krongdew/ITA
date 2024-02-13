@@ -24,7 +24,7 @@ $user = $_SESSION['user'];
   <link rel="icon" type="image/png" href="../assets/img/Mahidol_U.png">
 
   <title>
-  รายงานสถิติจำนวนผู้เข้าใช้บริการ 
+  รายงานสถิติจำนวนผู้เข้าใช้บริการตามปีงบประมาณ
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         <div class="card mb-4">
           <div class="card-header pb-0">
-            <h6>รายงานสถิติจำนวนผู้เข้าใช้บริการ</h6>
+            <h6>รายงานสถิติจำนวนผู้เข้าใช้บริการ ตามปีงบประมาณ</h6>
           </div>
 
 
@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var table;
         var globalDepartmentData;
         var years = []; // เก็บปีที่มีอยู่ในข้อมูล
-
+        var additionalNumber = 543;
        
 
         // เพิ่ม dropdown เลือกปี
@@ -296,7 +296,8 @@ document.addEventListener("DOMContentLoaded", function() {
             // เติมตัวเลือกปีใน dropdown
             var yearDropdown = $("#yearFilter");
             years.forEach(function(year) {
-              yearDropdown.append("<option value='" + year + "'>" + year + "</option>");
+              var yearAsNumber = parseInt(year);
+              yearDropdown.append("<option value='" + year + "'>" + (yearAsNumber + additionalNumber) + "</option>");
             });
 
             // กำหนดการเรียกใช้ DataTables
@@ -326,7 +327,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 render: function(data) {
                   // หาข้อมูล department_name จาก departmentData แล้วแสดง
                   var departmentInfo = departmentData.find(function(dep) {
-                    return dep.ID === data;
+                    // return dep.ID === data;
+                    return dep.ID.toString() === data;
                   });
                   return departmentInfo ? departmentInfo.department_name : '';
 
