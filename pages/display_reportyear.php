@@ -24,7 +24,7 @@ $user = $_SESSION['user'];
   <link rel="icon" type="image/png" href="../assets/img/Mahidol_U.png">
 
   <title>
-  รายงานสถิติจำนวนผู้เข้าใช้บริการตามปีงบประมาณ
+    รายงานสถิติจำนวนผู้เข้าใช้บริการตามปีงบประมาณ
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -179,23 +179,19 @@ $user = $_SESSION['user'];
   <? include '../action/connect.php';
   ?>
   <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // ตรวจสอบ URL เพื่อเปิดเมนูที่ถูกเลือก
+      const urlParams = new URLSearchParams(window.location.search);
+      const activeMenu = urlParams.get('active_menu');
 
-
-document.addEventListener("DOMContentLoaded", function() {
-    // ตรวจสอบ URL เพื่อเปิดเมนูที่ถูกเลือก
-    const urlParams = new URLSearchParams(window.location.search);
-    const activeMenu = urlParams.get('active_menu');
-    
-    // หากมีค่า active_menu ใน URL ให้เปิดเมนูที่เลือก
-    if (activeMenu === 'display_report') {
+      // หากมีค่า active_menu ใน URL ให้เปิดเมนูที่เลือก
+      if (activeMenu === 'display_report') {
         const subMenu = document.getElementById('subMenu');
         subMenu.style.display = 'block'; // แสดงเมนู
-    }
-});
-
-
+      }
+    });
   </script>
-  
+
   <div class="container-fluid py-4">
     <div class="row">
       <div class="col-12">
@@ -204,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="card-header pb-0">
             <h6>รายงานสถิติจำนวนผู้เข้าใช้บริการ ตามปีงบประมาณ</h6>
           </div>
-
+         
 
           <div style="padding: 20px;">
             <label for="yearFilter">เลือกปีที่ต้องการดูข้อมูล:</label>
@@ -283,7 +279,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var globalDepartmentData;
         var years = []; // เก็บปีที่มีอยู่ในข้อมูล
         var additionalNumber = 543;
-       
+
 
         // เพิ่ม dropdown เลือกปี
         $.ajax({
@@ -311,11 +307,11 @@ document.addEventListener("DOMContentLoaded", function() {
         function initializeDataTable() {
           var selectedYear = $("#yearFilter").val();
           var departmentData;
-          
+
           getDeaprtmentData(function(response) {
             departmentData = response;
           });
-          
+
           var userdepartment = <? echo $user['department']; ?>
 
           table = $('#myTable').DataTable({
@@ -373,27 +369,24 @@ document.addEventListener("DOMContentLoaded", function() {
               {
                 data: 'Sep'
               },
-             
+
             ],
             buttons: [
               'copyHtml5',
               {
                 extend: 'excel',
                 text: 'Excel',
+                title: function() {
+                  var selectedYear = parseInt(document.getElementById("yearFilter").value);
+                  var additionalNumber = 543;
+                  var yearAsNumber = selectedYear + additionalNumber;
+                  return "รายงานสถิติจำนวนผู้เข้าใช้บริการ ประจำปีงบประมาณ " + yearAsNumber;
+                },
                 customize: function(xlsx) {
-                  // ตรวจสอบและปรับแต่งข้อมูลก่อน export
                   var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-                  // กำหนดตำแหน่งหรือคอลัมน์ที่จะใช้ในการตรวจสอบและแทนที่ข้อมูล
-                  var columnIndex = 1; // ตั้งค่าตำแหน่งหรือคอลัมน์ที่จะใช้
                   $('row c[r^="C"]', sheet).each(function() {
-                    // ตรวจสอบว่าตำแหน่งนี้เป็นข้อมูลหรือไม่
                     var originalValue = $('t', this).text();
-
-                    // แทนที่เฉพาะข้อมูล text ไม่รวม HTML tags
                     var departmentName = originalValue.replace(/<\/?t>/g, '');
-
-                    // ตรวจสอบและแทนที่ข้อมูลในตำแหน่งนี้
                     if (departmentName !== originalValue) {
                       $(this).html('<t>' + departmentName + '</t>');
                     }
@@ -426,7 +419,7 @@ document.addEventListener("DOMContentLoaded", function() {
               data: {
                 selectedYear: selectedYear,
                 userdepartment: userdepartment,
-               
+
               }, // ส่งค่าปีที่เลือกไปด้วย
             },
             // ใช้ getDeaprtmentData เพื่อรับข้อมูลแผนกแล้วทำต่อไป
@@ -458,7 +451,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
               });
             },
-           
+
           });
         }
 

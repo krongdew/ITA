@@ -201,20 +201,40 @@ $user = $_SESSION['user'];
 
 
                     <div style="padding: 20px;">
-                        
-                        <label for="startMonthFilter">หรือเลือกเดือนเริ่มต้น:</label>
-                        <input type="month" id="startMonthFilter">
 
-                        <label for="endMonthFilter">เลือกเดือนสิ้นสุด:</label>
-                        <input type="month" id="endMonthFilter">
+                        <div>
+                            <label for="filter_date">Filter by Date:</label>
+                            <input type="date" id="filter_date">
+                            <button onclick="filterData()">Filter</button>
+                        </div>
+                        <div>
+                            <label for="filter_month_year">Filter by Month:</label>
+                            <input type="month" id="filter_month_year">
+                            <button onclick="filterMonthly()">Filter</button>
+                        </div>
+                        <div>
+                            <label for="filter_start_date">Filter by Week:</label>
+                            <input type="date" id="filter_start_date">
+                            <label for="filter_end_date">to</label>
+                            <input type="date" id="filter_end_date">
+                            <button onclick="filterWeekly()">Filter</button>
+                        </div>
+                        <div>
+                            <label for="service_id">Service ID:</label>
+                            <input type="text" id="service_id">
+                            <button onclick="filterDetailed()">Filter</button>
 
-                        <br><br>
-                        <table id="myTable" class="table align-items-center mb-0">
+                        </div>
+
+
+                        <table id="report_table">
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Service ID</th>
-                                    <th>MONTH</th>
-                                    <th>Total Number of People</th>
+                                    <th>Subservice ID</th>
+                                    <th>Number of People</th>
+                                    <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -232,64 +252,94 @@ $user = $_SESSION['user'];
         <?php include '../components/setting.php'; ?>
         <!--   Core JS Files   -->
         <?php include '../components/script.php'; ?>
+       
         <script>
             $(document).ready(function() {
-                // กำหนด DataTables ในตารางที่มี id="myTable"
-
-                var table = $('#myTable').DataTable({
-                    "ajax": {
-                        "url": "../action/fetch_customer_data.php", // ไฟล์ที่ใช้ดึงข้อมูลจากฐานข้อมูล
-                        "type": "POST",
-                        "data": function(d) {
-                            // ส่งข้อมูลการกรองเพิ่มเติมไปยังไฟล์ fetch_data.php
-                            d.yearFilter = $('#yearFilter').val();
-                            d.startMonthFilter = $('#startMonthFilter').val();
-                            d.endMonthFilter = $('#endMonthFilter').val();
-                        }
-                    },
-                    "columns": [
-                        // กำหนดคอลัมน์ที่จะแสดง
-                        {
-                            "data": "service_name"
-                        },
-
-                        {
-                            "data": "month"
-                        },
-                        {
-                            "data": "total_number_people"
-                        },
-                    ],
+                $('#report_table').DataTable({
                     "processing": true,
                     "serverSide": true,
-                    // เพิ่มตัวเลือกการกรองตามปีและเดือน
-                    "dom": 'Bfrtip',
-                    "responsive": true,
-                    "buttons": [
-                        'excelHtml5',
-                        'csvHtml5',
-                        'pdfHtml5'
-                    ]
-                });
-
-                // เมื่อเปลี่ยนค่าในตัวกรองให้รีเฟรช DataTables
-                $('#startMonthFilter, #endMonthFilter').change(function() {
-                    // แปลงค่าเดือนเป็นรูปแบบ YYYY-MM
-                    $('#yearFilter').val('');
-                    var startMonth = $('#startMonthFilter').val() + "-01";
-                    var endMonth = $('#endMonthFilter').val() + "-01";
-
-                    // ส่งข้อมูลการกรองเพิ่มเติมไปยังไฟล์ fetch_data.php
-                    table.ajax.reload(null, false);
-                });
+                    "ajax": "../action/fetch_numberp_data.php"
+                },
                 
-                // เมื่อเปลี่ยนค่าในตัวกรองให้รีเฟรช DataTables
-                $('#yearFilter').change(function() {
-                    
-
-                    // ส่งข้อมูลการกรองเพิ่มเติมไปยังไฟล์ fetch_data.php
-                    table.ajax.reload(null, false);
-                });
-                
+                );
             });
+
+            function filterData() {
+                var filterDate = $('#filter_date').val();
+                $('#report_table').DataTable().destroy();
+                $('#report_table').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        url: "../action/fetch_numberp_data.php",
+                        type: "POST",
+                        data: {
+                            filter_date: filterDate,
+                            draw: 1 // เพิ่ม draw ให้ส่งค่าเสมอ
+                        }
+                    }
+                });
+            }
+
+            function filterMonthly() {
+                var filterMonthYear = $('#filter_month_year').val();
+                $('#report_table').DataTable().destroy();
+                $('#report_table').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        url: "../action/fetch_numberp_data.php",
+                        type: "POST",
+                        data: {
+                            filter_month_year: filterMonthYear,
+                            draw: 1 // เพิ่ม draw ให้ส่งค่าเสมอ
+                        }
+                    }
+                });
+            }
+
+            function filterWeekly() {
+                var filterStartDate = $('#filter_start_date').val();
+                var filterEndDate = $('#filter_end_date').val();
+                $('#report_table').DataTable().destroy();
+                $('#report_table').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        url: "../action/fetch_numberp_data.php",
+                        type: "POST",
+                        data: {
+                            filter_start_date: filterStartDate,
+                            filter_end_date: filterEndDate,
+                            draw: 1 // เพิ่ม draw ให้ส่งค่าเสมอ
+                        }
+                    }
+                });
+            }
+
+            function filterDetailed() {
+                var serviceID = $('#service_id').val();
+                var filterDate = $('#filter_date').val();
+                var filterMonthYear = $('#filter_month_year').val();
+                var filterStartDate = $('#filter_start_date').val();
+                var filterEndDate = $('#filter_end_date').val();
+
+                $('#report_table').DataTable().destroy();
+                $('#report_table').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        url: "../action/fetch_numberp_data.php",
+                        type: "POST",
+                        data: {
+                            service_id: serviceID,
+                            filter_date: filterDate,
+                            filter_month_year: filterMonthYear,
+                            filter_start_date: filterStartDate,
+                            filter_end_date: filterEndDate,
+                            draw: 1 // เพิ่ม draw ให้ส่งค่าเสมอ
+                        }
+                    }
+                });
+            }
         </script>

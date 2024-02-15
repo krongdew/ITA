@@ -146,16 +146,14 @@ if (isset($_GET['ID'])) {
             <body class="g-sidenav-show   bg-gray-100">
                 <?php if ($user['UserType'] === "admin") {
 
-                    include '../components/sidebar.php';
-                    
-                } else {
-                    
                     include '../components/sidebar_admin.php';
-                }  
+                } else {
+                    include '../components/sidebar.php';
+                }
                 ?>
-                
+
                 <?php include '../components/navbar.php' ?>
-                
+
                 <? include '../action/connect.php';
 
                 // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล

@@ -224,8 +224,8 @@ $user = $_SESSION['user'];
           <div class="card">
             <div class="card-header pb-0">
               <div class="d-flex align-items-center">
-                <p class="mb-0">Edit Profile</p>
-                <button class="btn btn-primary btn-sm ms-auto">Settings</button>
+                <p class="mb-0">Profile</p>
+                <button class="btn btn-primary btn-sm ms-auto">แจ้งแก้ไขข้อมูล</button>
               </div>
             </div>
             <div class="card-body">
@@ -239,19 +239,19 @@ $user = $_SESSION['user'];
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Email address</label>
+                    <label for="example-text-input" class="form-control-label">อีเมล</label>
                     <input class="form-control" type="email" value="<? echo $user['email']; ?>">
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Name-Surname</label>
+                    <label for="example-text-input" class="form-control-label">ชื่อ-นามสกุล</label>
                     <input class="form-control" type="text" value="<? echo $user['name_surname']; ?>">
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">position</label>
+                    <label for="example-text-input" class="form-control-label">ตำแหน่ง</label>
                     <input class="form-control" type="text" value="<? echo $user['position']; ?>">
                   </div>
                 </div>
@@ -261,10 +261,14 @@ $user = $_SESSION['user'];
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">department</label>
+                    <label for="example-text-input" class="form-control-label">งานที่สังกัด</label>
                     <?
                     $department = $user['department'];
-                     try {
+                      if($department == 0){
+                        echo '<p><input class="form-control" type="text" value="Admin"></p>';
+                      }else{
+                   
+                      try {
                       // คำสั่ง SQL สำหรับดึงข้อมูล department
                       $sql = "SELECT ID, department_name FROM sa_department WHERE ID = :department";
 
@@ -279,7 +283,7 @@ $user = $_SESSION['user'];
 
                       // ตรวจสอบว่ามีข้อมูลหรือไม่
                       if ($departments) {
-                          
+                             
                           
                               echo '<input class="form-control" type="text" value="'.$departments['department_name'].'">';
                           
@@ -289,13 +293,14 @@ $user = $_SESSION['user'];
                   } catch (PDOException $e) {
                       echo "Connection failed: " . $e->getMessage();
                   }
+                }
                   ?>
                     
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Unit</label>
+                    <label for="example-text-input" class="form-control-label">หน่วย</label>
                     
                     <?
                     
@@ -330,13 +335,13 @@ $user = $_SESSION['user'];
                 </div>
                 <div class="col-md-4">
                   <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">email_other</label>
+                    <label for="example-text-input" class="form-control-label">อีเมลอื่น ๆ </label>
                     <input class="form-control" type="text" value="<? echo $user['email_other']; ?>">
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">phone</label>
+                    <label for="example-text-input" class="form-control-label">โทรศัพท์</label>
                     <input class="form-control" type="text" value="<? echo $user['phone']; ?>">
                   </div>
                 </div>

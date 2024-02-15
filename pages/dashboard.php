@@ -63,6 +63,7 @@ $user = $_SESSION['user'];
     ?>
  <?php include '../components/navbar.php' ?>
 
+
     
     <div class="container-fluid py-4">
       <div class="row">
@@ -72,7 +73,7 @@ $user = $_SESSION['user'];
               <div class="row">
                 <div class="col-8">
                   <div class="numbers">
-                    <p class="text-sm mb-0 text-uppercase font-weight-bold">จำนวนผู้ทำแบบประเมินทั้งหมด</p>
+                    <p class="text-sm mb-0 text-uppercase font-weight-bold">จำนวนผู้ใช้งานบริการในเดือนนี้</p>
                     <h5 id="respondent-count" class="font-weight-bolder"><!-- จำนวนผู้ทำแบบประเมินจะแสดงที่นี่ --></h5>
                     
                   </div>
@@ -92,7 +93,7 @@ $user = $_SESSION['user'];
               <div class="row">
                 <div class="col-8">
                   <div class="numbers">
-                    <p class="text-sm mb-0 text-uppercase font-weight-bold">จำนวนผู้ทำแบบประเมินวันนี้</p>
+                    <p class="text-sm mb-0 text-uppercase font-weight-bold">จำนวนผู้ใช้บริการในปีนี้</p>
                     <h5 class="font-weight-bolder">
                       20
                     </h5>

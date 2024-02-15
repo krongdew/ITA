@@ -25,7 +25,7 @@ $selectedYear = isset($_POST['selectedYear']) ? intval($_POST['selectedYear']) :
 $userdepartment = isset($_POST['userdepartment']) ? $_POST['userdepartment'] : 0;
 
 // Additional condition based on userdepartment
-$userDepartmentCondition = ($userdepartment == 0) ? '' : " AND service_Access = $userdepartment";
+$userDepartmentCondition = ($userdepartment == 0) ? '' : " AND sa_services.service_Access = $userdepartment";
 
 $columns = array('service_id', 'subservice_id', 'number_people', 'Date');
 
@@ -62,10 +62,10 @@ try {
     if ($selectedYear != date('Y')) {
         // หากปีที่เลือกไม่ใช่ปีปัจจุบัน ให้ใช้เงื่อนไขของปีงบประมาณ
        
-        $whereCondition = "WHERE (YEAR(Date) = $selectedYear-1 AND MONTH(Date) >= 10) OR (YEAR(Date) = $selectedYear  AND MONTH(Date) <= 9)";
+        $whereCondition = "WHERE ((YEAR(Date) = $selectedYear-1 AND MONTH(Date) >= 10) OR (YEAR(Date) = $selectedYear  AND MONTH(Date) <= 9))";
     } else {
         // หากปีที่เลือกเป็นปีปัจจุบัน ให้ใช้เงื่อนไขของปีปัจจุบัน
-        $whereCondition = "WHERE (MONTH(Date) >= 10 AND YEAR(Date) = $selectedYear-1) OR (MONTH(Date) <= 9 AND YEAR(Date) = $selectedYear )";
+        $whereCondition = "WHERE ((MONTH(Date) >= 10 AND YEAR(Date) = $selectedYear-1) OR (MONTH(Date) <= 9 AND YEAR(Date) = $selectedYear ))";
     }
     
     // คำสั่ง SQL ที่แก้ไขแล้ว
@@ -86,7 +86,7 @@ try {
     INNER JOIN sa_services ON sa_number_of_people.service_id = sa_services.ID
     $whereCondition $userDepartmentCondition 
     GROUP BY sa_services.service_Access, sa_services.ID
-    ORDER BY sa_services.service_Access, sa_services.ID ";
+    ORDER BY sa_services.service_Access, sa_services.ID";
 
     // รันคำสั่ง SQL และดึงข้อมูล
     $stmt = $conn->prepare($query);

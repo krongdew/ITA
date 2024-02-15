@@ -305,36 +305,7 @@ if (isset($_GET['ID'])) {
                     </div>
                 </div>
                 <div style="padding: 20px;">
-                    <div class="col-md-6">
-                    <label>เลือกดูจากเดือน</label>
-                    <input class="form-control" type="month" id="monthInput" name="monthInput">
-                    </div>
-                    <div class="row">
-                    <div class="col-md-4">
-                    <label>ค้นหาจากชื่อ</label>
-                    <input class="form-control" type="text" id="searchByName" name="searchByName" placeholder="ค้นหาจากชื่อ">
-                    </div>
-                    <div class="col-md-4">
-                    <label>ค้นหาจากวันที่</label>
-                    <input class="form-control" type="date" id="searchByDate" name="searchDate">
-                    </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                    <span>หรือค้นหาจากช่วงวันที่ต้องการ</span>
-                    <div class="col-md-4">  
-                    <Label>ค้นหาจากวันที่เริ่มต้น</Label>
-                    <input class="form-control" type="date" id="start-date" name="startDate">
-                    </div>
-                    <div class="col-md-4">
-                    <label>วันที่สิ้นสุด</label>
-                    <input class="form-control" type="date" id="end-date" name="endDate">
-                    </div>
                     
-                    <br>
-                    </div>
-                    
-                    <br>
                     <table id="myTable" class="table align-items-center mb-0">
                         <thead>
                             <tr>
@@ -412,279 +383,298 @@ if (isset($_GET['ID'])) {
                         xhr.send('service_id=' + service_id + '&date=' + date);
                     }
                 </script>
+                <!-- ส่วนที่เพิ่มเข้าไป -->
+                <!-- <script>
+    function updatedata() {
+      $('#myTable').DataTable().ajax.reload();
+    }
 
+
+    $(document).ready(function() {
+      // ให้ฟังก์ชันทำงานเมื่อมีการกด submit ฟอร์ม
+      $('form').submit(function(e) {
+        e.preventDefault(); // ป้องกันให้ฟอร์ม submit ตามปกติ
+
+        // ทำการส่งข้อมูลไปยังไฟล์ PHP ตาม URL ที่ระบุใน action
+        $.ajax({
+          type: 'POST',
+          url: '../action/add_services.php',
+          data: $(this).serialize(), // เพิ่ม CSRF Token ในข้อมูลที่ส่ง
+          success: function(response) {
+            // เมื่อเพิ่มข้อมูลเสร็จสิ้น, แสดง popup box
+            Swal.fire({
+              icon: 'success',
+              title: 'บันทึกข้อมูลสำเร็จ',
+              showConfirmButton: false,
+              timer: 1500,
+
+            }).then(function() {
+
+              // ล้างข้อมูลในฟอร์ม (ตรวจสอบว่าเขียนไว้ถูกหรือไม่)
+              $('form')[0].reset();
+
+              // เรียกใช้ฟังก์ชัน updatedata() เพื่อรีเฟรชตาราง
+              updatedata();
+            });
+          },
+          error: function(error) {
+            // กรณีเกิดข้อผิดพลาด
+            Swal.fire({
+              icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
+              text: 'ไม่สามารถบันทึกข้อมูลได้'
+            });
+          }
+        });
+      });
+    });
+  </script> -->
 
                 <script>
-                    // สร้างวัตถุ Date เพื่อเก็บข้อมูลเดือนปัจจุบัน
-                    const currentDate = new Date();
-                    // กำหนดค่าเริ่มต้นของ input แบบ "month" ให้เป็นเดือนปัจจุบัน
-                    const monthInput = document.getElementById('monthInput');
-                    const currentYear = currentDate.getFullYear();
-                    const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // เพิ่ม 0 หน้าตัวเลขถ้าน้อยกว่า 10
-                    const defaultValue = `${currentYear}-${currentMonth}`;
-                    monthInput.value = defaultValue;
+                    pdfMake.fonts = {
+                        thaiFont: {
+                            normal: 'THSarabun.ttf',
+                            bold: 'THSarabun-Bold.ttf',
+                            italics: 'THSarabun-Italic.ttf',
+                            bolditalics: 'THSarabun-BoldItalic.ttf'
+                        }
+                    };
+
+
 
                     $(document).ready(function() {
-                        // DataTable initialization
-                        var dataTable = $('#myTable').DataTable({
-                            dom: 'Bfrtip',
-                            buttons: [
-                                'copy', 'excel', 'print'
-                            ],
-                            "paging": true,
-                            "lengthChange": false,
-                            "searching": false,
-                            "ordering": true,
-                            "info": true,
-                            "autoWidth": false,
-                            "responsive": true,
-                            "pageLength": 20, // Set the number of rows per page
-                            "language": {
-                                "info": "Showing _START_ to _END_ of _TOTAL_ entries",
-                                "infoEmpty": "Showing 0 to 0 of 0 entries"
+                        var table;
+                        var globalsubserviceData; // ประกาศตัวแปรที่ถูกส่งเข้าไปนอกฟังก์ชัน success
+
+                        // เพิ่ม service_id จาก URL ใน DataTables ajax
+                        var urlParams = new URLSearchParams(window.location.search);
+                        var service_id = urlParams.get('ID') || '';
+                        // ดึงข้อมูลจาก sa_department
+                        $.ajax({
+                            url: "../action/get_subservice_data.php", // แก้ไข URL ให้ตรงกับที่เก็บโค้ด PHP ที่ดึงข้อมูล sa_department
+                            type: "GET",
+                            dataType: "json",
+                            success: function(response) {
+                                globalsubserviceData = response; // ใช้ตัวแปรที่ถูกส่งเข้าไปนอกฟังก์ชัน success
+                                var table = $('#myTable').DataTable({
+                                    responsive: true,
+                                    dom: 'lBfrtip',
+                                    columns: [{
+                                            data: "column1",
+                                            title: "Column 1"
+                                        },
+                                        {
+                                            data: "column2",
+                                            title: "Column 2"
+                                        },
+                                        {
+                                            data: "column3",
+                                            title: "Column 3"
+                                        },
+                                        {
+                                            data: "column4",
+                                            title: "Column 4"
+                                        },
+
+                                        // เพิ่มคอลัมน์ตามต้องการ
+                                    ],
+                                    buttons: [
+                                        'copyHtml5',
+                                        'excelHtml5',
+                                        {
+                                            extend: 'pdfHtml5',
+                                            exportOptions: {
+                                                columns: [0, 1, 2, 3, 4] // ระบุคอลัมน์ที่จะ export (index 0, 1, 2)
+                                            },
+                                            customize: function(doc) {
+                                                doc.defaultStyle.font = 'thaiFont'; // หรือใช้ชื่อ font ที่คุณต้องการ
+                                                doc.defaultStyle.fontSize = 16; // ตั้งค่าขนาดตัวอักษรที่นี่ (เป็นตัวเลข)
+
+                                                // ... รายละเอียดอื่น ๆ
+
+                                            }
+                                        }
+                                    ],
+                                    "autoWidth": false,
+                                    "lengthMenu": [10, 25, 50, 75, 100],
+                                    "pageLength": 10,
+                                    "serverSide": true,
+                                    "ajax": {
+                                        "url": "../action/get_people_server.php",
+                                        "type": "POST",
+                                        "dataType": "json",
+                                        "data": {
+                                            service_id: service_id // ส่งค่า service_id ไปที่ get_people_server.php
+                                        }
+                                    },
+                                    "columns": [{
+                                            "data": null,
+                                            "render": function(data, type, row, meta) {
+                                                return meta.settings._iDisplayStart + meta.row + 1;
+                                            }
+                                        },
+                                        {
+                                            "data": "Date",
+                                            // "render": function(data, type, row) {
+                                            //     // แปลงวันที่ให้เป็นรูปแบบที่ต้องการ (เช่น "DD/MM/YYYY")
+                                            //     var date = new Date(data);
+                                            //     var formattedDate = date.toLocaleDateString('en-GB'); // เปลี่ยน 'en-GB' เป็นลำดับค่าที่ต้องการ
+                                            //     return formattedDate;
+                                                
+                                            // },
+                                            
+
+                                        },
+                                        {
+                                            "data": "subservice_id",
+                                            render: function(data) {
+                                                // ให้หาข้อมูล department_name จาก globalDepartmentData แล้วแสดง
+                                                var subserviceData = globalsubserviceData.find(function(dep) {
+                                                    return dep.ID === data;
+                                                });
+                                                return subserviceData ? subserviceData.subservice_name : '';
+                                            },
+                                        },
+                                        {
+                                            "data": "number_people",
+                                            "className": "editable"
+                                        },
+
+                                        {
+                                            "data": null,
+                                            "render": function(data, type, row) {
+
+                                                return '<button class="editBtn">Edit</button> <button class="saveBtn" style="display:none;">Save</button> <button class="delBtn">Delete</button>';
+                                            },
+                                            "orderable": false
+                                        },
+
+
+                                    ],
+                                    order: [
+                                        [0, 'asc'],
+                                    ],
+                                });
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.error('Error fetching department data:', errorThrown);
                             }
                         });
 
+                        // Edit button click event
+                        $('#myTable').on('click', '.editBtn', function() {
+                            var row = $(this).closest('tr');
+                            row.find('td.editable').prop('contenteditable', true);
+                            row.find('.editBtn').hide();
+                            row.find('.saveBtn').show();
+
+                            // Set focus to the first editable field (department_name)
+                            row.find('.editable:eq(0)').focus();
+
+                            // Add border styling to the editable fields
+                            row.find('.editable').css({
+                                'border': '2px solid #337ab7', // Change the color as needed
+                                'border-radius': '5px', // Optional: Add border-radius for rounded corners
+                            });
+                        });
+
+                        // Save button click event
+                        $('#myTable').on('click', '.saveBtn', function() {
+                            var row = $(this).closest('tr');
+                            var data = $('#myTable').DataTable().row($(this).parents('tr')).data();
+                            row.find('td.editable').prop('contenteditable', false);
+                            row.find('.editBtn').show();
+                            row.find('.saveBtn').hide();
+
+                            // Save data to your server using Ajax if needed
+                            // Get the edited data
+                            var editedData = {
+                                number_people: row.find('.editable:eq(0)').text(),
+
+                                // Add other fields as needed
+                            };
+
+                            // Get the department ID
+                            var number_peopleID = data.ID
 
 
-                        // Function to load data from the server using Ajax
-                        function loadData() {
-                            var searchName = $('#searchByName').val();
-                            var searchDate = $('#searchByDate').val();
-                            var startDate = $('#start-date').val();
-                            var endDate = $('#end-date').val();
-                            var monthInput = $('#monthInput').val();
-
-                            // เพิ่ม service_id จาก URL ใน DataTables ajax
-                            var urlParams = new URLSearchParams(window.location.search);
-                            var service_id = urlParams.get('ID') || '';
-
+                            // Save data to your server using Ajax
                             $.ajax({
-                                url: '../action/get_data.php',
-                                method: 'POST',
+                                url: '../action/update_numberpeople.php',
+                                type: 'POST',
                                 data: {
-                                    service_id: service_id,
-                                    searchByName: searchName, // เปลี่ยนจาก searchName เป็น searchByName
-                                    searchDate: searchDate,
-                                    startDate: startDate, // เปลี่ยนจาก 'start-date' เป็น startDate
-                                    endDate: endDate, // เปลี่ยนจาก 'end-date' เป็น endDate
-                                    monthInput: monthInput
+                                    number_peopleID: number_peopleID,
+                                    editedData: editedData
                                 },
+                                dataType: 'json',
                                 success: function(response) {
-                                    // Clear the existing table data
-                                    dataTable.clear().draw();
+                                    if (response.status === 'success') {
+                                        // Reload DataTable to display updated data
 
-                                    // Parse the JSON response
-                                    var data = JSON.parse(response);
+                                        $('#myTable').DataTable().ajax.reload();
 
+                                    } else {
+                                        Swal.fire(
+                                            'เกิดข้อผิดพลาด!',
+                                            'เกิดข้อผิดพลาดในการแก้ไขข้อมูล.',
+                                            'error'
+                                        );
+                                    }
+                                }
+                            });
 
+                        });
 
-                                    // Populate the table with data
-                                    $.each(data, function(index, row) {
+                        // Event listener สำหรับปุ่ม Delete
+                        $('#myTable').on('click', '.delBtn', function() {
+                            var data = $('#myTable').DataTable().row($(this).parents('tr')).data();
+                            var number_peopleID = data.ID;
 
+                            // แสดง SweetAlert 2 สำหรับยืนยันการลบ
+                            Swal.fire({
+                                title: 'คุณต้องการลบข้อมูลหรือไม่?',
+                                text: "หากคุณลบที่นี่ จะลบทั้งบริการหลักและบริการย่อยทั้งหมด",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'ใช่, ลบ!'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // ทำการลบในฐานข้อมูลด้วย Ajax
+                                    $.ajax({
+                                        url: '../action/delete_people.php',
+                                        type: 'POST',
+                                        data: {
+                                            number_peopleID: number_peopleID
+                                        },
+                                        dataType: 'json', // รับข้อมูลเป็น JSON
+                                        success: function(response) {
+                                            if (response.status === 'success') {
 
-
-
-                                        var rowData = [
-                                            index + 1,
-                                            row.Date,
-                                            row.subservice_name,
-                                            row.number_people,
-
-                                            '<center><button class="editBtn">Edit</button> <button class="saveBtn" style="display:none;">Save</button> <button class="delBtn">Delete</button></center>',
-
-                                        ];
-
-                                        dataTable.row.add(rowData).draw();
-
-                                        // เพิ่มตรวจสอบสถานะและเปลี่ยนสีปุ่ม
-
+                                                Swal.fire(
+                                                    'ลบข้อมูลเรียบร้อย!',
+                                                    'ข้อมูลถูกลบออกจากระบบแล้ว.',
+                                                    'success'
+                                                ).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        // ทำการ reload ข้อมูล
+                                                        $('#myTable').DataTable().ajax.reload();
+                                                    }
+                                                });
+                                            } else {
+                                                Swal.fire(
+                                                    'เกิดข้อผิดพลาด!',
+                                                    'เกิดข้อผิดพลาดในการลบข้อมูล.',
+                                                    'error'
+                                                );
+                                            }
+                                        }
                                     });
                                 }
                             });
-                        }
-
-                        // Load data when the page is ready
-                        loadData();
-
-                        // Search input keyup event
-                        $('#searchByName').on('keyup', function(e) {
-                            if (e.key === 'Enter' || e.keyCode === 13) {
-                                loadData();
-                            }
-                        });
-
-                        // Search input blur event
-                        $('#searchByName').on('blur', function() {
-                            loadData();
-                        });
-
-                        // Search date change event
-                        $('#searchByName').on('change', function() {
-                            loadData();
-                        });
-
-                        // Search date change event
-                        $('#searchByDate').on('change', function() {
-                            loadData();
-                        });
-
-                        // Search date change event
-                        $('#end-date').on('change', function() {
-                            loadData();
-                        });
-
-                        // Search date change event
-                        $('#monthInput').on('change', function() {
-                            loadData();
-                        });
-
-                        // Search button click event
-                        $('#searchButton').on('click', function(e) {
-                            e.preventDefault();
-                            loadData();
-                        });
-
-
-
-                    });
-
-
-                    // JavaScript เพิ่มเติม
-
-
-                    // ให้สร้างฟังก์ชันสำหรับรีเซ็ตค่า monthInput เป็นค่าว่าง
-                    function resetMonthInput() {
-                        document.getElementById('monthInput').value = '';
-                    }
-
-                    // ให้กำหนดความเรียบร้อยของปุ่มที่ต้องการให้รีเซ็ตค่า
-                    document.getElementById('start-date').addEventListener('click', resetMonthInput);
-                    document.getElementById('searchByDate').addEventListener('click', resetMonthInput);
-
-
-
-
-
-
-
-
-
-
-                    // Edit button click event
-                    $('#myTable').on('click', '.editBtn', function() {
-                        var row = $(this).closest('tr');
-                        row.find('td.editable').prop('contenteditable', true);
-                        row.find('.editBtn').hide();
-                        row.find('.saveBtn').show();
-
-                        // Set focus to the first editable field (department_name)
-                        row.find('.editable:eq(0)').focus();
-
-                        // Add border styling to the editable fields
-                        row.find('.editable').css({
-                            'border': '2px solid #337ab7', // Change the color as needed
-                            'border-radius': '5px', // Optional: Add border-radius for rounded corners
                         });
                     });
-
-                    // Save button click event
-                    $('#myTable').on('click', '.saveBtn', function() {
-                        var row = $(this).closest('tr');
-                        var data = $('#myTable').DataTable().row($(this).parents('tr')).data();
-                        row.find('td.editable').prop('contenteditable', false);
-                        row.find('.editBtn').show();
-                        row.find('.saveBtn').hide();
-
-                        // Save data to your server using Ajax if needed
-                        // Get the edited data
-                        var editedData = {
-                            number_people: row.find('.editable:eq(0)').text(),
-
-                            // Add other fields as needed
-                        };
-
-                        // Get the department ID
-                        var number_peopleID = data.ID
-
-
-                        // Save data to your server using Ajax
-                        $.ajax({
-                            url: '../action/update_numberpeople.php',
-                            type: 'POST',
-                            data: {
-                                number_peopleID: number_peopleID,
-                                editedData: editedData
-                            },
-                            dataType: 'json',
-                            success: function(response) {
-                                if (response.status === 'success') {
-                                    // Reload DataTable to display updated data
-
-                                    $('#myTable').DataTable().ajax.reload();
-
-                                } else {
-                                    Swal.fire(
-                                        'เกิดข้อผิดพลาด!',
-                                        'เกิดข้อผิดพลาดในการแก้ไขข้อมูล.',
-                                        'error'
-                                    );
-                                }
-                            }
-                        });
-
-                    });
-
-                    // Event listener สำหรับปุ่ม Delete
-                    $('#myTable').on('click', '.delBtn', function() {
-                        var data = $('#myTable').DataTable().row($(this).parents('tr')).data();
-                        var number_peopleID = data.ID;
-
-                        // แสดง SweetAlert 2 สำหรับยืนยันการลบ
-                        Swal.fire({
-                            title: 'คุณต้องการลบข้อมูลหรือไม่?',
-                            text: "หากคุณลบที่นี่ จะลบทั้งบริการหลักและบริการย่อยทั้งหมด",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'ใช่, ลบ!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // ทำการลบในฐานข้อมูลด้วย Ajax
-                                $.ajax({
-                                    url: '../action/delete_people.php',
-                                    type: 'POST',
-                                    data: {
-                                        number_peopleID: number_peopleID
-                                    },
-                                    dataType: 'json', // รับข้อมูลเป็น JSON
-                                    success: function(response) {
-                                        if (response.status === 'success') {
-
-                                            Swal.fire(
-                                                'ลบข้อมูลเรียบร้อย!',
-                                                'ข้อมูลถูกลบออกจากระบบแล้ว.',
-                                                'success'
-                                            ).then((result) => {
-                                                if (result.isConfirmed) {
-                                                    // ทำการ reload ข้อมูล
-                                                    $('#myTable').DataTable().ajax.reload();
-                                                }
-                                            });
-                                        } else {
-                                            Swal.fire(
-                                                'เกิดข้อผิดพลาด!',
-                                                'เกิดข้อผิดพลาดในการลบข้อมูล.',
-                                                'error'
-                                            );
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    });
-                    // });
                 </script>
 
 
