@@ -94,8 +94,8 @@ $user = $_SESSION['user'];
               <div class="col-8">
                 <div class="numbers">
                   <p class="text-sm mb-0 text-uppercase font-weight-bold">จำนวนผู้ใช้บริการในปีนี้</p>
-                  <h5 class="font-weight-bolder">
-                    20 คน
+                  <h5 id="respondent-year" class="font-weight-bolder">
+
                   </h5>
                   <!-- <p class="mb-0">
                       <span class="text-success text-sm font-weight-bolder">+3%</span>
@@ -124,7 +124,7 @@ $user = $_SESSION['user'];
                     <? // คำสั่ง SQL สำหรับนับจำนวนแถวในตาราง sa_services
                     $userdepartment = $user['department'];
                     $userDepartmentCondition = ($userdepartment == 0) ? '' : " WHERE service_Access = $userdepartment";
-                    
+
                     $sql = "SELECT COUNT(*) AS total_rows FROM sa_services $userDepartmentCondition";
                     // ดึงข้อมูลจากฐานข้อมูลโดยใช้ PDO
                     $stmt = $conn->query($sql);
@@ -180,7 +180,9 @@ $user = $_SESSION['user'];
             <h6 class="text-capitalize">ภาพรวมผู้ใช้งานของบริการ...</h6>
             <p class="text-sm mb-0">
               <i class="fa fa-arrow-up text-success"></i>
-              <span class="font-weight-bold">4% more</span> in 2021
+              <span class="font-weight-bold">เลือกปีที่ต้องการดู</span> <select id="yearFilter">
+                <!-- ตัวเลือกจะถูกเติมโดย JavaScript -->
+              </select>
             </p>
           </div>
           <div class="card-body p-3">
@@ -286,106 +288,164 @@ $user = $_SESSION['user'];
   <!--   Core JS Files   -->
   <?php include '../components/script.php'; ?>
   <script>
-    $(document).ready(function() {
-      // ดึงข้อมูลผู้ใช้จาก PHP โดยใช้ AJAX
-      $.ajax({
-        url: '../action/get_users_chart.php',
-        type: 'GET',
-        dataType: 'json',
-        success: function(data) {
-          // สร้างข้อมูลในรูปแบบที่ Chart.js สามารถอ่านได้
-          var monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-          var userData = [];
-          for (var i = 0; i < data.length; i++) {
-            userData.push(data[i]['Jan'], data[i]['Feb'], data[i]['Mar'], data[i]['Apr'], data[i]['May'], data[i]['Jun'], data[i]['Jul'], data[i]['Aug'], data[i]['Sep'], data[i]['Oct'], data[i]['Nov'], data[i]['Dec']);
-          }
+    var myChart;
+    var userdepartment = <?php echo $user['department']; ?>;
+    var years = []; // เก็บปีที่มีอยู่ในข้อมูล
+    var additionalNumber = 543;
 
-          // สร้างกราฟ Chart.js
-          var ctx1 = document.getElementById("chart-line").getContext("2d");
-          var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
-          gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
-          gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
-          gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
-          new Chart(ctx1, {
-            type: "line",
-            data: {
-              labels: monthLabels,
-              datasets: [{
-                label: "Total Respondents",
-                tension: 0.4,
-                borderWidth: 0,
-                pointRadius: 0,
-                borderColor: "#5e72e4",
-                backgroundColor: gradientStroke1,
-                borderWidth: 3,
-                fill: true,
-                data: userData,
-                maxBarThickness: 6
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  display: false,
-                }
-              },
-              interaction: {
-                intersect: false,
-                mode: 'index',
-              },
-              scales: {
-                y: {
-                  grid: {
-                    drawBorder: false,
-                    display: true,
-                    drawOnChartArea: true,
-                    drawTicks: false,
-                    borderDash: [5, 5]
-                  },
-                  ticks: {
-                    display: true,
-                    padding: 10,
-                    color: '#fbfbfb',
-                    font: {
-                      size: 11,
-                      family: "Open Sans",
-                      style: 'normal',
-                      lineHeight: 2
-                    },
-                  }
-                },
-                x: {
-                  grid: {
-                    drawBorder: false,
-                    display: true,
-                    drawOnChartArea: true,
-                    drawTicks: false,
-                    borderDash: [5, 5]
-                  },
-                  ticks: {
-                    display: true,
-                    color: '#ccc',
-                    padding: 20,
-                    font: {
-                      size: 11,
-                      family: "Open Sans",
-                      style: 'normal',
-                      lineHeight: 2
-                    },
-                  }
-                },
-              },
-            },
+    $(document).ready(function() {
+
+      $("#yearFilter").on("change", function() {
+        // ทำลาย chart ที่มีอยู่เดิม
+        myChart.destroy();
+        // เรียกใช้งานฟังก์ชัน chartcalling() เพื่อสร้าง chart ใหม่
+        chartcalling();
+      });
+
+      // เพิ่ม dropdown เลือกปี
+      $.ajax({
+        url: "../action/get_years.php",
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+          years = response;
+
+          // เติมตัวเลือกปีใน dropdown
+          var yearDropdown = $("#yearFilter");
+          years.forEach(function(year) {
+            var yearAsNumber = parseInt(year);
+            yearDropdown.append("<option value='" + year + "'>" + (yearAsNumber + additionalNumber) + "</option>");
+
           });
-        },
-        error: function(xhr, status, error) {
-          console.error(xhr.responseText);
+          // กำหนดการเรียกใช้ DataTables
+          chartcalling();
         }
       });
+
+      function chartcalling() {
+        // ดึงข้อมูลผู้ใช้จาก PHP โดยใช้ AJAX
+        console.log(myChart)
+        // เช็คว่า myChart มีค่าอยู่หรือไม่ และไม่ใช่ null หรือ undefined
+        if (myChart) {
+          // ถ้ามี chart ให้ทำการทำลายเพื่อล้าง chart ทิ้ง
+          myChart.destroy();
+        }
+
+        var selectedYear = $("#yearFilter").val();
+        console.log(selectedYear)
+
+        $.ajax({
+          url: '../action/get_users_chart.php',
+          type: 'GET',
+          dataType: 'json',
+          data: {
+            userdepartment: userdepartment,
+            selectedYear: selectedYear,
+          },
+          success: function(data) {
+            console.log(data)
+            var serviceLabels = [];
+            var monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var datasets = [];
+
+            // สร้างข้อมูลของแต่ละบริการ
+            for (var i = 0; i < data.length; i++) {
+              var serviceData = [];
+              for (var j = 0; j < monthLabels.length; j++) {
+                serviceData.push(data[i][monthLabels[j]]);
+              }
+              serviceLabels.push(data[i]['service_Access']);
+              // กำหนดสีให้แต่ละแท่งด้วยอาร์เรย์ของสี
+              var barColors = ['#80BCBD', '#AAD9BB', '#D5F0C1', '#F9F7C9']; // ตัวอย่างสีที่แตกต่างกัน
+              datasets.push({
+                label: data[i]['service_name'],
+                backgroundColor: barColors[i % barColors.length], // เลือกสีตามดัชนีแต่ละแท่ง
+                borderColor: 'rgb(67, 104, 80, 1)',
+                borderWidth: 1,
+                data: serviceData
+              });
+            }
+
+           
+            // สร้างกราฟ Chart.js
+            var ctx1 = document.getElementById("chart-line").getContext("2d");
+            myChart = new Chart(ctx1, { // ลบ var หน้า myChart เพื่อทำให้ myChart เป็น global variable
+              type: "bar",
+              data: {
+                labels: monthLabels,
+                datasets: datasets
+              },
+              options: {
+                // ตั้งค่าต่าง ๆ ตามต้องการ
+
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: false,
+                  }
+                },
+                interaction: {
+                  intersect: false,
+                  mode: 'index',
+                },
+                scales: {
+                  y: {
+                    grid: {
+                      drawBorder: false,
+                      display: true,
+                      drawOnChartArea: true,
+                      drawTicks: false,
+                      borderDash: [5, 5]
+                    },
+                    ticks: {
+                      display: true,
+                      padding: 10,
+                      color: '#fbfbfb',
+                      font: {
+                        size: 11,
+                        family: "Open Sans",
+                        style: 'normal',
+                        lineHeight: 2
+                      },
+                    }
+                  },
+                  x: {
+                    grid: {
+                      drawBorder: false,
+                      display: true,
+                      drawOnChartArea: true,
+                      drawTicks: false,
+                      borderDash: [5, 5]
+                    },
+                    ticks: {
+                      display: true,
+                      color: '#ccc',
+                      padding: 20,
+                      font: {
+                        size: 11,
+                        family: "Open Sans",
+                        style: 'normal',
+                        lineHeight: 2
+                      },
+                    }
+                  },
+                },
+              },
+            });
+          },
+          error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+          }
+        });
+
+        // เมื่อมีการเปลี่ยนแปลงใน dropdown เลือกปี
+
+      }
+
     });
   </script>
+
   <script>
     $(document).ready(function() {
       function getRespondentCount() {
@@ -393,6 +453,9 @@ $user = $_SESSION['user'];
           url: '../action/get_respondent.php',
           type: 'GET',
           dataType: 'json',
+          data: {
+            userdepartment: userdepartment,
+          },
           success: function(data) {
             // อัพเดตจำนวนผู้ทำแบบประเมินในหน้า HTML
             $('#respondent-count').text(data.total_respondents);
@@ -410,10 +473,35 @@ $user = $_SESSION['user'];
       setInterval(getRespondentCount, 5000); // เรียกทุก 5 วินาที
     });
   </script>
+
+  <script>
+    $(document).ready(function() {
+      function getRespondentYear() {
+        $.ajax({
+          url: '../action/get_respondent_year.php',
+          type: 'GET',
+          dataType: 'json',
+          data: {
+            userdepartment: userdepartment,
+          },
+          success: function(data) {
+            $('#respondent-year').text(data.total_respondents);
+          },
+          error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+          }
+        });
+      }
+      getRespondentYear();
+      // ทำให้ฟังก์ชั่นเรียก AJAX แบบเป็นระยะ
+      setInterval(getRespondentYear, 5000); // เรียกทุก 5 วินาที
+    })
+  </script>
+
   <script>
     $(document).ready(function() {
       // กำหนดค่าของตัวแปร userdepartment โดยใช้ PHP
-      var userdepartment = <?php echo $user['department']; ?>;
+
 
       // เรียกใช้งานฟังก์ชัน getData() เมื่อเว็บโหลดขึ้นมาและทุก 5 วินาที
       getData();

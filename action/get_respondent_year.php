@@ -7,17 +7,16 @@ $userdepartment = isset($_GET['userdepartment']) ? $_GET['userdepartment'] : 0;
 $userDepartmentCondition = ($userdepartment == 0) ? '' : " AND service_Access = $userdepartment";
 
 try {
-    if($userdepartment == 0){
-    $sql = "SELECT SUM(number_people) AS total_respondents FROM sa_number_of_people WHERE DATE_FORMAT(Date, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')";;
-        
-    }else {
-    $sql = "SELECT s.service_Access, SUM(number_people) AS total_respondents 
-    FROM sa_number_of_people np
-    INNER JOIN sa_services s ON np.service_id = s.ID 
-    WHERE DATE_FORMAT(Date, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') $userDepartmentCondition
-    ";
+    if ($userdepartment == 0) {
+        $sql = "SELECT SUM(number_people) AS total_respondents 
+                FROM sa_number_of_people 
+                WHERE YEAR(Date) = YEAR(CURDATE())";
+    } else {
+        $sql = "SELECT s.service_Access, SUM(number_people) AS total_respondents 
+                FROM sa_number_of_people np
+                INNER JOIN sa_services s ON np.service_id = s.ID 
+                WHERE YEAR(Date) = YEAR(CURDATE()) $userDepartmentCondition";
     }
-    
     
     // ส่งคำสั่ง SQL ไปยังฐานข้อมูล
     $stmt = $conn->query($sql);
