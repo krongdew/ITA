@@ -2,20 +2,6 @@
 session_start();
 include 'connect.php';
 
-// Key for encryption
-include 'config.php';
-$key = $config['encryption_key'];
-
-// Function to encrypt data
-function encryptData($data, $key)
-{
-    $cipher = "aes-256-cbc";
-    $ivlen = openssl_cipher_iv_length($cipher);
-    $iv = openssl_random_pseudo_bytes($ivlen);
-    $encrypted = openssl_encrypt($data, $cipher, $key, 0, $iv);
-    return base64_encode($encrypted . '::' . $iv);
-}
-
 // ตรวจสอบ CSRF Token
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -90,12 +76,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Password ถูกต้อง
-        // เข้ารหัสข้อมูล
-        $hashedNameSurname = encryptData($name_surname, $key);
-        $hashedEmail = encryptData($email, $key);
-        $hashedEmailOther = encryptData($email_other, $key);
-        $hashedTell = encryptData($tell, $key);
-        // จะใช้ฟังก์ชัน encryptData ที่ได้แสดงให้เห็นในตัวอย่างก่อนหน้านี้
         // เตรียมคำสั่ง SQL ด้วย prepared statement
         $sql = "INSERT INTO sa_users (Username, Password, name_surname, department, unit, position, position_c, email, email_other, tell, phone, image) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -107,14 +87,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // ผูกค่าพารามิเตอร์
             $stmt->bindParam(1, $Username);
             $stmt->bindParam(2, $hashedPassword);
-            $stmt->bindParam(3, $hashedNameSurname);
+            $stmt->bindParam(3, $name_surname);
             $stmt->bindParam(4, $department_id);
             $stmt->bindParam(5, $unit_id);
             $stmt->bindParam(6, $position);
             $stmt->bindParam(7, $position_c);
-            $stmt->bindParam(8, $hashedEmail);
-            $stmt->bindParam(9, $hashedEmailOther);
-            $stmt->bindParam(10, $hashedTell);
+            $stmt->bindParam(8, $email);
+            $stmt->bindParam(9, $email_other);
+            $stmt->bindParam(10, $tell);
             $stmt->bindParam(11, $phone);
             $stmt->bindParam(12, $uploadFile);
 

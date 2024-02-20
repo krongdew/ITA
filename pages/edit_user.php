@@ -125,9 +125,22 @@ $user = $_SESSION['user'];
 </style>
 <?php
 include '../action/connect.php';
+
+
+
 // ตรวจสอบว่ามีการส่งค่า ID มาหรือไม่
 if (isset($_GET['ID'])) {
     $userID = $_GET['ID'];
+    
+    // Key for encryption
+$key = 'MUSAITA#202402@krogkwaN';
+
+// Function to decrypt data
+function decryptData($data, $key) {
+    $cipher = "aes-256-cbc";
+    list($encrypted_data, $iv) = explode( '::' , base64_decode($data), 2);
+    return openssl_decrypt($encrypted_data, $cipher, $key, 0, $iv);
+}
 
     // ดึงข้อมูลผู้ใช้จากฐานข้อมูล
     try {
@@ -141,6 +154,11 @@ if (isset($_GET['ID'])) {
 
         // ตรวจสอบว่ามีข้อมูลหรือไม่
         if ($user) {
+            
+            $user['name_surname'] = decryptData($user['name_surname'], $key);
+            $user['email'] = decryptData($user['email'], $key);
+            $user['email_other'] = decryptData($user['email_other'], $key);
+            $user['tell'] = decryptData($user['tell'], $key);
 ?>
 
             <body class="g-sidenav-show   bg-gray-100">

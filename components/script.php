@@ -22,3 +22,7 @@
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/argon-dashboard.min.js?v=2.0.4"></script>
   <script src="https://kit.fontawesome.com/c3a1442973.js" crossorigin="anonymous"></script>
+
+  <script>
+    
+  </script>

@@ -325,7 +325,7 @@ $user = $_SESSION['user'];
 
       function chartcalling() {
         // ดึงข้อมูลผู้ใช้จาก PHP โดยใช้ AJAX
-        console.log(myChart)
+       
         // เช็คว่า myChart มีค่าอยู่หรือไม่ และไม่ใช่ null หรือ undefined
         if (myChart) {
           // ถ้ามี chart ให้ทำการทำลายเพื่อล้าง chart ทิ้ง
@@ -333,7 +333,7 @@ $user = $_SESSION['user'];
         }
 
         var selectedYear = $("#yearFilter").val();
-        console.log(selectedYear)
+     
 
         $.ajax({
           url: '../action/get_users_chart.php',
@@ -344,7 +344,7 @@ $user = $_SESSION['user'];
             selectedYear: selectedYear,
           },
           success: function(data) {
-            console.log(data)
+           
             var serviceLabels = [];
             var monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             var datasets = [];

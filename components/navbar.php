@@ -40,6 +40,7 @@ if($department == 0){
 }else{
 // ดึงข้อมูลจากตาราง sa_department
 try {
+  
 $stmt = $conn->prepare("SELECT ID, department_name FROM sa_department WHERE ID = :department");
 $stmt->bindParam(':department', $department);
 $stmt->execute();
