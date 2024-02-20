@@ -175,20 +175,40 @@ $user = $_SESSION['user'];
     </div>
     <div class="row mt-4">
       <div class="col-lg-7 mb-lg-0 mb-4">
-        <div class="card z-index-2 h-100">
-          <div class="card-header pb-0 pt-3 bg-transparent">
-            <h6 class="text-capitalize">ภาพรวมผู้ใช้งานของบริการ...</h6>
-            <p class="text-sm mb-0">
-              <i class="fa fa-arrow-up text-success"></i>
-              <span class="font-weight-bold">เลือกปีที่ต้องการดู</span> <select id="yearFilter">
-                <!-- ตัวเลือกจะถูกเติมโดย JavaScript -->
-              </select>
-            </p>
-          </div>
-          <div class="card-body p-3">
-            <div class="chart">
-              <canvas id="chart-line" class="chart-canvas" height="300"></canvas>
+        <div class="card ">
+          <div class="card-header pb-0 p-3">
+            <div class="d-flex justify-content-between">
+              <h6 class="mb-2">5 อันดับบริการที่มีผู้ใช้งานสูงสุดประจำเดือน</h6>
             </div>
+          </div>
+          <div class="table-responsive">
+            <table id="Top5" class="table align-items-center ">
+              <tbody>
+                <tr>
+                  <td class="w-30">
+                    <div class="d-flex px-2 py-1 align-items-center">
+                      <div>
+                        <img src="../assets/img/icons/flags/US.png" alt="Country flag">
+                      </div>
+                      <div class="ms-4">
+                        <p class="text-xs font-weight-bold mb-0">ชื่อบริการ:</p>
+                        <h6 class="text-sm mb-0">ชื่อบริการ</h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="text-center">
+                      <p class="text-xs font-weight-bold mb-0">จำนวนผู้ใช้:</p>
+                      <h6 class="text-sm mb-0">2500</h6>
+                    </div>
+                  </td>
+
+                </tr>
+
+
+
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -240,46 +260,27 @@ $user = $_SESSION['user'];
       </div>
     </div>
     <div class="row mt-4">
-      <div class="col-lg-7 mb-lg-0 mb-4">
-        <div class="card ">
-          <div class="card-header pb-0 p-3">
-            <div class="d-flex justify-content-between">
-              <h6 class="mb-2">5 อันดับบริการที่มีผู้ใช้งานสูงสุดประจำเดือน</h6>
-            </div>
+      <div class="col-lg-12 mb-lg-0 mb-4">
+        <div class="card z-index-2 h-100">
+          <div class="card-header pb-0 pt-3 bg-transparent">
+            <h6 class="text-capitalize">ภาพรวมผู้ใช้งานของบริการ...</h6>
+            <p class="text-sm mb-0">
+              <i class="fa fa-arrow-up text-success"></i>
+              <span class="font-weight-bold">เลือกปีที่ต้องการดู</span> <select id="yearFilter">
+                <!-- ตัวเลือกจะถูกเติมโดย JavaScript -->
+              </select>
+            </p>
           </div>
-          <div class="table-responsive">
-            <table id="Top5" class="table align-items-center ">
-              <tbody>
-                <tr>
-                  <td class="w-30">
-                    <div class="d-flex px-2 py-1 align-items-center">
-                      <div>
-                        <img src="../assets/img/icons/flags/US.png" alt="Country flag">
-                      </div>
-                      <div class="ms-4">
-                        <p class="text-xs font-weight-bold mb-0">ชื่อบริการ:</p>
-                        <h6 class="text-sm mb-0">ชื่อบริการ</h6>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="text-center">
-                      <p class="text-xs font-weight-bold mb-0">จำนวนผู้ใช้:</p>
-                      <h6 class="text-sm mb-0">2500</h6>
-                    </div>
-                  </td>
-
-                </tr>
-
-
-
-              </tbody>
-            </table>
+          <div class="card-body p-3">
+            <div class="chart">
+              <canvas id="chart-line" class="chart-canvas" height="300"></canvas>
+            </div>
           </div>
         </div>
       </div>
-
+      
     </div>
+    
     <?php include '../components/footer.php' ?>
   </div>
   </main>

@@ -255,6 +255,8 @@ if (isset($_GET['ID'])) {
                                                                             <select class="form-select" name="QuestionType">
                                                                                 <option value="ans">คำตอบสั้น</option>
                                                                                 <option value="five">ระดับความพึงพอใจ</option>
+                                                                                <option value="five">Choice รายชื่อบริการย่อย</option>
+                                                                                <option value="fuc">Choice รายชื่อคณะ</option>
                                                                             </select>
                                                                         </div>
                                                                     </div>
