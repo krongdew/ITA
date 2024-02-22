@@ -32,7 +32,7 @@ $user = $_SESSION['user'];
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script> -->
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- CSS Files -->
     <link id="pagestyle" href="../assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
@@ -171,8 +171,9 @@ $user = $_SESSION['user'];
 <?php
 include '../action/connect.php';
 // ตรวจสอบว่ามีการส่งค่า ID มาหรือไม่
-if (isset($_GET['ID'])) {
-    $serviceID = $_GET['ID'];
+if (isset($_POST['ID'])) {
+    $serviceID = $_POST['ID'];
+
 
     // ดึงข้อมูลผู้ใช้จากฐานข้อมูล
     try {

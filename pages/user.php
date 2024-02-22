@@ -34,7 +34,7 @@ $user = $_SESSION['user'];
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script> -->
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- CSS Files -->
     <link id="pagestyle" href="../assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
@@ -122,6 +122,11 @@ $user = $_SESSION['user'];
         font-size: small;
         color: #ff3a24;
     }
+    .buttonform{
+    padding: 0;
+    margin: 0;
+    display: inline;
+  }
 </style>
 
 <body class="g-sidenav-show   bg-gray-100">
@@ -678,7 +683,7 @@ $user = $_SESSION['user'];
                     columns: [{
                             data: null,
                             render: function(data, type, row) {
-                                return '<a href="../pages/edit_user.php?ID=' + data.ID + '"><button class="editBtn">Edit</button></a> <button class="saveBtn" style="display:none;">Save</button> <button class="delBtn">Delete</button>';
+                                return '<form class="buttonform" method="post" action="../pages/edit_user.php"><input type="hidden" name="ID" value="' + data.ID + '"><button type="submit" class="btn btn-link text-dark px-3 mb-0"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</button></form><button class="saveBtn" style="display:none;">Save</button> <button class="delBtn">Delete</button>';
                             },
                             orderable: false,
                         },

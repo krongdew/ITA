@@ -3,8 +3,9 @@ session_start();
 include 'connect.php';
 
 // Key for encryption
-include 'config.php';
-$key = $config['encryption_key'];
+// include 'config.php';
+// $key = $config['encryption_key'];
+$key = getenv('ENCRYPTION_KEY');
 
 // Function to encrypt data
 function encryptData($data, $key)

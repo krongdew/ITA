@@ -33,7 +33,7 @@ $user = $_SESSION['user'];
   <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script> -->
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="../assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
@@ -62,10 +62,7 @@ $user = $_SESSION['user'];
 
   <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-  <!-- <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script> -->
-  <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script> -->
-  <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.css"> -->
-  <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.js"></script> -->
+
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap">
   <script src="../pages/vfs_fonts.js"></script>
 </head>
@@ -167,6 +164,11 @@ $user = $_SESSION['user'];
 
   .slider.round:before {
     border-radius: 50%;
+  }
+  .buttonform{
+    padding: 0;
+    margin: 0;
+    display: inline;
   }
 </style>
 
@@ -630,7 +632,7 @@ $user = $_SESSION['user'];
               {
                 "data": null,
                 "render": function(data, type, row) {
-                  return '<a href="../pages/edit_service.php?ID=' + data.ID + '"><button class="btn btn-link text-dark px-3 mb-0"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</button></a>  <button class="delBtn"><i class="far fa-trash-alt me-2" aria-hidden="true"></i>Delete</button>';
+                  return '<form class="buttonform" method="post" action="../pages/edit_service.php"><input type="hidden" name="ID" value="' + data.ID + '"><button type="submit" class="btn btn-link text-dark px-3 mb-0"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</button></form><button class="delBtn"><i class="far fa-trash-alt me-2" aria-hidden="true"></i>Delete</button>';
                 },
                 "orderable": false
               }

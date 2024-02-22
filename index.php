@@ -1,26 +1,51 @@
-<? session_start(); ?>
+<?php
+header_remove("X-Powered-By");
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: SAMEORIGIN");
+header_remove("Server");
+
+?>
+<?php
+session_start();
+$current_time = time();
+$next_login_time = isset($_SESSION['next_login_time']) ? $_SESSION['next_login_time'] : array();
+if(isset($_SESSION['next_login_time'][$_SERVER['REMOTE_ADDR']])) {
+  $next_login_time = $_SESSION['next_login_time'][$_SERVER['REMOTE_ADDR']];
+  date_default_timezone_set('Asia/Bangkok'); // เลือกโซนเวลาของประเทศไทย
+  // echo "Next login time for IP address 172.25.0.1: " . date("Y-m-d H:i:s", $next_login_time);
+} else {
+  // echo "Next login time is not set for IP address 172.25.0.1";
+}
+
+include './action/csrf_token.php';
+// สร้าง CSRF token
+$csrf_token = generateCsrfToken();
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
   <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/Mahidol_U.png">
   <link rel="icon" type="image/png" href="./assets/img/Mahidol_U.png">
 
-  <title>
-    ระบบ ITA
-  </title>
+  <title>ระบบ ITA</title>
   <!--     Fonts and icons     -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" /> -->
   <!-- Nucleo Icons -->
   <link href="./assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="./assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- <script src="./assets/js/42d5adcbca.js" crossorigin="anonymous"></script> -->
   <link href="./assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="./assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+  
 </head>
 
 
@@ -41,38 +66,6 @@
                 <span class="navbar-toggler-bar bar3"></span>
               </span>
             </button>
-            <!-- <div class="collapse navbar-collapse" id="navigation">
-              <ul class="navbar-nav mx-auto">
-                <li class="nav-item">
-                  <a class="nav-link d-flex align-items-center me-2 active" aria-current="page" href="../pages/dashboard.html">
-                    <i class="fa fa-chart-pie opacity-6 text-dark me-1"></i>
-                    Dashboard
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link me-2" href="../pages/profile.html">
-                    <i class="fa fa-user opacity-6 text-dark me-1"></i>
-                    Profile
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link me-2" href="../pages/sign-up.html">
-                    <i class="fas fa-user-circle opacity-6 text-dark me-1"></i>
-                    Sign Up
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link me-2" href="../pages/sign-in.html">
-                    <i class="fas fa-key opacity-6 text-dark me-1"></i>
-                    Sign In
-                  </a>
-                </li>
-              </ul>
-              <ul class="navbar-nav d-lg-block d-none">
-                <li class="nav-item">
-                  <a href="https://www.creative-tim.com/product/argon-dashboard" class="btn btn-sm mb-0 me-1 btn-primary">Free Download</a>
-                </li>
-              </ul> -->
           </div>
       </div>
       </nav>
@@ -93,38 +86,30 @@
                 </div>
                 <div class="card-body">
                   <form role="form" method="POST" action="action/login.php">
+                  <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                     <div class="mb-3">
                       <input type="text" name="Username" class="form-control form-control-lg" placeholder="Username" aria-label="Username" required>
                     </div>
                     <div class="mb-3">
                       <input type="password" name="Password" class="form-control form-control-lg" placeholder="Password" aria-label="Password" required>
                     </div>
-                    <!-- <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" id="rememberMe">
-                      <label class="form-check-label" for="rememberMe">Remember me</label>
-                    </div> -->
-                    <?php if (isset($errorMessage)) : ?>
-                      <div style="color: red;"><?php echo $errorMessage; ?></div>
-                    <?php endif; ?>
+                    <div id="error" style="color: red;"><?php echo isset($_SESSION['error_message']) ? $_SESSION['error_message'] : ''; 
+                    unset($_SESSION['error_message']); ?></div>
+                    
+                    <div id="countdown" style="color: red;"></div>
+ 
                     <div class="text-center">
-                      <button type="submit" class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0">Sign in</button>
+                    <button id="signInButton" type="submit" class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0">Sign in</button>
+                                       
                     </div>
                   </form>
                 </div>
-                <!-- <div class="card-footer text-center pt-0 px-lg-2 px-1">
-                  <p class="mb-4 text-sm mx-auto">
-                    Don't have an account?
-                    <a href="javascript:;" class="text-primary text-gradient font-weight-bold">Sign up</a>
-                  </p>
-                </div> -->
               </div>
             </div>
             <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 end-0 text-center justify-content-center flex-column">
               <div class="position-relative bg-gradient-primary h-100 m-3 px-7  border-radius-lg d-flex flex-column justify-content-center overflow-hidden" style="background-image: url('assets/img/005-128.jpg');
           background-size: cover;">
                 <span class="mask bg-gradient-primary opacity-6"></span>
-                <!-- <h4 class="mt-5 text-white font-weight-bolder position-relative">"Attention is the new currency"</h4>
-                <p class="text-white position-relative">The more effortless the writing looks, the more effort the writer actually put into the process.</p> -->
               </div>
             </div>
           </div>
@@ -135,8 +120,47 @@
 
 
   <!--   Core JS Files   -->
-  
+
   <?php include './components/script.php'; ?>
+  <script>
+  // ฟังก์ชันสำหรับการนับถอยหลัง
+  var nextLoginTime = <?php echo $next_login_time; ?>;
+
+  var intervalId; // สร้างตัวแปรเก็บ id ของ setInterval
+
+// เรียกใช้ฟังก์ชัน countdown() ทุกๆ 1 วินาที
+intervalId = setInterval(countdown, 1000);
+
+// ฟังก์ชัน countdown
+function countdown() {
+    // คำนวณเวลาที่เหลือ
+    var now = Math.floor(Date.now() / 1000);  // เวลาปัจจุบันในรูปแบบ timestamp (เวลาในมิลลิวินาทีที่ผ่านไปตั้งแต่ Epoch)
+    var remainingTime = nextLoginTime - now;
+
+    // ตรวจสอบว่าเวลาที่เหลือมีค่ามากกว่าศูนย์หรือไม่
+    if (remainingTime > 0) {
+        // แปลงเวลาที่เหลือให้เป็นรูปแบบนาที
+        var minutes = Math.floor(remainingTime / 60); // หาจำนวนนาทีที่เหลือ
+        var seconds = remainingTime % 60; // หาจำนวนวินาทีที่เหลือ
+
+        // แสดงผลลัพธ์
+        console.log("เหลืออีก " + minutes + "." + Math.abs(seconds) + " นาที");
+        // แสดงผลลัพธ์ใน <div> ที่มี id="countdown"
+      document.getElementById("countdown").innerHTML = "เหลืออีก " + minutes + ":" + Math.abs(seconds) + " นาที";
+    } else {
+        console.log("เวลาการเข้าสู่ระบบของคุณหมดลงแล้ว");
+        // เมื่อเวลาหมดลงแล้ว
+      document.getElementById("countdown").innerHTML = "เวลาการเข้าสู่ระบบของคุณหมดลงแล้ว กรุณาเข้าสู่ระบบอีกครั้ง";
+        clearInterval(intervalId); // หยุดการเรียกใช้ setInterval เมื่อเวลาหมดลงแล้ว
+        return;
+    }
+}
+
+// เรียกใช้ฟังก์ชันนับถอยหลังเมื่อหน้าเว็บโหลด
+window.onload = function() {
+    countdown();
+};
+</script>
 </body>
 
 </html>

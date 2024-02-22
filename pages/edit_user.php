@@ -33,7 +33,7 @@ $user = $_SESSION['user'];
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script> -->
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- CSS Files -->
     <link id="pagestyle" href="../assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
@@ -46,28 +46,7 @@ $user = $_SESSION['user'];
 
     <!-- เพิ่ม link ไปยัง SweetAlert2 JavaScript ตรงนี้ -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <!-- datatables -->
-    <!-- <script src="https://code.jquery.com/jquery-3.7.0.js"></script> -->
-
-    <!-- <link rel="stylesheet" href="../assets/DataTables/datatables.css" />
-    <link rel="stylesheet" href="../assets/DataTables/Responsive-2.5.0/css/responsive.dataTables.css" />
-    <link rel="stylesheet" href="../assets/DataTables/Buttons-2.4.2/css/buttons.dataTables.css" />
-
-    <script src="../assets/DataTables/datatables.js"></script>
-    <script src="../assets/DataTables/Responsive-2.5.0/js/dataTables.responsive.js"></script>
-
-    <script src="../assets/DataTables/Buttons-2.4.2/js/dataTables.buttons.min.js"></script>
-    <script src="../assets/DataTables/Buttons-2.4.2/js/dataTables.buttons.js"></script>
-    <script src="../assets/DataTables/Buttons-2.4.2/js/buttons.html5.min.js"></script>
-
-    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script> -->
-    <!-- <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script> -->
-    <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script> -->
-    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.css"> -->
-    <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.js"></script> -->
-    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap">
-    <script src="../pages/vfs_fonts.js"></script> -->
+  
 </head>
 
 <style>
@@ -129,11 +108,11 @@ include '../action/connect.php';
 
 
 // ตรวจสอบว่ามีการส่งค่า ID มาหรือไม่
-if (isset($_GET['ID'])) {
-    $userID = $_GET['ID'];
+if (isset($_POST['ID'])) {
+    $userID = $_POST['ID'];
     
     // Key for encryption
-$key = 'MUSAITA#202402@krogkwaN';
+$key = getenv('ENCRYPTION_KEY');
 
 // Function to decrypt data
 function decryptData($data, $key) {
@@ -145,20 +124,21 @@ function decryptData($data, $key) {
     // ดึงข้อมูลผู้ใช้จากฐานข้อมูล
     try {
         // เตรียมคำสั่ง SQL
+     
         $stmt = $conn->prepare("SELECT * FROM sa_users WHERE ID = :userID");
         $stmt->bindParam(':userID', $userID);
         $stmt->execute();
 
         // ดึงข้อมูลผู้ใช้
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // ตรวจสอบว่ามีข้อมูลหรือไม่
-        if ($user) {
+        if ($row) {
             
-            $user['name_surname'] = decryptData($user['name_surname'], $key);
-            $user['email'] = decryptData($user['email'], $key);
-            $user['email_other'] = decryptData($user['email_other'], $key);
-            $user['tell'] = decryptData($user['tell'], $key);
+            $row['name_surname'] = decryptData($row['name_surname'], $key);
+            $row['email'] = decryptData($row['email'], $key);
+            $row['email_other'] = decryptData($row['email_other'], $key);
+            $row['tell'] = decryptData($row['tell'], $key);
 ?>
 
             <body class="g-sidenav-show   bg-gray-100">
@@ -222,8 +202,9 @@ function decryptData($data, $key) {
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label for="example-text-input" class="form-control-label">Username*: </label>
-                                                                        <input class="form-control" type="hidden" id="id" name="ID" value="<?php echo $user['ID']; ?>">
-                                                                        <input class="form-control" type="text" id="username" name="username" value="<?php echo $user['Username']; ?>" disabled>
+                                                                        <input class="form-control" type="hidden" id="id" name="ID" value="<?php echo $row['ID']; ?>">
+                                                                        <input class="form-control" type="text" id="username" name="username" value="<?php echo $row['Username']; ?>" disabled>
+                                                                        <input class="form-control" type="hidden" id="username" name="username" value="<?php echo $row['Username']; ?>" disabled>
                                                                         <div class="noticeerror" id="#usernameExistsError"></div>
                                                                     </div>
 
@@ -247,7 +228,7 @@ function decryptData($data, $key) {
                                                                             if (count($departments) > 0) {
                                                                                 echo '<select name="department_id"  id="department_id"  class="form-select" required onchange="getUnits(this.value)">';
                                                                                 foreach ($departments as $department) {
-                                                                                    $selected = ($user['department'] == $department['ID']) ? 'selected' : '';
+                                                                                    $selected = ($row['department'] == $department['ID']) ? 'selected' : '';
                                                                                     echo '<option value="' . $department['ID'] . '" ' . $selected . '>' . $department['department_name'] . '</option>';
                                                                                 }
                                                                                 echo '</select>';
@@ -264,20 +245,20 @@ function decryptData($data, $key) {
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label for="example-text-input" class="form-control-label">ตำแหน่ง*: </label>
-                                                                        <input class="form-control" type="text" name="position" value="<?php echo $user['position']; ?>" required>
+                                                                        <input class="form-control" type="text" name="position" value="<?php echo $row['position']; ?>" required>
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label for="example-text-input" class="form-control-label">email มหาวิทยาลัย*: </label>
-                                                                        <input class="form-control" type="email" name="email" value="<?php echo $user['email']; ?>" required>
+                                                                        <input class="form-control" type="email" name="email" value="<?php echo $row['email']; ?>" required>
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label for="example-text-input" class="form-control-label">เบอร์โต๊ะทำงาน*: </label>
-                                                                        <input class="form-control" type="text" name="phone" value="<?php echo $user['phone']; ?>" required>
+                                                                        <input class="form-control" type="text" name="phone" value="<?php echo $row['phone']; ?>" required>
                                                                     </div>
                                                                     <div class="form-group">
 
                                                                         <label for="example-text-input" class="form-control-label">รูปถ่าย*: </label><br>
-                                                                        <img src="<?php echo $user['image']; ?>" width="100px" height="100px"><br><br>
+                                                                        <img src="<?php echo $row['image']; ?>" width="100px" height="100px"><br><br>
                                                                         <input class="form-control" type="file" name="image" id="imageInput" accept="image/*">
                                                                         <div id="fileSizeError" style="color: red; font-size: small;"></div>
                                                                         <div id="fileTypeError" style="color: red; font-size: small;"></div>
@@ -289,12 +270,12 @@ function decryptData($data, $key) {
 
                                                                     <div class="form-group">
                                                                         <label for="example-text-input" class="form-control-label">ชื่อ-นามสกุล*: </label>
-                                                                        <input class="form-control" type="text" name="name_surname" value="<?php echo $user['name_surname']; ?>" required>
+                                                                        <input class="form-control" type="text" name="name_surname" value="<?php echo $row['name_surname']; ?>" required>
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label for="example-text-input" class="form-control-label">หน่วยปัจจุบันที่สังกัด:
                                                                             <?php
-                                                                            $unit = $user['unit'];
+                                                                            $unit = $row['unit'];
                                                                             // ดึงข้อมูลผู้ใช้จากฐานข้อมูล
                                                                             try {
                                                                                 // เตรียมคำสั่ง SQL
@@ -309,7 +290,7 @@ function decryptData($data, $key) {
                                                                                 if ($units) {
 
                                                                                     echo '<input class="form-control" type="text" name="unit_old" value="' . $units['unit_name'] . '" disabled>';
-                                                                                    echo '<input type="hidden" name="unit_old_id" value="' . $user['unit'] . '" >';
+                                                                                    echo '<input type="hidden" name="unit_old_id" value="' . $row['unit'] . '" >';
                                                                                 } else {
                                                                                     echo '<p>ไม่พบข้อมูลหน่วยที่สังกัด</p>';
                                                                                 }
@@ -325,15 +306,15 @@ function decryptData($data, $key) {
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label for="example-text-input" class="form-control-label">ตำแหน่งบริหาร (ถ้ามี): </label>
-                                                                        <input class="form-control" type="text" name="position_c" value="<?php echo $user['position_c']; ?>">
+                                                                        <input class="form-control" type="text" name="position_c" value="<?php echo $row['position_c']; ?>">
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label for="example-text-input" class="form-control-label">email อื่น ๆ: </label>
-                                                                        <input class="form-control" type="email" name="email_other" value="<?php echo $user['email_other']; ?>">
+                                                                        <input class="form-control" type="email" name="email_other" value="<?php echo $row['email_other']; ?>">
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label for="example-text-input" class="form-control-label">เบอร์โทรศัพท์: </label>
-                                                                        <input class="form-control" type="text" name="tell" value="<?php echo $user['tell']; ?>">
+                                                                        <input class="form-control" type="text" name="tell" value="<?php echo $row['tell']; ?>">
                                                                     </div>
                                                                 </div>
 

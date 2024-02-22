@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // header("Location: ../pages/edit_service.php?ID=" . $serviceID);
         // ทำการ redirect ไปที่หน้า pages/edit_user.php?ID=$ID
         echo "<script>alert('อัพเดทข้อมูลสำเร็จ')</script>";
-        echo '<script>window.location.href = "../pages/edit_service.php?ID=' . $serviceID . '";</script>';
+        echo '<script>window.location.href = "../pages/services.php";</script>';
         exit();
     } catch (PDOException $e) {
         // echo "Connection failed: " . $e->getMessage();

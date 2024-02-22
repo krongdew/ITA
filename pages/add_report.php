@@ -34,7 +34,7 @@ $user = $_SESSION['user'];
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script> -->
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- CSS Files -->
     <link id="pagestyle" href="../assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
@@ -306,40 +306,41 @@ if (isset($_GET['ID'])) {
                 </div>
                 <div style="padding: 20px;">
                     <div class="col-md-6">
-                    <label>เลือกดูจากเดือน</label>
-                    <input class="form-control" type="month" id="monthInput" name="monthInput">
+                        <label>เลือกดูจากเดือน</label>
+                        <input class="form-control" type="month" id="monthInput" name="monthInput">
                     </div>
                     <div class="row">
-                    <div class="col-md-4">
-                    <label>ค้นหาจากชื่อ</label>
-                    <input class="form-control" type="text" id="searchByName" name="searchByName" placeholder="ค้นหาจากชื่อ">
-                    </div>
-                    <div class="col-md-4">
-                    <label>ค้นหาจากวันที่</label>
-                    <input class="form-control" type="date" id="searchByDate" name="searchDate">
-                    </div>
+                        <div class="col-md-4">
+                            <label>ค้นหาจากชื่อ</label>
+                            <input class="form-control" type="text" id="searchByName" name="searchByName" placeholder="ค้นหาจากชื่อ">
+                        </div>
+                        <div class="col-md-4">
+                            <label>ค้นหาจากวันที่</label>
+                            <input class="form-control" type="date" id="searchByDate" name="searchDate">
+                        </div>
                     </div>
                     <br>
                     <div class="row">
-                    <span>หรือค้นหาจากช่วงวันที่ต้องการ</span>
-                    <div class="col-md-4">  
-                    <Label>ค้นหาจากวันที่เริ่มต้น</Label>
-                    <input class="form-control" type="date" id="start-date" name="startDate">
+                        <span>หรือค้นหาจากช่วงวันที่ต้องการ</span>
+                        <div class="col-md-4">
+                            <Label>ค้นหาจากวันที่เริ่มต้น</Label>
+                            <input class="form-control" type="date" id="start-date" name="startDate">
+                        </div>
+                        <div class="col-md-4">
+                            <label>วันที่สิ้นสุด</label>
+                            <input class="form-control" type="date" id="end-date" name="endDate">
+                        </div>
+
+                        <br>
                     </div>
-                    <div class="col-md-4">
-                    <label>วันที่สิ้นสุด</label>
-                    <input class="form-control" type="date" id="end-date" name="endDate">
-                    </div>
-                    
-                    <br>
-                    </div>
-                    
+
                     <br>
                     <table id="myTable" class="table align-items-center mb-0">
                         <thead>
                             <tr>
 
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ลำดับ</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">รหัส</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">วันที่บันทึก</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">บริการย่อย</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">จำนวนผู้ใช้</th>
@@ -487,6 +488,7 @@ if (isset($_GET['ID'])) {
 
                                         var rowData = [
                                             index + 1,
+                                            row.ID,
                                             row.Date,
                                             row.subservice_name,
                                             row.number_people,
@@ -547,7 +549,7 @@ if (isset($_GET['ID'])) {
 
 
 
-                    });
+                    
 
 
                     // JavaScript เพิ่มเติม
@@ -563,51 +565,36 @@ if (isset($_GET['ID'])) {
                     document.getElementById('searchByDate').addEventListener('click', resetMonthInput);
 
 
-
-
-
-
-
-
-
-
                     // Edit button click event
                     $('#myTable').on('click', '.editBtn', function() {
                         var row = $(this).closest('tr');
-                        row.find('td.editable').prop('contenteditable', true);
-                        row.find('.editBtn').hide();
-                        row.find('.saveBtn').show();
+                        var number_people = row.find('td:nth-child(5)').text();
 
-                        // Set focus to the first editable field (department_name)
-                        row.find('.editable:eq(0)').focus();
+                        var editField = '<input type="text" class="editField" value="' + number_people + '">';
+                        row.find('td:nth-child(5)').html(editField); // Replace the table cell content with an input field
+                        row.find('.editBtn').hide(); // Hide the edit button
+                        row.find('.saveBtn').show(); // Show the save button
 
-                        // Add border styling to the editable fields
-                        row.find('.editable').css({
-                            'border': '2px solid #337ab7', // Change the color as needed
-                            'border-radius': '5px', // Optional: Add border-radius for rounded corners
-                        });
+
                     });
 
                     // Save button click event
                     $('#myTable').on('click', '.saveBtn', function() {
                         var row = $(this).closest('tr');
-                        var data = $('#myTable').DataTable().row($(this).parents('tr')).data();
-                        row.find('td.editable').prop('contenteditable', false);
-                        row.find('.editBtn').show();
-                        row.find('.saveBtn').hide();
+                        var editedValue = row.find('.editField').val(); // Get the edited value from the input field
+
+                        row.find('td:nth-child(5)').text(editedValue); // Update the table cell content with the edited value
+                        row.find('.editBtn').show(); // Show the edit button
+                        row.find('.saveBtn').hide(); // Hide the save button
 
                         // Save data to your server using Ajax if needed
-                        // Get the edited data
-                        var editedData = {
-                            number_people: row.find('.editable:eq(0)').text(),
 
-                            // Add other fields as needed
-                        };
 
                         // Get the department ID
-                        var number_peopleID = data.ID
-
-
+                        editedData = parseInt(editedValue);
+                      
+                        var number_peopleID = row.find('td:nth-child(2)').text();
+                       
                         // Save data to your server using Ajax
                         $.ajax({
                             url: '../action/update_numberpeople.php',
@@ -621,7 +608,7 @@ if (isset($_GET['ID'])) {
                                 if (response.status === 'success') {
                                     // Reload DataTable to display updated data
 
-                                    $('#myTable').DataTable().ajax.reload();
+                                    loadData();
 
                                 } else {
                                     Swal.fire(
@@ -637,8 +624,8 @@ if (isset($_GET['ID'])) {
 
                     // Event listener สำหรับปุ่ม Delete
                     $('#myTable').on('click', '.delBtn', function() {
-                        var data = $('#myTable').DataTable().row($(this).parents('tr')).data();
-                        var number_peopleID = data.ID;
+                        var row = $(this).closest('tr');
+                        var number_peopleID = row.find('td:nth-child(2)').text();
 
                         // แสดง SweetAlert 2 สำหรับยืนยันการลบ
                         Swal.fire({
@@ -669,7 +656,7 @@ if (isset($_GET['ID'])) {
                                             ).then((result) => {
                                                 if (result.isConfirmed) {
                                                     // ทำการ reload ข้อมูล
-                                                    $('#myTable').DataTable().ajax.reload();
+                                                    loadData();
                                                 }
                                             });
                                         } else {
@@ -685,6 +672,8 @@ if (isset($_GET['ID'])) {
                         });
                     });
                     // });
+                    
+                });
                 </script>
 
 

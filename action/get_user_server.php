@@ -2,8 +2,9 @@
 include 'connect.php';
 
 // Key for encryption
-include 'config.php';
-$key = $config['encryption_key'];
+// include 'config.php';
+// $key = $config['encryption_key'];
+$key = getenv('ENCRYPTION_KEY');
 
 // Function to decrypt data
 function decryptData($data, $key) {
