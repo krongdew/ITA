@@ -225,7 +225,10 @@ $user = $_SESSION['user'];
             <div class="card-header pb-0">
               <div class="d-flex align-items-center">
                 <p class="mb-0">Profile</p>
-                <button class="btn btn-primary btn-sm ms-auto">แจ้งแก้ไขข้อมูล</button>
+                
+                <form class="ms-auto" action="./change_password.php" method="post">
+                <input class="form-control" type="hidden" id="id" name="ID" value="<?php echo $user['ID']; ?>">
+                <button type="submit" class="btn btn-primary btn-sm ms-auto" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service">เปลี่ยน password</button>
               </div>
             </div>
             <div class="card-body">

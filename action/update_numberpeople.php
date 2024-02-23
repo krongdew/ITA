@@ -1,6 +1,6 @@
 <?php
 include 'connect.php';
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if(isset($_POST['number_peopleID']) && isset($_POST['editedData'])) {
     $number_peopleID = $_POST['number_peopleID'];
     $editedData = $_POST['editedData'];
@@ -18,5 +18,6 @@ if(isset($_POST['number_peopleID']) && isset($_POST['editedData'])) {
     }
 } else {
     echo json_encode(['status' => 'errorID']);
+}
 }
 ?>

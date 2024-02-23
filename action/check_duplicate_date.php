@@ -2,6 +2,7 @@
 // Include the database connection file
 include 'connect.php';
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Get service_id and date from the AJAX request
 $service_id = $_POST['service_id'];
 $date = $_POST['date'];
@@ -25,5 +26,6 @@ try {
     }
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
+}
 }
 ?>

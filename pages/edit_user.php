@@ -103,10 +103,6 @@ $user = $_SESSION['user'];
     }
 </style>
 <?php
-include '../action/connect.php';
-
-
-
 // ตรวจสอบว่ามีการส่งค่า ID มาหรือไม่
 if (isset($_POST['ID'])) {
     $userID = $_POST['ID'];
@@ -167,21 +163,11 @@ function decryptData($data, $key) {
                                 <div class="card-header pb-0">
                                     <h6>แก้ไขผู้ใช้งานระบบ</h6>
                                     <br>
-                                    <button class="badge badge-sm bg-gradient-success" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">เปลี่ยน password</button>
-                                    <!-- <div class="form-group">
-                                                                            <label for="example-text-input" class="form-control-label">แก้ไข Password*: </label>
-                                                                            <input id="ipassword" class="form-control" type="password" name="Password" placeholder="Password" required>
-                                                                            <input type="checkbox" onclick="showpassword()">
-                                                                            <span style="font-size: xx-small;">Show Password</span>
-                                                                            <br>
-                                                                            <span class="noticeerror" id="passwordComplexityError"></span>
-                                                                        </div>
-                                                                        <div class="form-group" style="padding-top: 25px;">
-                                                                            <label for="example-text-input" class="form-control-label">Confirm Password*: </label>
-                                                                            <input class="form-control" type="password" id="ConfirmPassword" name="ConfirmPassword" placeholder="Password" required>
-                                                                            <span class="noticeerror" id="passwordMatchError"></span>
-                                                                        </div> -->
-
+                                    <form action="./change_password.php" method="post">
+                                    <input class="form-control" type="hidden" id="id" name="ID" value="<?php echo $row['ID']; ?>">
+                                    <button type="submit" class="badge badge-sm bg-gradient-success" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service">เปลี่ยน password</button>
+                                    </form>
+                                    
                                 </div>
 
                                 <div class="card-body px-0 pt-0 pb-2">
@@ -353,33 +339,7 @@ function decryptData($data, $key) {
                 <?php include '../components/setting.php'; ?>
                 <!--   Core JS Files   -->
                 <?php include '../components/script.php'; ?>
-                <script>
-                    function showpassword() {
-                        var x = document.getElementById("ipassword");
-                        if (x.type === "password") {
-                            x.type = "text";
-                        } else {
-                            x.type = "password";
-                        }
-                    }
-
-
-                    function toggleAddForm() {
-                        var addFormDiv = document.getElementById('passwordform');
-
-                        // Check if the form is already visible
-                        if (addFormDiv.style.display === 'none' || addFormDiv.style.display === '') {
-                            // Show the form
-                            addFormDiv.style.display = 'block';
-                        } else {
-                            // Hide the form
-                            addFormDiv.style.display = 'none';
-                        }
-
-                        // Return false to prevent the default behavior of the button
-                        return false;
-                    }
-                </script>
+                
                 <script>
                     $(document).ready(function() {
                         // Fetch product options based on selected company and plant

@@ -18,7 +18,8 @@ $custom_page_names = array(
   'department.php' => 'จัดการหน่วยงาน',
   'unit.php' => 'จัดการหน่วย',
   'edit_user.php' => 'แก้ไขผู้ใช้งานระบบ',
-  'display_reportyear.php' => 'รายงานตามปีงบประมาณ'
+  'display_reportyear.php' => 'รายงานตามปีงบประมาณ',
+  'change_password.php' => 'เปลี่ยน password'
 );
 
 // ตรวจสอบว่า $current_page มีอยู่ใน $custom_page_names หรือไม่
