@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
   // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-  header("Location: http://localhost:8080/index.php");
+  header("Location:/index.php");
 }
 
 // ดึงข้อมูลผู้ใช้จาก session
@@ -176,7 +176,7 @@ $user = $_SESSION['user'];
   }
   ?>
   <?php include '../components/navbar.php' ?>
-  <? include '../action/connect.php';
+  <?php include '../action/connect.php';
   ?>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -231,6 +231,8 @@ $user = $_SESSION['user'];
                   <th>ก.ค.</th>
                   <th>ส.ค.</th>
                   <th>ก.ย.</th>
+                  <th>ยอดรวม</th>
+                  <th>หน่วยนับ</th>
                 </tr>
               </thead>
               <tbody>
@@ -312,7 +314,7 @@ $user = $_SESSION['user'];
             departmentData = response;
           });
 
-          var userdepartment = <? echo $user['department']; ?>
+          var userdepartment = <?php echo $user['department']; ?>
 
           table = $('#myTable').DataTable({
             responsive: true,
@@ -368,6 +370,21 @@ $user = $_SESSION['user'];
               },
               {
                 data: 'Sep'
+              },
+              {
+                data: null,
+                render: function(data, type, row) {
+                  var total = 0;
+                  for (var key in data) {
+                    if (data.hasOwnProperty(key) && key !== 'service_id' && key !== 'service_Access' && key !== 'service_ea') {
+                      total += parseFloat(data[key]); // รวมค่าที่เก็บใน total
+                    }
+                  }
+                  return total;
+                }
+              },
+              {
+                data: 'service_ea'
               },
 
             ],
@@ -444,7 +461,7 @@ $user = $_SESSION['user'];
                     var departmentName = departmentInfo ? departmentInfo.department_name : '';
 
                     $(rows).eq(i).before(
-                      '<tr class="group" style="background-color:#dbdbd9; color:black;"><td colspan="14"><b>' + departmentName + '</b></td></tr>'
+                      '<tr class="group" style="background-color:#dbdbd9; color:black;"><td colspan="15"><b>' + departmentName + '</b></td></tr>'
                     );
                     lastServiceAccess = serviceAccess;
                   }

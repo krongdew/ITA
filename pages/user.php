@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['UserType'] !== "admin") {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
+    header("Location: /index.php");
     
 }
 
@@ -236,7 +236,7 @@ $user = $_SESSION['user'];
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="example-text-input" class="form-control-label">รูปถ่าย*: </label>
-                                                                <input class="form-control" type="file" name="image" id="imageInput" accept="image/*" required>
+                                                                <input class="form-control" type="text" name="image" id="imageInput" value="../upload/">
                                                                 <div id="fileSizeError" style="color: red; font-size: small;"></div>
                                                                 <div id="fileTypeError" style="color: red; font-size: small;"></div>
                                                             </div>
@@ -266,6 +266,10 @@ $user = $_SESSION['user'];
                                                             <div class="form-group">
                                                                 <label for="example-text-input" class="form-control-label">ตำแหน่งบริหาร (ถ้ามี): </label>
                                                                 <input class="form-control" type="text" name="position_c" placeholder="ตำแหน่งบริหาร">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="example-text-input" class="form-control-label">Role: </label>
+                                                                <input class="form-control" type="text" name="UserType" placeholder="user / admin">
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="example-text-input" class="form-control-label">email อื่น ๆ: </label>
@@ -308,6 +312,8 @@ $user = $_SESSION['user'];
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ตำแหน่งบริหาร</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">อีเมลอื่น ๆ </th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">เบอร์โทรส่วนตัว</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Role</th>
+                                
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">created_at</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">updated_at</th>
 
@@ -745,6 +751,9 @@ $user = $_SESSION['user'];
                         },
                         {
                             data: "tell",
+                        },
+                        {
+                            data: "UserType",
                         },
                         {
                             data: "created_at",

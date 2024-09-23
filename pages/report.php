@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
   // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-  header("Location: http://localhost:8080/index.php");
+  header("Location: /index.php");
 }
 
 // ดึงข้อมูลผู้ใช้จาก session
@@ -179,7 +179,7 @@ $user = $_SESSION['user'];
   }
   ?>
   <?php include '../components/navbar.php' ?>
-  <? include '../action/connect.php';
+  <?php include '../action/connect.php';
 
   // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
   // $sql = "SELECT * FROM sa_department";
@@ -517,7 +517,7 @@ $user = $_SESSION['user'];
     $(document).ready(function() {
       var table;
       var globalDepartmentData; // ประกาศตัวแปรที่ถูกส่งเข้าไปนอกฟังก์ชัน success
-      var userdepartment = <? echo $user['department']; ?>
+      var userdepartment = <?php echo $user['department']; ?>
       // ดึงข้อมูลจาก sa_department
       $.ajax({
         url: "../action/get_department_data.php", // แก้ไข URL ให้ตรงกับที่เก็บโค้ด PHP ที่ดึงข้อมูล sa_department

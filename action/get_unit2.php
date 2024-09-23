@@ -31,7 +31,7 @@ if (isset($_POST['department_id'])) {
         // ตรวจสอบว่ามีข้อมูลหรือไม่
         if (count($units) > 0) {
             // สร้างตัวเลือกของ unit
-            // $options = '<option value="">ชื่อหน่วย</option>';
+           
             foreach ($units as $unit) {
                 $options .= '<option value="' . $unit['ID'] . '">' . $unit['unit_name'] . '</option>';
             }
@@ -39,7 +39,7 @@ if (isset($_POST['department_id'])) {
             // ส่งผลลัพธ์กลับไปให้ JavaScript
             echo $options;
         } else {
-            echo '<option value="">ไม่พบหน่วย</option>';
+            echo '<option value="0">ไม่พบหน่วย</option>';
         }
     } catch (PDOException $e) {
         echo "Connection failed: " . $e->getMessage();

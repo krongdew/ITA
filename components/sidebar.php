@@ -37,7 +37,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
   <div class="sidenav-header">
     <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-    <a class="navbar-brand m-0" href="">
+    <a class="navbar-brand m-0" href="../pages/dashboard.php">
       <img src="../assets/img/Mahidol_U.png" class="navbar-brand-img h-100" alt="main_logo">
       <span class="ms-1 font-weight-bold">SA Service</span>
     </a>
@@ -91,7 +91,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <li class="nav-item">
         <a class="nav-link <?php echo ($current_page == 'display_report.php') ? 'active' : ''; ?>" href="../pages/display_report.php?active_menu=display_report">
                 <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="fa-solid fa-calendar-days text-info opacity-10" style="font-size: smaller;"></i>
+                    <i class="fa-regular fa-calendar text-warning opacity-10" style="font-size: smaller;"></i>
                    
                 </div>
                 <span class="nav-link-text ms-1" style="font-size: smaller;">รายงานตามปีปฏิทิน</span>
@@ -106,8 +106,57 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <span class="nav-link-text ms-1" style="font-size: smaller;">รายงานตามปีงบประมาณ</span>
             </a>
         </li>
+        <li class="nav-item">
+        <a class="nav-link <?php echo ($current_page == 'display_reportedu.php') ? 'active' : ''; ?>" href="../pages/display_reportedu.php?active_menu=display_report">
+                <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="fa-regular fa-calendar text-warning opacity-10" style="font-size: smaller;"></i>
+                    
+                </div>
+                <span class="nav-link-text ms-1" style="font-size: smaller;">รายงานตามปีการศึกษา</span>
+            </a>
+        </li>
           <!-- เพิ่มเมนูย่อยเพิ่มเติมตามต้องการ -->
         </ul>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" onclick="toggleSubMenu2()">
+        <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="fa-solid fa-scroll text-primary text-sm opacity-10"></i>
+        </div>
+        <span class="nav-link-text ms-1">รายงานผลบริการย่อย</span>
+    </a>
+    <ul id="subMenu2" class="sub-menu">
+        <li class="nav-item">
+            <a class="nav-link <?php echo ($current_page == 'subservice_report.php') ? 'active' : ''; ?>" href="../pages/subservice_report.php?active_menu=display_report">
+                <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="fa-solid fa-calendar-days text-info opacity-10" style="font-size: smaller;"></i>
+                   
+                </div>
+                <span class="nav-link-text ms-1" style="font-size: smaller;">รายงานตามปีปฏิทิน</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <?php echo ($current_page == 'subservice_reportyear.php') ? 'active' : ''; ?>" href="../pages/subservice_reportyear.php?active_menu=display_report">
+                <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="fa-solid fa-calendar-days text-info opacity-10" style="font-size: smaller;"></i>
+                   
+                </div>
+                <span class="nav-link-text ms-1" style="font-size: smaller;">รายงานตามปีงบประมาณ</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <?php echo ($current_page == 'subservice_reportedu.php') ? 'active' : ''; ?>" href="../pages/subservice_reportedu.php?active_menu=display_report">
+                <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <i class="fa-solid fa-calendar-days text-info opacity-10" style="font-size: smaller;"></i>
+                   
+                </div>
+                <span class="nav-link-text ms-1" style="font-size: smaller;">รายงานตามปีการศึกษา</span>
+            </a>
+        </li>
+       
+          <!-- เพิ่มเมนูย่อยเพิ่มเติมตามต้องการ -->
+        </ul>
+        
         </li>
       <!-- <li class="nav-item">
           <a class="nav-link " href="./pages/rtl.html">
@@ -173,6 +222,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <script>
   function toggleSubMenu() {
     var subMenu = document.getElementById('subMenu');
+    if (subMenu.style.display === 'none' || subMenu.style.display === '') {
+        subMenu.style.display = 'block';
+    } else {
+        subMenu.style.display = 'none';
+    }
+}
+
+function toggleSubMenu2() {
+    var subMenu = document.getElementById('subMenu2');
     if (subMenu.style.display === 'none' || subMenu.style.display === '') {
         subMenu.style.display = 'block';
     } else {

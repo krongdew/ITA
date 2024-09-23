@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
   // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-  header("Location: http://localhost:8080/index.php");
+  header("Location:/index.php");
 }
 
 // ดึงข้อมูลผู้ใช้จาก session
@@ -176,7 +176,7 @@ $user = $_SESSION['user'];
   }
   ?>
   <?php include '../components/navbar.php' ?>
-  <? include '../action/connect.php';
+  <?php include '../action/connect.php';
   ?>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -219,6 +219,7 @@ $user = $_SESSION['user'];
                 <tr>
                   <th>งาน</th>
                   <th>ชื่อบริการ</th>
+
                   <th>ม.ค.</th>
                   <th>ก.พ.</th>
                   <th>มี.ค.</th>
@@ -231,6 +232,8 @@ $user = $_SESSION['user'];
                   <th>ต.ค.</th>
                   <th>พ.ย.</th>
                   <th>ธ.ค.</th>
+                  <th>ยอดรวม</th>
+                  <th>หน่วยนับ</th>
                 </tr>
               </thead>
               <tbody>
@@ -314,7 +317,7 @@ $user = $_SESSION['user'];
             departmentData = response;
           });
 
-          var userdepartment = <? echo $user['department']; ?>
+          var userdepartment = <?php echo $user['department']; ?>
 
           table = $('#myTable').DataTable({
             responsive: true,
@@ -325,7 +328,8 @@ $user = $_SESSION['user'];
                 render: function(data) {
                   // หาข้อมูล department_name จาก departmentData แล้วแสดง
                   var departmentInfo = departmentData.find(function(dep) {
-                    return dep.ID === data;
+
+                    return dep.ID.toString() === data;
                   });
                   return departmentInfo ? departmentInfo.department_name : '';
 
@@ -369,7 +373,26 @@ $user = $_SESSION['user'];
               },
               {
                 data: 'Dec'
-              }
+              },
+
+              {
+                data: null,
+                render: function(data, type, row) {
+                  var total = 0;
+                  for (var key in data) {
+                    if (data.hasOwnProperty(key) && key !== 'service_id' && key !== 'service_Access' && key !== 'service_ea') {
+                      total += parseFloat(data[key]); // รวมค่าที่เก็บใน total
+                    }
+                  }
+                  return total;
+                }
+              },
+              {
+                data: 'service_ea'
+              },
+
+
+
             ],
             buttons: [
               'copyHtml5',
@@ -445,7 +468,7 @@ $user = $_SESSION['user'];
                     var departmentName = departmentInfo ? departmentInfo.department_name : '';
 
                     $(rows).eq(i).before(
-                      '<tr class="group" style="background-color:#dbdbd9; color:black;"><td colspan="14"><b>' + departmentName + '</b></td></tr>'
+                      '<tr class="group" style="background-color:#dbdbd9; color:black;"><td colspan="15"><a href="./subservice_report.php"><b>' + departmentName + '</b></a></td></tr>'
                     );
                     lastServiceAccess = serviceAccess;
                   }

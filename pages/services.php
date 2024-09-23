@@ -3,9 +3,8 @@ session_start();
 include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
-    // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
-    
+  // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
+  header("Location:/index.php");
 }
 
 // ดึงข้อมูลผู้ใช้จาก session
@@ -165,7 +164,8 @@ $user = $_SESSION['user'];
   .slider.round:before {
     border-radius: 50%;
   }
-  .buttonform{
+
+  .buttonform {
     padding: 0;
     margin: 0;
     display: inline;
@@ -174,15 +174,15 @@ $user = $_SESSION['user'];
 
 <body class="g-sidenav-show   bg-gray-100">
   <?php  // เรียกใช้ Sidebar ตาม UserType
-    if ($user['UserType'] === "admin") {
-   
-        include '../components/sidebar_admin.php';
-    } else {
-        include '../components/sidebar.php';
-    }
-    ?> 
+  if ($user['UserType'] === "admin") {
+
+    include '../components/sidebar_admin.php';
+  } else {
+    include '../components/sidebar.php';
+  }
+  ?>
   <?php include '../components/navbar.php' ?>
-  <? include '../action/connect.php';
+  <?php include '../action/connect.php';
 
   // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
   // $sql = "SELECT * FROM sa_department";
@@ -228,15 +228,29 @@ $user = $_SESSION['user'];
                                 <input class="form-control" type="text" name="service_detail" placeholder="รายละเอียดของบริการ">
                               </div>
                               <div class="form-group">
+                                <label for="example-text-input" class="form-control-label">หน่วยนับ : </label>
+                                <input class="form-control" type="text" name="service_ea" placeholder="หน่วยนับ">
+                              </div>
+                              <div class="form-group">
                                 <label for="example-text-input" class="form-control-label">สังกัดงาน : </label>
                                 <?php
                                 try {
-                                 
+                                  $service_Access = $user['department'];
                                   // คำสั่ง SQL สำหรับดึงข้อมูล department
                                   $sql = "SELECT ID, department_name FROM sa_department";
 
+                                  // เพิ่มเงื่อนไข WHERE เช็คค่า ID ว่าไม่เป็น 0
+                                  if ($service_Access != 0) {
+                                    $sql .= " WHERE ID = :service_Access";
+                                  }
+
                                   // ใช้ Prepared Statement
                                   $stmt = $conn->prepare($sql);
+
+                                  // ถ้า $service_Access ไม่เป็น 0 ให้ bind parameter
+                                  if ($service_Access != 0) {
+                                    $stmt->bindParam(':service_Access', $service_Access);
+                                  }
 
                                   // ประมวลผลคำสั่ง SQL
                                   $stmt->execute();
@@ -246,11 +260,9 @@ $user = $_SESSION['user'];
 
                                   // ตรวจสอบว่ามีข้อมูลหรือไม่
                                   if (count($departments) > 0) {
-
                                     echo '<select name="department_id" id="department_id" class="form-select" required>';
                                     echo '<option value="" disabled selected>กรุณาเลือกงาน</option>';
                                     foreach ($departments as $department) {
-
                                       echo '<option value="' . $department['ID'] . '">' . $department['department_name'] . '</option>';
                                     }
                                     echo '</select>';
@@ -261,6 +273,8 @@ $user = $_SESSION['user'];
                                   echo "Connection failed: " . $e->getMessage();
                                 }
                                 ?>
+                                <div id="departmentWarning" style="color: red; font-size: smaller;"></div>
+
                               </div>
 
                             </div>
@@ -288,6 +302,7 @@ $user = $_SESSION['user'];
                                       <tr>
                                         <th style="font-size: smaller; padding:10px">ชื่อบริการย่อย</th>
                                         <th style="font-size: smaller; padding:10px">รายละเอียดของบริการย่อย</th>
+                                        <th style="font-size: smaller; padding:10px">หน่วยนับ</th>
                                         <th style="font-size: smaller; padding:10px">หน่วยงานที่ดูแล</th>
                                         <th style="font-size: smaller; padding:10px">สถานะของบริการย่อย</th>
                                       </tr>
@@ -317,6 +332,7 @@ $user = $_SESSION['user'];
                             </div>
                           </div>
                           <br>
+                          <input class="form-control" type="hidden" name="created_by" placeholder="ชื่อผู้สร้าง" value="<?php echo $user['name_surname']; ?>">
                           <button type="submit" class="btn btn-primary btn-sm ms-auto">เพิ่มบริการ</button>
                           <button type="reset" class="btn btn-primary btn-sm ms-auto" onclick="toggleAddForm()">Cancel</button>
                         </div>
@@ -334,13 +350,14 @@ $user = $_SESSION['user'];
           <table id="myTable" class="table align-items-center mb-0">
             <thead>
               <tr>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No.</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ชื่อบริการ</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">รายละเอียดบริการ</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">สถานะของบริการ</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">เจ้าของ</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">วันที่อัพเดท</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
               </tr>
             </thead>
@@ -378,7 +395,7 @@ $user = $_SESSION['user'];
   </script>
   <script>
     $(document).ready(function() {
-      // Fetch product options based on selected company and plant
+      // Fetch product options based on selected 
       $('#department_id').on('change', function() {
         var selectedDepartment = $(this).val();
         $.ajax({
@@ -390,6 +407,8 @@ $user = $_SESSION['user'];
           success: function(data) {
             $('#subservice_Access').html(data);
 
+
+
           }
         });
       });
@@ -398,6 +417,20 @@ $user = $_SESSION['user'];
 
     // ฟังก์ชันเพิ่มแถวในตาราง
     function addRow() {
+
+      var departmentId = document.getElementById('department_id').value;
+
+      // Check if department_id is selected
+      if (departmentId === "") {
+        var warningDiv = document.getElementById('departmentWarning');
+        warningDiv.innerText = "กรุณาเลือกงานก่อนที่จะเพิ่มบริการย่อย";
+        return;
+      }
+
+      // Clear the warning message if department_id is selected
+      document.getElementById('departmentWarning').innerText = "";
+
+
       // ดึงตารางมา
       var table = document.getElementById("subservices");
 
@@ -410,21 +443,22 @@ $user = $_SESSION['user'];
       var cell3 = newRow.insertCell(2);
       var cell4 = newRow.insertCell(3);
       var cell5 = newRow.insertCell(4);
+      var cell6 = newRow.insertCell(5);
 
       // เพิ่ม HTML ลงในเซลล์
       cell1.innerHTML = '<input class="form-control" type="text" name="subservice_name[]" placeholder="ชื่อบริการย่อย" required>';
       cell2.innerHTML = '<input class="form-control" type="text" name="subservice_detail[]" placeholder="รายละเอียดของบริการย่อย">';
+      cell3.innerHTML = '<input class="form-control" type="text" name="sub_ea[]" placeholder="หน่วยนับ">';
 
       // สร้าง select ใน cell3 และให้มี id เฉพาะ
-      // cell3.innerHTML = '<select class="form-select" name="subservice_Access[]" onchange="getUnits2(this)""></select>';
-      // Create a new select element for the product
+      
       var departmentSelect = document.createElement("select");
       departmentSelect.className = "form-select";
       departmentSelect.name = "subservice_Access[]";
       // departmentSelect.onchange = function() {
       //   getUnits2(this)
       // };
-      cell3.appendChild(departmentSelect);
+      cell4.appendChild(departmentSelect);
 
       // Fetch product options based on selected company and plant
       var selecteddepartment = $('#department_id').val();
@@ -443,10 +477,10 @@ $user = $_SESSION['user'];
       });
 
       // สร้าง select ใน cell4
-      cell4.innerHTML = '<select class="form-select" name="subservice_status[]"><option value="1">เปิด</option><option value="0">ปิด</option></select>';
+      cell5.innerHTML = '<select class="form-select" name="subservice_status[]"><option value="1">เปิด</option><option value="0">ปิด</option></select>';
 
       // สร้างปุ่มลบใน cell5
-      cell5.innerHTML = '<button type="button" class="delBtn" onclick="deleteRow(this)" style="font-size: small;" >ลบแถว</button>';
+      cell6.innerHTML = '<button type="button" class="delBtn" onclick="deleteRow(this)" style="font-size: small;" >ลบแถว</button>';
 
     }
 
@@ -520,8 +554,8 @@ $user = $_SESSION['user'];
     $(document).ready(function() {
       var table;
       var globalDepartmentData; // ประกาศตัวแปรที่ถูกส่งเข้าไปนอกฟังก์ชัน success
-      var userdepartment = <? echo $user['department']; ?>
-      
+      var userdepartment = <?php echo $user['department']; ?>
+
       // ดึงข้อมูลจาก sa_department
       $.ajax({
         url: "../action/get_department_data.php", // แก้ไข URL ให้ตรงกับที่เก็บโค้ด PHP ที่ดึงข้อมูล sa_department
@@ -530,6 +564,7 @@ $user = $_SESSION['user'];
         success: function(response) {
           globalDepartmentData = response; // ใช้ตัวแปรที่ถูกส่งเข้าไปนอกฟังก์ชัน success
           var table = $('#myTable').DataTable({
+        
             responsive: true,
             dom: 'lBfrtip',
             columns: [{
@@ -568,7 +603,7 @@ $user = $_SESSION['user'];
               {
                 extend: 'pdfHtml5',
                 exportOptions: {
-                  columns: [0, 1, 2, 3,4,5] // ระบุคอลัมน์ที่จะ export (index 0, 1, 2)
+                  columns: [0, 1, 2, 3, 4, 5] // ระบุคอลัมน์ที่จะ export (index 0, 1, 2)
                 },
                 customize: function(doc) {
                   doc.defaultStyle.font = 'thaiFont'; // หรือใช้ชื่อ font ที่คุณต้องการ
@@ -587,11 +622,19 @@ $user = $_SESSION['user'];
               "url": "../action/get_services_server.php",
               "type": "POST",
               "dataType": "json",
-              data:{
+              data: {
                 userdepartment: userdepartment
               }
             },
-            "columns": [{
+            "columns": [
+              {
+                "data": null,
+                "render": function(data, type, row) {
+                  return '<form class="buttonform" method="post" action="../pages/edit_service.php"><input type="hidden" name="ID" value="' + data.ID + '"><button type="submit" class="btn btn-link text-dark px-3 mb-0"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</button></form><button class="delBtn"><i class="far fa-trash-alt me-2" aria-hidden="true"></i>Delete</button>';
+                },
+                "orderable": false
+              },
+              {
                 "data": null,
                 "render": function(data, type, row, meta) {
                   return meta.settings._iDisplayStart + meta.row + 1;
@@ -599,11 +642,31 @@ $user = $_SESSION['user'];
               },
               {
                 "data": "service_name",
-                "className": "editable"
+                "className": "editable",
+                "render": function(data, type, row, meta) {
+                  // ตรวจสอบว่าข้อมูลเป็นชนิดแสดงหรือไม่
+                  if (type === 'display' && data != null && data.length > 30) {
+                    // หากยาวเกิน 30 ตัวอักษร ให้ตัดข้อความและเพิ่ม ...
+                    return data.substr(0, 30) + '...';
+                  } else {
+                    // ไม่ต้องการแสดงตัวย่อ
+                    return data;
+                  }
+                }
               },
               {
                 "data": "service_detail",
-                "className": "editable"
+                "className": "editable",
+                "render": function(data, type, row, meta) {
+                  // ตรวจสอบว่าข้อมูลเป็นชนิดแสดงหรือไม่
+                  if (type === 'display' && data != null && data.length > 30) {
+                    // หากยาวเกิน 30 ตัวอักษร ให้ตัดข้อความและเพิ่ม ...
+                    return data.substr(0, 10) + '...';
+                  } else {
+                    // ไม่ต้องการแสดงตัวย่อ
+                    return data;
+                  }
+                }
               },
               {
                 "data": "service_status",
@@ -620,7 +683,7 @@ $user = $_SESSION['user'];
                 render: function(data) {
                   // ให้หาข้อมูล department_name จาก globalDepartmentData แล้วแสดง
                   var departmentData = globalDepartmentData.find(function(dep) {
-                    return dep.ID === data;
+                    return dep.ID.toString() === data;
                   });
                   return departmentData ? departmentData.department_name : '';
                 },
@@ -629,25 +692,19 @@ $user = $_SESSION['user'];
                 "data": "updated_at",
               },
 
-              {
-                "data": null,
-                "render": function(data, type, row) {
-                  return '<form class="buttonform" method="post" action="../pages/edit_service.php"><input type="hidden" name="ID" value="' + data.ID + '"><button type="submit" class="btn btn-link text-dark px-3 mb-0"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</button></form><button class="delBtn"><i class="far fa-trash-alt me-2" aria-hidden="true"></i>Delete</button>';
-                },
-                "orderable": false
-              }
-              ,
+              
 
               {
                 "data": null,
                 "render": function(data, type, row) {
+                  
                   return '<a href="../pages/add_assessment.php?ID=' + data.ID + '"><button class="badge badge-sm bg-gradient-warning" style="border: 0px;" onMouseOver="this.style.color=red" onMouseOut="this.style.color=white" >สร้างแบบประเมิน</button> </a>';
                 },
                 "orderable": false
               }
             ],
             order: [
-              [0, 'asc'],
+              [7, 'desc'],
             ],
           });
         },
@@ -656,56 +713,59 @@ $user = $_SESSION['user'];
         }
       });
 
-      
-      // Event listener สำหรับปุ่ม Delete
-      $('#myTable').on('click', '.delBtn', function() {
-        var data = $('#myTable').DataTable().row($(this).parents('tr')).data();
-        var servicesID = data.ID;
 
-        // แสดง SweetAlert 2 สำหรับยืนยันการลบ
-        Swal.fire({
-          title: 'คุณต้องการลบข้อมูลหรือไม่?',
-          text: "หากคุณลบที่นี่ จะลบทั้งบริการหลักและบริการย่อยทั้งหมด",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'ใช่, ลบ!'
-        }).then((result) => {
-          if (result.isConfirmed) {
+      // Event listener สำหรับปุ่ม Delete
+$('#myTable').on('click', '.delBtn', function() {
+    var table = $('#myTable').DataTable();
+    var rowIndex = table.row($(this).parents('tr')).index();
+    var servicesID = table.cell(rowIndex, 0).data(); // ดึงข้อมูลในเซลล์ที่ 0 (หรือคอลัมน์แรก) ของแถวที่ถูกเลือก
+
+    console.log('servicesID to delete:', servicesID); // แสดงผลค่า servicesID ใน console
+
+    // แสดง SweetAlert 2 สำหรับยืนยันการลบ
+    Swal.fire({
+        title: 'คุณต้องการลบข้อมูลหรือไม่?',
+        text: "หากคุณลบที่นี่ จะลบทั้งบริการหลักและบริการย่อยทั้งหมด",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'ใช่, ลบ!'
+    }).then((result) => {
+        if (result.isConfirmed) {
             // ทำการลบในฐานข้อมูลด้วย Ajax
             $.ajax({
-              url: '../action/delete_services.php',
-              type: 'POST',
-              data: {
-                servicesID: servicesID
-              },
-              dataType: 'json', // รับข้อมูลเป็น JSON
-              success: function(response) {
-                if (response.status === 'success') {
-
-                  Swal.fire(
-                    'ลบข้อมูลเรียบร้อย!',
-                    'ข้อมูลถูกลบออกจากระบบแล้ว.',
-                    'success'
-                  ).then((result) => {
-                    if (result.isConfirmed) {
-                      // ทำการ reload ข้อมูล
-                      $('#myTable').DataTable().ajax.reload();
+                url: '../action/delete_services.php',
+                type: 'POST',
+                data: {
+                    servicesID: servicesID.ID // ดึงเฉพาะ ID ของบริการ
+                },
+                dataType: 'json', // รับข้อมูลเป็น JSON
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire(
+                            'ลบข้อมูลเรียบร้อย!',
+                            'ข้อมูลถูกลบออกจากระบบแล้ว.',
+                            'success'
+                        ).then((result) => {
+                            if (result.isConfirmed) {
+                                // ทำการ reload ข้อมูล
+                                $('#myTable').DataTable().ajax.reload();
+                            }
+                        });
+                    } else {
+                        Swal.fire(
+                            'เกิดข้อผิดพลาด!',
+                            'เกิดข้อผิดพลาดในการลบข้อมูล.',
+                            'error'
+                        );
                     }
-                  });
-                } else {
-                  Swal.fire(
-                    'เกิดข้อผิดพลาด!',
-                    'เกิดข้อผิดพลาดในการลบข้อมูล.',
-                    'error'
-                  );
                 }
-              }
             });
-          }
-        });
-      });
+        }
+    });
+});
+
     });
   </script>
 

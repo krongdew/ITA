@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
+    header("Location: /index.php");
 }
 
 // ดึงข้อมูลผู้ใช้จาก session
@@ -61,7 +61,7 @@ $user = $_SESSION['user'];
 
     <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-   
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap">
     <script src="../pages/vfs_fonts.js"></script>
 </head>
@@ -176,7 +176,7 @@ $user = $_SESSION['user'];
     }
     ?>
     <?php include '../components/navbar.php' ?>
-    <? include '../action/connect.php';
+    <?php include '../action/connect.php';
 
     // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
     // $sql = "SELECT * FROM sa_department";
@@ -213,7 +213,7 @@ $user = $_SESSION['user'];
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">การอนุมัติ</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">วันที่สร้าง</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">URL</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">QR-CODE</th>
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -282,7 +282,7 @@ $user = $_SESSION['user'];
             });
 
             function initializeDataTable() {
-                var userdepartment = <? echo $user['department']; ?>
+                var userdepartment = <?php echo $user['department']; ?>
 
                 var table = $('#myTable').DataTable({
                     responsive: true,
@@ -362,7 +362,11 @@ $user = $_SESSION['user'];
                     "columns": [{
                             "data": null,
                             "render": function(data, type, row) {
-                                return '<a href="../pages/add_question.php?ID=' + data.AssessmentID + '"><button class="saveBtn">สร้างข้อคำถาม</button></a> <a href="../pages/edit_service.php?ID=' + data.AssessmentID + '"><button class="editBtn">Edit</button></a>  <button class="delBtn">Delete</button>';
+                                if (row.AssessmentStatus !== "รอสร้างข้อคำถาม") {
+                                    return '<a href="../pages/edit_question.php?ID=' + data.AssessmentID + '"><button class="editBtn">โหลด Qr-code</button></a> <button class="delBtn">Delete</button><form class="buttonform" method="post" action="./Evaluation.php"><input type="hidden" name="AssessmentID" value="' + data.AssessmentID + '"><button type="submit" class="btn btn-link text-dark px-3 mb-0"><i class="fa-regular fa-circle-check" text-dark me-2" aria-hidden="true"></i>  อนุมัติแบบประเมิน</button></form><a href="../pages/display_respondent.php?AssessmentID=' + data.AssessmentID + '"><button class="btn btn-link text-dark px-3 mb-0"><i class="fa-solid fa-file text-dark me-2" aria-hidden="true"></i>ผลการประเมิน</button></a>';
+                                } else {
+                                    return '<a href="../pages/add_question.php?ID=' + data.AssessmentID + '"><button class="saveBtn">สร้างข้อคำถาม</button></a> <button class="delBtn">Delete</button>';
+                                }
                             },
                             "orderable": false
                         },
@@ -417,15 +421,17 @@ $user = $_SESSION['user'];
                         },
 
                         {
-                            "data": "AssessmentURL",
+                            data : "AssessmentURL",
+                            render: function (data, type, row, meta) {
+                            return '<a href="' + data + '">' + data + '</a>';
+                            }
+                           
                         },
 
-                        {
-                            "data": "QrCodeImageName",
-                        },
+                       
                     ],
                     order: [
-                        [0, 'asc'],
+                        [8, 'desc'],
                     ],
                 })
             }

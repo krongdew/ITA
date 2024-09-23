@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['UserType'] !== "admin") {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
+    header("Location: /index.php");
     
 }
 
@@ -116,7 +116,7 @@ $user = $_SESSION['user'];
    include '../components/sidebar.php';
 }  ?>
   <?php include '../components/navbar.php' ?>
-  <? include '../action/connect.php';
+  <?php include '../action/connect.php';
 
   // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
   // $sql = "SELECT * FROM sa_department";

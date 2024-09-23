@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
+    header("Location: /index.php");
 }
 
 // ดึงข้อมูลผู้ใช้จาก session

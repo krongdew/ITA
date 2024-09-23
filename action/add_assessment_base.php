@@ -1,10 +1,9 @@
 <?php
 session_start();
 include 'connect.php';
-    
+
 // ตรวจสอบ CSRF Token
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
 
     // รับข้อมูลจากฟอร์ม
     $AssessmentName = $_POST['AssessmentName'];
@@ -13,9 +12,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ApprovalStatus = "ยังไม่อนุมัติ";
     $AssessmentStatus = "รอสร้างข้อคำถาม";
 
+    // ตรวจสอบว่ามีการเลือกบริการย่อยหรือไม่
+    if (!empty($_POST['selected_subservice'])) {
+        $subservice_id = $_POST['selected_subservice'];
+    } else {
+        $subservice_id = NULL; // ใช้ NULL แทนค่าที่ไม่ถูกต้อง
+    }
+
     // เตรียมคำสั่ง SQL ด้วย prepared statement
-    $sql = "INSERT INTO sa_assessment (AssessmentName, CreatorUserID, ApprovalStatus, service_id , AssessmentStatus) 
-            VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO sa_assessment (AssessmentName, CreatorUserID, ApprovalStatus, service_id, subservice_id, AssessmentStatus) 
+            VALUES (?, ?, ?, ?, ?, ?)";
 
     try {
         // สร้าง prepared statement
@@ -26,7 +32,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(2, $CreatorUserID);
         $stmt->bindParam(3, $ApprovalStatus);
         $stmt->bindParam(4, $service_id);
-        $stmt->bindParam(5, $AssessmentStatus);
+        $stmt->bindParam(5, $subservice_id, PDO::PARAM_INT); // กำหนดเป็น INT
+        $stmt->bindParam(6, $AssessmentStatus);
 
         // ทำการเพิ่มข้อมูล
         $stmt->execute();

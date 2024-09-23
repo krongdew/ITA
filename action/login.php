@@ -34,16 +34,36 @@ function decryptData($data, $key)
 }
 
 // Function to write log
+// function writeLog($message)
+// {
+//   $logFile = "./log/login_logs.txt";
+//   $timestamp = date('Y-m-d H:i:s');
+//   $ip_address = $_SERVER['REMOTE_ADDR'];
+//   // แปลงเวลาปัจจุบันเป็นเวลาของประเทศไทย
+//   $thai_timestamp = gmdate('Y-m-d H:i:s', strtotime('+7 hours')); // +7 หมายถึงอัตราที่กำหนดในการแปลงไทย
+//   $logMessage = "$thai_timestamp - IP: $ip_address - $message\n";
+//   file_put_contents($logFile, $logMessage, FILE_APPEND | LOCK_EX);
+// }
+// Function to write log into database
 function writeLog($message)
 {
-  $logFile = "./log/login_logs.txt";
-  $timestamp = date('Y-m-d H:i:s');
-  $ip_address = $_SERVER['REMOTE_ADDR'];
-  // แปลงเวลาปัจจุบันเป็นเวลาของประเทศไทย
-  $thai_timestamp = gmdate('Y-m-d H:i:s', strtotime('+7 hours')); // +7 หมายถึงอัตราที่กำหนดในการแปลงไทย
-  $logMessage = "$thai_timestamp - IP: $ip_address - $message\n";
-  file_put_contents($logFile, $logMessage, FILE_APPEND | LOCK_EX);
+    include '../action/connect.php'; // เรียกใช้งานไฟล์เชื่อมต่อฐานข้อมูล
+
+    // แปลงเวลาปัจจุบันเป็นเวลาของประเทศไทย
+    $thai_timestamp = gmdate('Y-m-d H:i:s', strtotime('+7 hours')); // +7 หมายถึงอัตราที่กำหนดในการแปลงไทย
+
+    // Prepare SQL statement
+    $stmt = $conn->prepare("INSERT INTO login_logs (timestamp, ip_address, message) VALUES (:timestamp, :ip_address, :message)");
+
+    // Bind parameters
+    $stmt->bindParam(':timestamp', $thai_timestamp);
+    $stmt->bindParam(':ip_address', $_SERVER['REMOTE_ADDR']);
+    $stmt->bindParam(':message', $message);
+
+    // Execute the statement
+    $stmt->execute();
 }
+
 
 // Check if there is any previous login attempts for this IP
 if (!isset($_SESSION['login_attempts']) || !is_array($_SESSION['login_attempts'])) {

@@ -14,7 +14,7 @@ function decryptData($data, $key) {
 }
 
 // Columns
-$columns = array('image', 'Username', 'name_surname','department','unit','phone','email','position','position_c','email_other','tell','created_at','updated_at');
+$columns = array('image', 'Username', 'name_surname','department','unit','phone','email','position','position_c','email_other','tell','UserType','created_at','updated_at');
 
 // ตรวจสอบและกำหนดค่า start และ length
 $start = isset($_POST['start']) ? intval($_POST['start']) : 0;

@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $position_c = $_POST['position_c'];
         $email_other = $_POST['email_other'];
         $tell = $_POST['tell'];
+        $UserType = $_POST['UserType'];
 
         // ดึงข้อมูลผู้ใช้จากฐานข้อมูล
         try {
@@ -52,42 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         } else {
             // ตรวจสอบการอัปโหลดไฟล์รูปภาพ
-            if ($_FILES['image']['error'] == 0) {
-                // ตรวจสอบประเภทของไฟล์ภาพ
-                $allowed_types = array('jpg', 'jpeg', 'png', 'gif');
-                $file_info = pathinfo($_FILES['image']['name']);
-                $file_extension = strtolower($file_info['extension']);
-            
-                if (!in_array($file_extension, $allowed_types)) {
-                    // ประเภทของไฟล์ไม่ถูกต้อง
-                    echo "<script>alert('รูปแบบไฟล์ไม่ถูกต้อง!')</script>";
-                    echo '<script>window.location.href = "../pages/user.php";</script>';
-                    exit;
-                }
-            
-                // ตรวจสอบขนาดของไฟล์
-                $max_file_size = 5 * 1024 * 1024; // 5MB
-                if ($_FILES['image']['size'] > $max_file_size) {
-                    // ไฟล์มีขนาดใหญ่เกินไป
-                    echo "<script>alert('ขนาดของไฟล์ใหญ่เกินไป!')</script>";
-                    echo '<script>window.location.href = "../pages/user.php";</script>';
-                    exit;
-                }
-            
-                // ตรวจสอบว่ามีไฟล์ภาพที่มีชื่อซ้ำกันหรือไม่
-                $target_directory = '../upload/';
-                $target_file = $target_directory . basename($_FILES['image']['name']);
-                $file_name = $_FILES['image']['name'];
-                $file_count = 1;
-            
-                while (file_exists($target_file)) {
-                    $file_name = $file_info['filename'] . '_' . $file_count . '.' . $file_info['extension'];
-                    $target_file = $target_directory . $file_name;
-                    $file_count++;
-                }
-            
-                $image = $target_file;
-                move_uploaded_file($_FILES['image']['tmp_name'], $image);
+            if ($_POST['image']) {
+                $image = $_POST['image'];
             } else {
                 // ใช้รูปภาพเดิมถ้าไม่ได้อัปโหลดใหม่
                 $image = $user['image'];
@@ -115,7 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 name_surname = :name_surname,
                 position_c = :position_c,
                 email_other = :email_other,
-                tell = :tell
+                tell = :tell,
+                UserType = :UserType
                 WHERE ID = :ID";
 
             // ใช้ Prepared Statement
@@ -132,10 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':position_c', $position_c);
             $stmt->bindParam(':email_other', $hashedEmailOther);
             $stmt->bindParam(':tell', $hashedTell);
+            $stmt->bindParam(':UserType', $UserType);
             $stmt->bindParam(':ID', $ID);
 
             // ทำการอัปเดตข้อมูล
             if ($stmt->execute()) {
+                
+                
                
                 // ทำการ redirect ไปที่หน้า pages/edit_user.php?ID=$ID
                 echo "<script>alert('อัพเดทข้อมูลสำเร็จ')</script>";

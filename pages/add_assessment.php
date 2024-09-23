@@ -4,14 +4,11 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
+    header("Location: /index.php");
 }
 
 // ดึงข้อมูลผู้ใช้จาก session
 $user = $_SESSION['user'];
-
-// ดึงข้อมูลผู้ใช้จาก session
-
 
 ?>
 <!DOCTYPE html>
@@ -170,6 +167,8 @@ include '../action/connect.php';
 if (isset($_GET['ID'])) {
     $serviceID = $_GET['ID'];
 
+
+
     // ดึงข้อมูลผู้ใช้จากฐานข้อมูล
     try {
         // เตรียมคำสั่ง SQL
@@ -193,12 +192,8 @@ if (isset($_GET['ID'])) {
                     include '../components/sidebar.php';
                 } ?>
                 <?php include '../components/navbar.php' ?>
-                <? include '../action/connect.php';
+                <?php include '../action/connect.php';
 
-                // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
-                // $sql = "SELECT * FROM sa_department";
-                // $stmt = $conn->prepare($sql);
-                // $stmt->execute();
                 ?>
 
                 <div class="container-fluid py-4">
@@ -209,8 +204,6 @@ if (isset($_GET['ID'])) {
                                 <div class="card-header pb-0">
                                     <h6>สร้างแบบประเมินความพึงพอใจ</h6>
                                     <br>
-                                    <!-- <button class="badge badge-sm bg-gradient-success" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">เพิ่ม Services</button>
-                        <button class="badge badge-sm bg-gradient-warning" style="border: 0px;" onMouseOver="this.style.color='red'" onMouseOut="this.style.color='white'" id="button-service" onclick="toggleAddForm()">สร้างแบบประเมินความพึงพอใจ</button> -->
                                 </div>
 
                                 <div class="card-body px-0 pt-0 pb-2">
@@ -281,7 +274,7 @@ if (isset($_GET['ID'])) {
                                                                         <div class="form-group">
                                                                             <label for="example-text-input" class="form-control-label">สถานะของบริการ :</label><br>
                                                                             <label>ปิด</label>
-                                                                            <?
+                                                                            <?php
                                                                             echo "<label class='switch'>";
                                                                             echo "<input type='checkbox' name='service_status[]'";
 
@@ -299,133 +292,131 @@ if (isset($_GET['ID'])) {
                                                                     </div>
 
                                                                     <div class="col-md-12">
+                                                                        <!-- Toggle Button -->
+                                                                        <button type="button" id="toggleSubserviceButton" class="btn btn-secondary btn-sm ms-auto">สร้างแบบประเมินแยกตามบริการย่อย</button>
                                                                         <div class="form-group">
                                                                             <span for="example-text-input" class="form-control-label"><b>ส่วนของบริการย่อย :</b></span><br>
                                                                             <!-- สร้าง input สำหรับรับค่าบริการย่อย -->
                                                                             <div class="form-group">
-                                                                                <table id="subservices">
-                                                                                    <thead>
-                                                                                        <tr>
-                                                                                            <th style="font-size: smaller; padding:10px">ชื่อบริการย่อย</th>
-                                                                                            <th style="font-size: smaller; padding:10px">รายละเอียดของบริการย่อย</th>
-                                                                                            <th style="font-size: smaller; padding:10px">หน่วยงานที่ดูแล</th>
-                                                                                            <th style="font-size: smaller; padding:10px">สถานะของบริการย่อย</th>
+                                                                                <div id="subserviceTable">
+                                                                                    <table id="subservices">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th style="font-size: smaller; padding:10px">ชื่อบริการย่อย</th>
+                                                                                                <th style="font-size: smaller; padding:10px">รายละเอียดของบริการย่อย</th>
+                                                                                                <th style="font-size: smaller; padding:10px">หน่วยงานที่ดูแล</th>
+                                                                                                <th style="font-size: smaller; padding:10px">สถานะของบริการย่อย</th>
 
-                                                                                        </tr>
-                                                                                    </thead>
-                                                                                    <tbody id="mytable">
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody id="mytable">
 
-                                                                                        <?php
-
-
-                                                                                        try {
-                                                                                            // คำสั่ง SQL สำหรับดึงข้อมูลบริการย่อย
-                                                                                            $sql = "SELECT * FROM sa_subservices WHERE service_id = :serviceID";
-
-                                                                                            // ใช้ Prepared Statement
-                                                                                            $stmt = $conn->prepare($sql);
-                                                                                            // Bind parameter
-                                                                                            $stmt->bindParam(':serviceID', $serviceID, PDO::PARAM_INT);
-
-                                                                                            // ประมวลผลคำสั่ง SQL
-                                                                                            $stmt->execute();
-
-                                                                                            // ดึงผลลัพธ์
-                                                                                            $subservices = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                                                                                            // ตรวจสอบว่ามีข้อมูลหรือไม่
-                                                                                            if (count($subservices) > 0) {
-                                                                                                // สร้างตัวเลือกของ unit
-                                                                                                // $options = '<option value="">ชื่อหน่วย</option>';
-                                                                                                foreach ($subservices as $subservice) {
-                                                                                                    echo "<tr>";
-                                                                                                    echo "<td style='font-size: smaller;'> <input class='form-control' type='hidden' name='subservice_ID[]' placeholder='ชื่อบริการย่อย' value='" . $subservice['ID'] . "'><input class='form-control' type='text' name='subservice_name[]' placeholder='ชื่อบริการย่อย' value='" . $subservice['subservice_name'] . "' disabled></td>";
-                                                                                                    echo "<td style='font-size: smaller;'> <input class='form-control' type='text' name='subservice_detail[]' placeholder='รายละเอียดบริการย่อย' value='" . $subservice['subservice_detail'] . "' disabled></td>";
-                                                                                                    // ทำการตรวจสอบว่ามีข้อมูลหน่วยหรือไม่
-                                                                                                    echo "<td style='font-size: smaller;'>";
-                                                                                                    $departmentId = $service['service_Access'];
-                                                                                                    try {
-                                                                                                        // คำสั่ง SQL สำหรับดึงข้อมูล department
-                                                                                                        $sql = "SELECT ID, unit_name FROM sa_unit WHERE department_id = :departmentId";
-
-                                                                                                        // ใช้ Prepared Statement
-                                                                                                        $stmt = $conn->prepare($sql);
-                                                                                                        // Bind parameter
-                                                                                                        $stmt->bindParam(':departmentId', $departmentId, PDO::PARAM_INT);
-
-                                                                                                        // ประมวลผลคำสั่ง SQL
-                                                                                                        $stmt->execute();
+                                                                                            <?php
 
 
-                                                                                                        // ดึงผลลัพธ์
-                                                                                                        $units = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                                                            try {
+                                                                                                // คำสั่ง SQL สำหรับดึงข้อมูลบริการย่อย
+                                                                                                $sql = "SELECT * FROM sa_subservices WHERE service_id = :serviceID";
+
+                                                                                                // ใช้ Prepared Statement
+                                                                                                $stmt = $conn->prepare($sql);
+                                                                                                // Bind parameter
+                                                                                                $stmt->bindParam(':serviceID', $serviceID, PDO::PARAM_INT);
+
+                                                                                                // ประมวลผลคำสั่ง SQL
+                                                                                                $stmt->execute();
+
+                                                                                                // ดึงผลลัพธ์
+                                                                                                $subservices = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                                                                                // ตรวจสอบว่ามีข้อมูลหรือไม่
+                                                                                                if (count($subservices) > 0) {
+                                                                                                    // สร้างตัวเลือกของ unit
+                                                                                                    // $options = '<option value="">ชื่อหน่วย</option>';
+                                                                                                    foreach ($subservices as $subservice) {
+                                                                                                        echo "<tr>";
+                                                                                                        echo "<td style='font-size: smaller;'> <input class='form-control' type='hidden' name='subservice_ID[]' placeholder='ชื่อบริการย่อย' value='" . $subservice['ID'] . "'><input class='form-control' type='text' name='subservice_name[]' placeholder='ชื่อบริการย่อย' value='" . $subservice['subservice_name'] . "' disabled></td>";
+                                                                                                        echo "<td style='font-size: smaller;'> <input class='form-control' type='text' name='subservice_detail[]' placeholder='รายละเอียดบริการย่อย' value='" . $subservice['subservice_detail'] . "' disabled></td>";
+                                                                                                        // ทำการตรวจสอบว่ามีข้อมูลหน่วยหรือไม่
+                                                                                                        echo "<td style='font-size: smaller;'>";
+                                                                                                        $departmentId = $service['service_Access'];
+                                                                                                        try {
+                                                                                                            // คำสั่ง SQL สำหรับดึงข้อมูล department
+                                                                                                            $sql = "SELECT ID, unit_name FROM sa_unit WHERE department_id = :departmentId";
+
+                                                                                                            // ใช้ Prepared Statement
+                                                                                                            $stmt = $conn->prepare($sql);
+                                                                                                            // Bind parameter
+                                                                                                            $stmt->bindParam(':departmentId', $departmentId, PDO::PARAM_INT);
+
+                                                                                                            // ประมวลผลคำสั่ง SQL
+                                                                                                            $stmt->execute();
 
 
-                                                                                                        if (count($units) > 0) {
-                                                                                                            echo '<select name="subservice_Access[]"  id="subservice_Access"  class="form-select" required disabled>';
-                                                                                                            foreach ($units as $unit) {
-                                                                                                                $selected = ($subservice['subservice_Access'] == $unit['ID']) ? 'selected' : '';
-                                                                                                                echo '<option value="' . $unit['ID'] . '" ' . $selected . '>' . $unit['unit_name'] . '</option>';
+                                                                                                            // ดึงผลลัพธ์
+                                                                                                            $units = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+                                                                                                            if (count($units) > 0) {
+                                                                                                                echo '<select name="subservice_Access[]"  id="subservice_Access"  class="form-select" required disabled>';
+                                                                                                                foreach ($units as $unit) {
+                                                                                                                    $selected = ($subservice['subservice_Access'] == $unit['ID']) ? 'selected' : '';
+                                                                                                                    echo '<option value="' . $unit['ID'] . '" ' . $selected . '>' . $unit['unit_name'] . '</option>';
+                                                                                                                }
+                                                                                                            } else {
+                                                                                                                echo '<option value="" disabled selected>No unit found</option>';
                                                                                                             }
-                                                                                                        } else {
-                                                                                                            echo '<option value="" disabled selected>No unit found</option>';
+                                                                                                        } catch (PDOException $e) {
+                                                                                                            echo "Connection failed: " . $e->getMessage();
                                                                                                         }
-                                                                                                    } catch (PDOException $e) {
-                                                                                                        echo "Connection failed: " . $e->getMessage();
+
+                                                                                                        echo "</select>";
+                                                                                                        echo "</td>";
+
+                                                                                                        echo "<td style='font-size: smaller;'>";
+                                                                                                        echo "<select name='subservice_status[]' id='subservice_status' class='form-select' required disabled>";
+
+                                                                                                        // เตรียมคำสั่งเพื่อกำหนด option ที่เลือกตาม $subservice['subservice_status']
+                                                                                                        $selectedOpen = ($subservice['subservice_status'] == 1) ? 'selected' : '';
+                                                                                                        $selectedClose = ($subservice['subservice_status'] == 0) ? 'selected' : '';
+
+                                                                                                        // แสดง option ที่เลือก
+                                                                                                        echo "<option value='1' $selectedOpen>เปิด</option>";
+                                                                                                        echo "<option value='0' $selectedClose>ปิด</option>";
+
+                                                                                                       
+                                                                                                        echo "</select></td>";
+
+
+                                                                                                        // หากต้องการแสดงข้อมูลหน่วยงานที่ดูแลและสถานะบริการย่อยต่อไปนี้
+                                                                                                        echo "</tr>";
                                                                                                     }
-
-                                                                                                    echo "</select>";
-                                                                                                    echo "</td>";
-
-                                                                                                    echo "<td style='font-size: smaller;'>";
-                                                                                                    echo "<select name='subservice_status[]' id='subservice_status' class='form-select' required disabled>";
-
-                                                                                                    // เตรียมคำสั่งเพื่อกำหนด option ที่เลือกตาม $subservice['subservice_status']
-                                                                                                    $selectedOpen = ($subservice['subservice_status'] == 1) ? 'selected' : '';
-                                                                                                    $selectedClose = ($subservice['subservice_status'] == 0) ? 'selected' : '';
-
-                                                                                                    // แสดง option ที่เลือก
-                                                                                                    echo "<option value='1' $selectedOpen>เปิด</option>";
-                                                                                                    echo "<option value='0' $selectedClose>ปิด</option>";
-
-                                                                                                    // // แสดง option ที่ไม่ได้เลือก
-                                                                                                    // if ($subservice['subservice_status'] == 1) {
-                                                                                                    //     echo "<option value='0'>ปิด</option>";
-                                                                                                    // } else {
-                                                                                                    //     echo "<option value='1'>เปิด</option>";
-                                                                                                    // }
-
-                                                                                                    echo "</select></td>";
-
-
-                                                                                                    // หากต้องการแสดงข้อมูลหน่วยงานที่ดูแลและสถานะบริการย่อยต่อไปนี้
-                                                                                                    echo "</tr>";
+                                                                                                } else {
+                                                                                                    echo 'ไม่พบบริการย่อย';
                                                                                                 }
-                                                                                            } else {
-                                                                                                echo 'ไม่พบบริการย่อย';
+                                                                                            } catch (PDOException $e) {
+                                                                                                echo "Connection failed: " . $e->getMessage();
                                                                                             }
-                                                                                        } catch (PDOException $e) {
-                                                                                            echo "Connection failed: " . $e->getMessage();
+                                                                                            ?>
+
+                                                                                
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
+
+                                                                                <!-- New Select Dropdown (Initially Hidden) -->
+                                                                                <div id="subserviceSelect" style="display:none;">
+                                                                                    <select class="form-select" name="selected_subservice">
+                                                                                        <option value="">เลือกบริการย่อย</option>
+                                                                                        <?php
+                                                                                        // Loop through subservices to create options
+                                                                                        foreach ($subservices as $subservice) {
+                                                                                            echo "<option value='" . $subservice['ID'] . "'>" . $subservice['subservice_name'] . "</option>";
                                                                                         }
                                                                                         ?>
+                                                                                    </select>
+                                                                                </div>
 
-                                                                                        <!-- <tr>
-                                       
-                                        <td style="font-size: smaller;"> <input class="form-control" type="text" name="subservice_detail" placeholder="รายละเอียดของบริการ"></td>
-                                        <td>
-                                        <select class="form-select" name="subservice_Access" id="subservice_Access">
-                                            <option></option>
-                                          </select>
-                                          </td> 
-                                        <td>
-                                          <select class="form-select">
-                                            <option value="1">เปิด</option>
-                                            <option value="0">ปิด</option>
-                                          </select>
-                                        </td>
-                                      </tr> -->
-                                                                                    </tbody>
-                                                                                </table>
                                                                                 <br>
                                                                                 <div class="form-group">
                                                                                     <span for="example-text-input" class="form-control-label"><b>ชื่อแบบประเมิน :</b> </span>
@@ -433,8 +424,8 @@ if (isset($_GET['ID'])) {
                                                                                 </div>
                                                                                 <div class="form-group">
                                                                                     <span for="example-text-input" class="form-control-label"><b>ชื่อผู้สร้างแบบประเมิน :</b> </span>
-                                                                                    <input class="form-control" type="text" name="name_surname " value="<? echo $user['name_surname']  ?> " disabled>
-                                                                                    <input class="form-control" type="hidden" name="CreatorUserID" value="<? echo $user['ID'] ?>">
+                                                                                    <input class="form-control" type="text" name="name_surname " value="<?php echo $user['name_surname']  ?> " disabled>
+                                                                                    <input class="form-control" type="hidden" name="CreatorUserID" value="<?php echo $user['ID'] ?>">
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -608,6 +599,20 @@ if (isset($_GET['ID'])) {
                             }
                         });
                     }
+                </script>
+                <script>
+                    document.getElementById('toggleSubserviceButton').addEventListener('click', function() {
+                        var table = document.getElementById('subserviceTable');
+                        var select = document.getElementById('subserviceSelect');
+
+                        if (table.style.display === 'none') {
+                            table.style.display = 'block';
+                            select.style.display = 'none';
+                        } else {
+                            table.style.display = 'none';
+                            select.style.display = 'block';
+                        }
+                    });
                 </script>
             </body>
 

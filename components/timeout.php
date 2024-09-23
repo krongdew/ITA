@@ -8,7 +8,7 @@ if (isset($_SESSION['user']) && isset($_SESSION['login_time'])) {
         // ถ้าเวลา session เกิน timeout ให้ทำการลบ session และเรียกใช้งานหน้า login.php เพื่อล็อกเอาต์
         session_unset();
         session_destroy();
-        header("Location: http://localhost:8080/index.php");
+        header("Location: https://saservice.mahidol.ac.th/index.php");
         exit;
     }
 }

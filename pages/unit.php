@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['UserType'] !== "admin") {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
+    header("Location: /index.php");
     
 }
 
@@ -127,7 +127,7 @@ $user = $_SESSION['user'];
         include '../components/sidebar.php';
     }  ?>
     <?php include '../components/navbar.php' ?>
-    <? include '../action/connect.php';
+    <?php include '../action/connect.php';
 
     // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
     // $sql = "SELECT * FROM sa_department";
@@ -169,7 +169,7 @@ $user = $_SESSION['user'];
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="example-text-input" class="form-control-label">Department Name : </label>
-                                                                <? include_once '../action/get_departmentname.php'; ?>
+                                                                <?php include_once '../action/get_departmentname.php'; ?>
 
                                                                 <!-- <input class="form-control" type="text" name="department_id" placeholder="ชื่องานที่สังกัด" required> -->
 

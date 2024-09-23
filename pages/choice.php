@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['UserType'] !== "admin") {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
+    header("Location:/index.php");
     
 }
 
@@ -177,7 +177,7 @@ $user = $_SESSION['user'];
     }
     ?> 
   <?php include '../components/navbar.php' ?>
-  <? include '../action/connect.php';
+  <?php include '../action/connect.php';
 
   // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
   // $sql = "SELECT * FROM sa_department";
@@ -320,13 +320,12 @@ $user = $_SESSION['user'];
       // สร้างเซลล์ในแถว
       var cell1 = newRow.insertCell(0);
       var cell2 = newRow.insertCell(1);
-      var cell3 = newRow.insertCell(2);
-      var cell4 = newRow.insertCell(3);
-      var cell5 = newRow.insertCell(4);
+    
 
       // เพิ่ม HTML ลงในเซลล์
       cell1.innerHTML = '<input class="form-control" type="text" name="choice_item[]" placeholder="Choice" required>';
-    
+      // สร้างปุ่มลบใน cell5
+      cell2.innerHTML = '<button type="button" class="delBtn" onclick="deleteRow(this)" style="font-size: small;" >ลบแถว</button>';
 
     }
 
@@ -398,17 +397,10 @@ $user = $_SESSION['user'];
 
 
     $(document).ready(function() {
-      var table;
-      var globalDepartmentData; // ประกาศตัวแปรที่ถูกส่งเข้าไปนอกฟังก์ชัน success
-      var userdepartment = <? echo $user['department']; ?>
+   
+      var userdepartment = <?php echo $user['department']; ?>
       
-      // ดึงข้อมูลจาก sa_department
-      $.ajax({
-        url: "../action/get_choice.php", // แก้ไข URL ให้ตรงกับที่เก็บโค้ด PHP ที่ดึงข้อมูล sa_department
-        type: "GET",
-        dataType: "json",
-        success: function(response) {
-          globalDepartmentData = response; // ใช้ตัวแปรที่ถูกส่งเข้าไปนอกฟังก์ชัน success
+     
           var table = $('#myTable').DataTable({
             responsive: true,
             dom: 'lBfrtip',
@@ -478,32 +470,22 @@ $user = $_SESSION['user'];
                 }
               },
               {
-                "data": "choice_id",
-              },
-              {
-                "data": "choice_id",
-                render: function(data) {
-                  // ให้หาข้อมูล department_name จาก globalDepartmentData แล้วแสดง
-                  var departmentData = globalDepartmentData.find(function(dep) {
-                    return dep.ID === data;
-                  });
-                  return departmentData ? departmentData.choice_name : '';
-                },
-              },
-              {
-                "data": "choice_item",
-                "className": "editable"
+                "data": "ID",
               },
              
              
+             
               {
-                "data": "timestamp",
+                "data": "Assessment_ID",
+              },
+              {
+                "data": "choice_name",
               },
 
               {
                 "data": null,
                 "render": function(data, type, row) {
-                  return '<a href="../pages/edit_service.php?ID=' + data.ID + '"><button class="btn btn-link text-dark px-3 mb-0"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</button></a>  <button class="delBtn"><i class="far fa-trash-alt me-2" aria-hidden="true"></i>Delete</button>';
+                  return '<a href="../pages/edit_choice.php?ID=' + data.ID + '"><button class="btn btn-link text-dark px-3 mb-0"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</button></a>  <button class="delBtn"><i class="far fa-trash-alt me-2" aria-hidden="true"></i>Delete</button>';
                 },
                 "orderable": false
               }
@@ -515,22 +497,19 @@ $user = $_SESSION['user'];
               [0, 'asc'],
             ],
           });
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-          console.error('Error fetching department data:', errorThrown);
-        }
-      });
+        }, 
+    );
 
       
       // Event listener สำหรับปุ่ม Delete
       $('#myTable').on('click', '.delBtn', function() {
         var data = $('#myTable').DataTable().row($(this).parents('tr')).data();
-        var servicesID = data.ID;
+        var choiceID = data.ID;
 
         // แสดง SweetAlert 2 สำหรับยืนยันการลบ
         Swal.fire({
-          title: 'คุณต้องการลบข้อมูลหรือไม่?',
-          text: "หากคุณลบที่นี่ จะลบทั้งบริการหลักและบริการย่อยทั้งหมด",
+          title: 'คุณต้องการลบ Choice หรือไม่?',
+          text: "ลบ Choice นี้และตัวเลือกทั้งหมด",
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
@@ -540,10 +519,10 @@ $user = $_SESSION['user'];
           if (result.isConfirmed) {
             // ทำการลบในฐานข้อมูลด้วย Ajax
             $.ajax({
-              url: '../action/delete_services.php',
+              url: '../action/delete_choice.php',
               type: 'POST',
               data: {
-                servicesID: servicesID
+                choiceID: choiceID
               },
               dataType: 'json', // รับข้อมูลเป็น JSON
               success: function(response) {
@@ -571,7 +550,7 @@ $user = $_SESSION['user'];
           }
         });
       });
-    });
+
   </script>
 
 

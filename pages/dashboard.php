@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
   // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-  header("Location: http://localhost:8080/index.php");
+  header("Location: /index.php");
 }
 
 include '../components/timeout.php';
@@ -68,6 +68,29 @@ $user = $_SESSION['user'];
 
   <div class="container-fluid py-4">
     <div class="row">
+
+      <!-- <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+        <div class="card">
+          <div class="card-body p-3">
+            <div class="row">
+              <div class="col-8">
+                <div class="numbers">
+                  <p class="text-sm mb-0 text-uppercase font-weight-bold">ผู้ใช้งานบริการในเดือนก่อน</p>
+                  <h5 id="respondent-count2" class="font-weight-bolder"> </h5> -->
+
+      <!-- </div>
+              </div>
+              
+              <div class="col-4 text-end">
+                <div class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle">
+                  <i class="ni ni-money-coins text-lg opacity-10" aria-hidden="true"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
       <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
         <div class="card">
           <div class="card-body p-3">
@@ -88,6 +111,7 @@ $user = $_SESSION['user'];
           </div>
         </div>
       </div>
+
       <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
         <div class="card">
           <div class="card-body p-3">
@@ -122,7 +146,7 @@ $user = $_SESSION['user'];
                 <div class="numbers">
                   <p class="text-sm mb-0 text-uppercase font-weight-bold">บริการในหน่วยทั้งหมด</p>
                   <h5 class="font-weight-bolder">
-                    <? // คำสั่ง SQL สำหรับนับจำนวนแถวในตาราง sa_services
+                    <?php // คำสั่ง SQL สำหรับนับจำนวนแถวในตาราง sa_services
                     $userdepartment = $user['department'];
                     $userDepartmentCondition = ($userdepartment == 0) ? '' : " WHERE service_Access = $userdepartment";
 
@@ -131,13 +155,9 @@ $user = $_SESSION['user'];
                     $stmt = $conn->query($sql);
                     // ดึงจำนวนแถวทั้งหมด
                     $totalRows = $stmt->fetch(PDO::FETCH_ASSOC)['total_rows'];
-                    ?>
-                    <? echo $totalRows; ?> บริการ
+
+                    echo $totalRows; ?> บริการ
                   </h5>
-                  <!-- <p class="mb-0">
-                      <span class="text-danger text-sm font-weight-bolder">-2%</span>
-                      since last quarter
-                    </p> -->
                 </div>
               </div>
               <div class="col-4 text-end">
@@ -260,17 +280,24 @@ $user = $_SESSION['user'];
         </div>
       </div>
     </div>
+
     <div class="row mt-4">
       <div class="col-lg-12 mb-lg-0 mb-4">
         <div class="card z-index-2 h-100">
           <div class="card-header pb-0 pt-3 bg-transparent">
             <h6 class="text-capitalize">ภาพรวมผู้ใช้งานของบริการ...</h6>
+            <label style="float: right;">คลิกที่ tag ชื่อบริการเพื่อดูกราฟ</label>
             <p class="text-sm mb-0">
               <i class="fa fa-arrow-up text-success"></i>
               <span class="font-weight-bold">เลือกปีที่ต้องการดู</span> <select id="yearFilter">
                 <!-- ตัวเลือกจะถูกเติมโดย JavaScript -->
               </select>
             </p>
+
+            <div id="buttonContainer" style="float: right;">
+              <!-- ตัวเลือกจะถูกเติมโดย JavaScript -->
+            </div>
+
           </div>
           <div class="card-body p-3">
             <div class="chart">
@@ -279,9 +306,9 @@ $user = $_SESSION['user'];
           </div>
         </div>
       </div>
-      
+
     </div>
-    
+
     <?php include '../components/footer.php' ?>
   </div>
   </main>
@@ -289,16 +316,49 @@ $user = $_SESSION['user'];
   <?php include '../components/setting.php'; ?>
   <!--   Core JS Files   -->
   <?php include '../components/script.php'; ?>
+  <style>
+    .button-bounce {
+      transition: transform 0.2s;
+    }
+
+    .button-bounce:hover {
+      transform: scale(1.1);
+      /* ขยายปุ่มเล็กน้อย */
+    }
+  </style>
+
   <script>
     var myChart;
     var userdepartment = <?php echo $user['department']; ?>;
     var years = []; // เก็บปีที่มีอยู่ในข้อมูล
     var additionalNumber = 543;
+    var barColors = ['#80BCBD', '#AAD9BB', '#D5F0C1', '#F9F7C9', '#fcdbc0', '#c0f6fc', '#c3c0fc'];
+    // สร้างตัวแปร global เพื่อเก็บสถานะการแสดงของแต่ละแท่งกราฟ
+    var visibleBars = [];
+
+    // ฟังก์ชันสำหรับเปิด-ปิดการแสดงผลแท่งกราฟ
+    function toggleBarVisibility(barIndex) {
+      // สลับค่าสถานะการแสดงผลของแท่งกราฟที่ต้องการเปลี่ยนแปลง
+      visibleBars[barIndex] = !visibleBars[barIndex];
+      // เรียกใช้งานฟังก์ชันสำหรับแสดงผลกราฟใหม่
+      chartcalling();
+
+      // หากสถานะการแสดงผลของแท่งกราฟเป็น false (ปิด)
+      if (!visibleBars[barIndex]) {
+        // เปลี่ยนสีของปุ่มเป็นสีเทา
+        $('#toggleButton' + barIndex).css('background-color', '#ccc');
+      } else {
+        // หากเป็น true (เปิด) เปลี่ยนสีของปุ่มเป็นสีตามที่ต้องการ
+        $('#toggleButton' + barIndex).css('background-color', barColors[barIndex % barColors.length]);
+      }
+    }
+
 
     $(document).ready(function() {
 
       $("#yearFilter").on("change", function() {
         // ทำลาย chart ที่มีอยู่เดิม
+        $('#buttonContainer').empty();
         myChart.destroy();
         // เรียกใช้งานฟังก์ชัน chartcalling() เพื่อสร้าง chart ใหม่
         chartcalling();
@@ -321,131 +381,160 @@ $user = $_SESSION['user'];
           });
           // กำหนดการเรียกใช้ DataTables
           chartcalling();
+
         }
       });
 
-      function chartcalling() {
-        // ดึงข้อมูลผู้ใช้จาก PHP โดยใช้ AJAX
-       
-        // เช็คว่า myChart มีค่าอยู่หรือไม่ และไม่ใช่ null หรือ undefined
-        if (myChart) {
-          // ถ้ามี chart ให้ทำการทำลายเพื่อล้าง chart ทิ้ง
-          myChart.destroy();
-        }
 
-        var selectedYear = $("#yearFilter").val();
-     
-
-        $.ajax({
-          url: '../action/get_users_chart.php',
-          type: 'GET',
-          dataType: 'json',
-          data: {
-            userdepartment: userdepartment,
-            selectedYear: selectedYear,
-          },
-          success: function(data) {
-           
-            var serviceLabels = [];
-            var monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            var datasets = [];
-
-            // สร้างข้อมูลของแต่ละบริการ
-            for (var i = 0; i < data.length; i++) {
-              var serviceData = [];
-              for (var j = 0; j < monthLabels.length; j++) {
-                serviceData.push(data[i][monthLabels[j]]);
-              }
-              serviceLabels.push(data[i]['service_Access']);
-              // กำหนดสีให้แต่ละแท่งด้วยอาร์เรย์ของสี
-              var barColors = ['#80BCBD', '#AAD9BB', '#D5F0C1', '#F9F7C9']; // ตัวอย่างสีที่แตกต่างกัน
-              datasets.push({
-                label: data[i]['service_name'],
-                backgroundColor: barColors[i % barColors.length], // เลือกสีตามดัชนีแต่ละแท่ง
-                borderColor: 'rgb(67, 104, 80, 1)',
-                borderWidth: 1,
-                data: serviceData
-              });
-            }
-
-           
-            // สร้างกราฟ Chart.js
-            var ctx1 = document.getElementById("chart-line").getContext("2d");
-            myChart = new Chart(ctx1, { // ลบ var หน้า myChart เพื่อทำให้ myChart เป็น global variable
-              type: "bar",
-              data: {
-                labels: monthLabels,
-                datasets: datasets
-              },
-              options: {
-                // ตั้งค่าต่าง ๆ ตามต้องการ
-
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    display: false,
-                  }
-                },
-                interaction: {
-                  intersect: false,
-                  mode: 'index',
-                },
-                scales: {
-                  y: {
-                    grid: {
-                      drawBorder: false,
-                      display: true,
-                      drawOnChartArea: true,
-                      drawTicks: false,
-                      borderDash: [5, 5]
-                    },
-                    ticks: {
-                      display: true,
-                      padding: 10,
-                      color: '#fbfbfb',
-                      font: {
-                        size: 11,
-                        family: "Open Sans",
-                        style: 'normal',
-                        lineHeight: 2
-                      },
-                    }
-                  },
-                  x: {
-                    grid: {
-                      drawBorder: false,
-                      display: true,
-                      drawOnChartArea: true,
-                      drawTicks: false,
-                      borderDash: [5, 5]
-                    },
-                    ticks: {
-                      display: true,
-                      color: '#ccc',
-                      padding: 20,
-                      font: {
-                        size: 11,
-                        family: "Open Sans",
-                        style: 'normal',
-                        lineHeight: 2
-                      },
-                    }
-                  },
-                },
-              },
-            });
-          },
-          error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-          }
-        });
-
-        // เมื่อมีการเปลี่ยนแปลงใน dropdown เลือกปี
-
-      }
 
     });
+
+    function chartcalling() {
+      // ดึงข้อมูลผู้ใช้จาก PHP โดยใช้ AJAX
+
+      // เช็คว่า myChart มีค่าอยู่หรือไม่ และไม่ใช่ null หรือ undefined
+      if (myChart) {
+        // ถ้ามี chart ให้ทำการทำลายเพื่อล้าง chart ทิ้ง
+        myChart.destroy();
+      }
+
+      var selectedYear = $("#yearFilter").val();
+
+
+      $.ajax({
+        url: '../action/get_users_chart.php',
+        type: 'GET',
+        dataType: 'json',
+        data: {
+          userdepartment: userdepartment,
+          selectedYear: selectedYear,
+        },
+        success: function(data) {
+
+          var serviceLabels = [];
+          var monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          var datasets = [];
+
+
+          // กำหนดสีให้แต่ละแท่งด้วยอาร์เรย์ของสี
+          var defaultColor = '#D3D3D3'; // สีเทา
+          var barColors = ['#80BCBD', '#AAD9BB', '#D5F0C1', '#F9F7C9', '#fcdbc0', '#c0f6fc', '#c3c0fc']; // ตัวอย่างสีที่แตกต่างกัน
+
+          // สร้างปุ่มอัตโนมัติตามจำนวนแท่งกราฟ
+
+          for (var i = 0; i < data.length; i++) {
+            var serviceData = [];
+            for (var j = 0; j < monthLabels.length; j++) {
+              serviceData.push(data[i][monthLabels[j]]);
+            }
+            visibleBars.push(false);
+
+            var buttonId = 'toggleButton' + i;
+            if ($('#' + buttonId).length === 0) {
+              var button = $('<button style="border-radius: 25px; border:0px; font-size:14px; margin-right:5px;">')
+                .attr('id', buttonId)
+                .text(data[i]['service_name'])
+                .attr('onclick', 'toggleBarVisibility(' + i + ')')
+                .addClass('button-bounce'); // เพิ่มคลาส button-bounce
+
+              // กำหนดสีเริ่มต้นเป็นสีเทา
+              button.css('background-color', defaultColor);
+
+              $('#buttonContainer').append(button);
+            }
+
+            datasets.push({
+              label: data[i]['service_name'],
+              backgroundColor: barColors[i % barColors.length],
+              borderColor: 'rgb(67, 104, 80, 1)',
+              borderWidth: 1,
+              data: serviceData,
+              hidden: !visibleBars[i]
+            });
+          }
+
+
+          // สร้างกราฟ Chart.js
+          var ctx1 = document.getElementById("chart-line").getContext("2d");
+          myChart = new Chart(ctx1, { // ลบ var หน้า myChart เพื่อทำให้ myChart เป็น global variable
+            type: "bar",
+            data: {
+              labels: monthLabels,
+              datasets: datasets
+            },
+            options: {
+              // ตั้งค่าต่าง ๆ ตามต้องการ
+
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: false,
+                  labels: {
+                    // กำหนดลักษณะของปุ่ม Toggle
+                    filter: function(legendItem, chartData) {
+                      return !legendItem.hidden;
+                    }
+                  }
+                }
+              },
+              interaction: {
+                intersect: false,
+                mode: 'index',
+              },
+              scales: {
+                y: {
+                  grid: {
+                    drawBorder: false,
+                    display: true,
+                    drawOnChartArea: true,
+                    drawTicks: false,
+                    borderDash: [5, 5]
+                  },
+                  ticks: {
+                    display: true,
+                    padding: 10,
+                    color: '#fbfbfb',
+                    font: {
+                      size: 11,
+                      family: "Open Sans",
+                      style: 'normal',
+                      lineHeight: 2
+                    },
+                  }
+                },
+                x: {
+                  grid: {
+                    drawBorder: false,
+                    display: true,
+                    drawOnChartArea: true,
+                    drawTicks: false,
+                    borderDash: [5, 5]
+                  },
+                  ticks: {
+                    display: true,
+                    color: '#ccc',
+                    padding: 20,
+                    font: {
+                      size: 11,
+                      family: "Open Sans",
+                      style: 'normal',
+                      lineHeight: 2
+                    },
+                  }
+                },
+              },
+            },
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error(xhr.responseText);
+        }
+      });
+
+      // เมื่อมีการเปลี่ยนแปลงใน dropdown เลือกปี
+
+    }
   </script>
 
   <script>
@@ -460,7 +549,7 @@ $user = $_SESSION['user'];
           },
           success: function(data) {
             // อัพเดตจำนวนผู้ทำแบบประเมินในหน้า HTML
-            $('#respondent-count').text(data.total_respondents);
+            $('#respondent-count').text(data.total);
           },
           error: function(xhr, status, error) {
             console.error(xhr.responseText);
@@ -487,7 +576,7 @@ $user = $_SESSION['user'];
             userdepartment: userdepartment,
           },
           success: function(data) {
-            $('#respondent-year').text(data.total_respondents);
+            $('#respondent-year').text(data.total);
           },
           error: function(xhr, status, error) {
             console.error(xhr.responseText);
@@ -549,7 +638,7 @@ $user = $_SESSION['user'];
             '<td>' +
             '<div class="text-center">' +
             '<p class="text-xs font-weight-bold mb-0">จำนวนผู้ใช้:</p>' +
-            '<h6 class="text-sm mb-0">' + item.total_users + '</h6>' +
+            '<h6 class="text-sm mb-0">' + item.total_combined + '</h6>' +
             '</div>' +
             '</td>' +
             '</tr>';

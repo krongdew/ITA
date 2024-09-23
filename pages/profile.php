@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
+    header("Location: /index.php");
 }
 
 // ดึงข้อมูลผู้ใช้จาก session
@@ -163,7 +163,7 @@ $user = $_SESSION['user'];
     }
     ?>
     <?php include '../components/navbar.php' ?>
-    <? include '../action/connect.php';
+    <?php include '../action/connect.php';
 
     // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
     // $sql = "SELECT * FROM sa_department";
@@ -178,16 +178,16 @@ $user = $_SESSION['user'];
         <div class="row gx-4">
           <div class="col-auto">
             <div class="avatar avatar-xl position-relative">
-              <img src="<? echo $user['image']; ?>" alt="profile_image" class="w-100 h-100 border-radius-lg shadow-sm">
+              <img src="<?php echo $user['image']; ?>" alt="profile_image" class="w-100 h-100 border-radius-lg shadow-sm" style="object-fit: cover;">
             </div>
           </div>
           <div class="col-auto my-auto">
             <div class="h-100">
               <h5 class="mb-1">
-              <? echo $user['name_surname']; ?>
+              <?php echo $user['name_surname']; ?>
               </h5>
               <p class="mb-0 font-weight-bold text-sm">
-              <? echo $user['position_c']; ?> <? echo $user['position']; ?>
+              <?php echo $user['position_c']; ?> <?php echo $user['position']; ?>
               </p>
             </div>
           </div>
@@ -237,25 +237,25 @@ $user = $_SESSION['user'];
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="example-text-input" class="form-control-label">Username</label>
-                    <input class="form-control" type="text" value="<? echo $user['Username']; ?>" disabled>
+                    <input class="form-control" type="text" value="<?php echo $user['Username']; ?>" disabled>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="example-text-input" class="form-control-label">อีเมล</label>
-                    <input class="form-control" type="email" value="<? echo $user['email']; ?>">
+                    <input class="form-control" type="email" value="<?php echo $user['email']; ?>">
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="example-text-input" class="form-control-label">ชื่อ-นามสกุล</label>
-                    <input class="form-control" type="text" value="<? echo $user['name_surname']; ?>">
+                    <input class="form-control" type="text" value="<?php echo $user['name_surname']; ?>">
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="example-text-input" class="form-control-label">ตำแหน่ง</label>
-                    <input class="form-control" type="text" value="<? echo $user['position']; ?>">
+                    <input class="form-control" type="text" value="<?php echo $user['position']; ?>">
                   </div>
                 </div>
               </div>
@@ -265,7 +265,7 @@ $user = $_SESSION['user'];
                 <div class="col-md-12">
                   <div class="form-group">
                     <label for="example-text-input" class="form-control-label">งานที่สังกัด</label>
-                    <?
+                    <?php
                     $department = $user['department'];
                       if($department == 0){
                         echo '<p><input class="form-control" type="text" value="Admin"></p>';
@@ -305,7 +305,7 @@ $user = $_SESSION['user'];
                   <div class="form-group">
                     <label for="example-text-input" class="form-control-label">หน่วย</label>
                     
-                    <?
+                    <?php
                     
                     $unit = $user['unit'];
                      try {
@@ -339,13 +339,13 @@ $user = $_SESSION['user'];
                 <div class="col-md-4">
                   <div class="form-group">
                     <label for="example-text-input" class="form-control-label">อีเมลอื่น ๆ </label>
-                    <input class="form-control" type="text" value="<? echo $user['email_other']; ?>">
+                    <input class="form-control" type="text" value="<?php echo $user['email_other']; ?>">
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group">
                     <label for="example-text-input" class="form-control-label">โทรศัพท์</label>
-                    <input class="form-control" type="text" value="<? echo $user['phone']; ?>">
+                    <input class="form-control" type="text" value="<?php echo $user['phone']; ?>">
                   </div>
                 </div>
               </div>

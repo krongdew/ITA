@@ -8,18 +8,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $serviceID = $_POST['ID'];
         $serviceName = $_POST['service_name'];
         $serviceDetail = $_POST['service_detail'];
+        $service_ea = $_POST['service_ea'];
         $serviceAccess = $_POST['service_Access'];
         $serviceStatus = isset($_POST['service_status']) ? 1 : 0; // ตรวจสอบว่า checkbox ถูกติ๊กหรือไม่
 
+
         // อัปเดตข้อมูลในตาราง sa_services
-        $sqlUpdateService = "UPDATE sa_services SET service_name = :serviceName, service_detail = :serviceDetail, service_Access = :serviceAccess, service_status = :serviceStatus WHERE ID = :serviceID";
+        $sqlUpdateService = "UPDATE sa_services SET service_name = :serviceName, service_detail = :serviceDetail, service_Access = :serviceAccess, service_status = :serviceStatus, service_ea = :service_ea WHERE ID = :serviceID";
         $stmtUpdateService = $conn->prepare($sqlUpdateService);
         $stmtUpdateService->bindParam(':serviceID', $serviceID, PDO::PARAM_INT);
         $stmtUpdateService->bindParam(':serviceName', $serviceName, PDO::PARAM_STR);
         $stmtUpdateService->bindParam(':serviceDetail', $serviceDetail, PDO::PARAM_STR);
         $stmtUpdateService->bindParam(':serviceAccess', $serviceAccess, PDO::PARAM_INT);
         $stmtUpdateService->bindParam(':serviceStatus', $serviceStatus, PDO::PARAM_INT);
+        $stmtUpdateService->bindParam(':service_ea', $service_ea, PDO::PARAM_STR); // นำเข้า service_ea เพิ่มเข้าไปในคำสั่ง SQL
         $stmtUpdateService->execute();
+        
+
 
         // ตรวจสอบว่ามีข้อมูลบริการย่อยใหม่ที่เพิ่มเข้ามาหรือไม่
         if (isset($_POST['subservice_name']) && is_array($_POST['subservice_name'])) {
@@ -28,27 +33,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $subserviceID = $_POST['subservice_ID'][$key]; // ถ้ามี ID แสดงว่าเป็นการแก้ไขข้อมูลเดิม
                 $subserviceName = $_POST['subservice_name'][$key];
                 $subserviceDetail = $_POST['subservice_detail'][$key];
+                $sub_ea = $_POST['sub_ea'][$key];
                 $subserviceAccess = $_POST['subservice_Access'][$key];
                 $subserviceStatus = $_POST['subservice_status'][$key];
 
                 // ตรวจสอบว่าเป็นการแก้ไขหรือเพิ่มข้อมูลใหม่
                 if (!empty($subserviceID)) {
                     // อัปเดตข้อมูลบริการย่อยในตาราง sa_subservices
-                    $sqlUpdateSubservice = "UPDATE sa_subservices SET subservice_name = :subserviceName, subservice_detail = :subserviceDetail, subservice_Access = :subserviceAccess, subservice_status = :subserviceStatus WHERE ID = :subserviceID";
+                    $sqlUpdateSubservice = "UPDATE sa_subservices SET subservice_name = :subserviceName, subservice_detail = :subserviceDetail, sub_ea = :sub_ea, subservice_Access = :subserviceAccess, subservice_status = :subserviceStatus WHERE ID = :subserviceID";
                     $stmtUpdateSubservice = $conn->prepare($sqlUpdateSubservice);
                     $stmtUpdateSubservice->bindParam(':subserviceID', $subserviceID, PDO::PARAM_INT);
                     $stmtUpdateSubservice->bindParam(':subserviceName', $subserviceName, PDO::PARAM_STR);
                     $stmtUpdateSubservice->bindParam(':subserviceDetail', $subserviceDetail, PDO::PARAM_STR);
+                    $stmtUpdateSubservice->bindParam(':sub_ea', $sub_ea, PDO::PARAM_STR);
                     $stmtUpdateSubservice->bindParam(':subserviceAccess', $subserviceAccess, PDO::PARAM_INT);
                     $stmtUpdateSubservice->bindParam(':subserviceStatus', $subserviceStatus, PDO::PARAM_INT);
                     $stmtUpdateSubservice->execute();
                 } else {
                     // เพิ่มข้อมูลบริการย่อยใหม่ลงในตาราง sa_subservices
-                    $sqlInsertSubservice = "INSERT INTO sa_subservices (service_id, subservice_name, subservice_detail, subservice_Access, subservice_status) VALUES (:serviceID, :subserviceName, :subserviceDetail, :subserviceAccess, :subserviceStatus)";
+                    $sqlInsertSubservice = "INSERT INTO sa_subservices (service_id, subservice_name, subservice_detail, sub_ea, subservice_Access, subservice_status) VALUES (:serviceID, :subserviceName, :subserviceDetail,:sub_ea, :subserviceAccess, :subserviceStatus)";
                     $stmtInsertSubservice = $conn->prepare($sqlInsertSubservice);
                     $stmtInsertSubservice->bindParam(':serviceID', $serviceID, PDO::PARAM_INT);
                     $stmtInsertSubservice->bindParam(':subserviceName', $subserviceName, PDO::PARAM_STR);
                     $stmtInsertSubservice->bindParam(':subserviceDetail', $subserviceDetail, PDO::PARAM_STR);
+                    $stmtInsertSubservice->bindParam(':sub_ea', $sub_ea, PDO::PARAM_STR);
                     $stmtInsertSubservice->bindParam(':subserviceAccess', $subserviceAccess, PDO::PARAM_INT);
                     $stmtInsertSubservice->bindParam(':subserviceStatus', $subserviceStatus, PDO::PARAM_INT);
                     $stmtInsertSubservice->execute();
@@ -71,4 +79,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo '<script>window.location.href = "../pages/services.php";</script>';
     exit();
 }
-?>

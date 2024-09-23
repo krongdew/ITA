@@ -11,21 +11,36 @@ try {
         $sql = "SELECT SUM(number_people) AS total_respondents 
                 FROM sa_number_of_people 
                 WHERE YEAR(Date) = YEAR(CURDATE())";
+                
+        $sql2 = "SELECT COUNT(service_id) AS total_person FROM sa_respondent WHERE YEAR(SubmissionDate) = YEAR(CURDATE())";
+        
     } else {
         $sql = "SELECT s.service_Access, SUM(number_people) AS total_respondents 
                 FROM sa_number_of_people np
                 INNER JOIN sa_services s ON np.service_id = s.ID 
                 WHERE YEAR(Date) = YEAR(CURDATE()) $userDepartmentCondition";
+                
+        $sql2 = "SELECT COUNT(service_id) AS total_person FROM sa_respondent r
+                 INNER JOIN sa_services s ON r.service_id = s.ID 
+                 WHERE YEAR(SubmissionDate) = YEAR(CURDATE()) $userDepartmentCondition";
     }
     
     // ส่งคำสั่ง SQL ไปยังฐานข้อมูล
     $stmt = $conn->query($sql);
-    
-    // ดึงข้อมูลจำนวนผู้ทำแบบประเมิน
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $total_respondents = isset($result['total_respondents']) ? $result['total_respondents'] : 0;
+    
+    // ส่งคำสั่ง SQL ไปยังฐานข้อมูล
+    $stmt2 = $conn->query($sql2);
+    $result2 = $stmt2->fetch(PDO::FETCH_ASSOC);
+    $total_person = isset($result2['total_person']) ? $result2['total_person'] : 0;
+    
+    // คำนวณผลรวม
+    $total = $total_respondents + $total_person;
     
     // ส่งค่าจำนวนผู้ทำแบบประเมินกลับไปยัง JavaScript
-    echo json_encode($result);
+    echo json_encode(array('total' => $total));
+    
 } catch (PDOException $e) {
     // หากเกิดข้อผิดพลาดในการดึงข้อมูล
     echo json_encode(array('error' => $e->getMessage()));

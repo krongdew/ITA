@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
+    header("Location:/index.php");
 }
 
 // ดึงข้อมูลผู้ใช้จาก session
@@ -167,7 +167,7 @@ $user = $_SESSION['user'];
     }
 </style>
 <?php
-include '../action/connect.php';
+
 // ตรวจสอบว่ามีการส่งค่า ID มาหรือไม่
 if (isset($_GET['ID'])) {
     $AssessmentID  = $_GET['ID'];
@@ -196,13 +196,7 @@ if (isset($_GET['ID'])) {
                     include '../components/sidebar.php';
                 } ?>
                 <?php include '../components/navbar.php' ?>
-                <? include '../action/connect.php';
-
-                // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
-                // $sql = "SELECT * FROM sa_department";
-                // $stmt = $conn->prepare($sql);
-                // $stmt->execute();
-                ?>
+               
 
                 <div class="container-fluid py-4">
                     <div class="row">
@@ -218,7 +212,7 @@ if (isset($_GET['ID'])) {
 
                                 <div class="card-body px-0 pt-0 pb-2">
                                     <div id="add-form">
-                                        <form method="post" action="../action/add_assessment_base.php">
+                                        <form method="post" action="../action/add_question_base.php">
                                             <div class="container-fluid py-4">
                                                 <div class="row">
                                                     <div class="col-md-8">
@@ -230,39 +224,68 @@ if (isset($_GET['ID'])) {
                                                                 </div>
                                                             </div>
                                                             <div class="card-body">
-
                                                                 <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <table id="question" class="table align-items-center mb-0">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-9">ข้อที่</th>
+                                                                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-9">คำถาม</th>
+                                                                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-9">ประเภทคำถาม</th>
+                                                                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-9">ตัวเลือก</th>
+                                                                                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-9"></th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><input class="form-control" type="hidden" id="id" name="AssessmentID[]" value="<?php echo $Assessment['AssessmentID']; ?>">
+                                                                                        <input class="form-control" type="text" id="QuestionOrder" name="QuestionOrder[]" value="1" style="width: 50px;">
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input class="form-control" type="text" id="QuestionText" name="QuestionText[]" value="บริการที่ท่านเข้าใช้งาน">
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <!-- ใส่ชื่อบริการลงไปเลย -->
+                                                                                        <!-- <input class="form-control" type="text" id="service" name="QuestionType" value="<?php echo $Assessment['AssessmentName']; ?>"> -->
+                                                                                        <select class="form-select" name="QuestionType[]">
+                                                                                            <option value="Service"><?php echo $Assessment['AssessmentName']; ?></option>
+                                                                                        </select>
+                                                                                        <input class="form-control" type="hidden" id="QuestionText" name="chioce_id[]" value="0">
+                                                                                    </td>
+                                                                                    <td></td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <input class="form-control" type="hidden" id="id" name="AssessmentID[]" value="<?php echo $Assessment['AssessmentID']; ?>">
+                                                                                        <input class="form-control" type="text" id="QuestionOrder" name="QuestionOrder[]" value="2" style="width: 50px;">
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input class="form-control" type="text" id="QuestionText" name="QuestionText[]" value="เข้าใช้บริการวันที่">
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <!-- เรียกช่องวันที่ -->
+                                                                                        <!-- <input class="form-control" type="text" id="Dateofservice" name="QuestionType" value="Date"> -->
+                                                                                        <select class="form-select" name="QuestionType[]">
+                                                                                            <option value="Date">วันที่</option>
+                                                                                        </select>
+                                                                                        <input class="form-control" type="hidden" id="QuestionText" name="chioce_id[]" value="0">
+                                                                                    </td>
+                                                                                    <td></td>
+                                                                                </tr>
+                                                                            </tbody>
+
+                                                                        </table>
+                                                                        <br>
+                                                                        <button type="button" id="addrow" class="saveBtn" style="font-size: small;" onclick="addRow()">+เพิ่มคำถาม</button>
+                                                                    </div>
+
+
                                                                     <div class="col-md-2">
-                                                                        <div class="form-group">
-                                                                            <label for="example-text-input" class="form-control-label">ข้อที่ </label>
-                                                                            <input class="form-control" type="hidden" id="id" name="AssessmentID" value="<?php echo $Assessment['AssessmentID']; ?>">
-                                                                            <input class="form-control" type="text" id="QuestionOrder" name="QuestionOrder" value="1" style="width: 50px;">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-4">
-                                                                        <div class="form-group">
-                                                                            <label for="example-text-input" class="form-control-label">คำถาม</label>
-                                                                            <input class="form-control" type="text" id="QuestionText" name="QuestionText" value="บริการที่ท่านเข้าใช้งาน">
-                                                                           
-<!--                                                                             
-                                                                            <input class="form-control" type="text" id="QuestionOrder" name="choice" value="บริการที่ท่านเข้าใช้งาน"> -->
-                                                                        </div>
-                                                                       
-                                                                    </div>
-                                                                    <div class="col-md-4">
-                                                                        <div class="form-group">
-                                                                        <label for="example-text-input" class="form-control-label">ประเภทคำถาม</label>
-                                                                            <select class="form-select" name="QuestionType">
-                                                                                <option value="ans">คำตอบสั้น</option>
-                                                                                <option value="five">ระดับความพึงพอใจ</option>
-                                                                                <option value="five">Choice รายชื่อบริการย่อย</option>
-                                                                                <option value="fuc">Choice รายชื่อคณะ</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
 
 
-                                                                   
+
+
+                                                                    </div>
                                                                 </div>
                                                                 <br>
                                                                 <button type="submit" class="btn btn-primary btn-sm ms-auto">สร้างข้อคำถาม</button>
@@ -301,36 +324,18 @@ if (isset($_GET['ID'])) {
                 <!--   Core JS Files   -->
                 <?php include '../components/script.php'; ?>
                 <script>
-                    $(document).ready(function() {
-                        // Fetch product options based on selected company and plant
-                        $('#department_id').on('change', function() {
-                            var selectedDepartment = $(this).val();
-                            $.ajax({
-                                url: '../action/get_unit2.php',
-                                type: 'POST',
-                                data: {
-                                    department_id: selectedDepartment
-                                },
-                                success: function(data) {
-                                    // $('#subservice_Access').html(data);
-                                    var Departmentselected = document.querySelectorAll("select[name='subservice_Access[]'");
-                                    for (var i = 0; i < Departmentselected.length; i++) {
-                                        Departmentselected[i].innerHTML = data;
-                                    }
-
-                                }
-                            });
-                        });
-                    })
-
-
                     // ฟังก์ชันเพิ่มแถวในตาราง
+                    var questionCounter = 1;
+
                     function addRow() {
                         // ดึงตารางมา
-                        var table = document.getElementById("subservices");
+                        var table = document.getElementById("question");
+
+                        // หาจำนวนแถวที่มีอยู่
+                        var rowCount = table.rows.length;
 
                         // สร้างแถวใหม่
-                        var newRow = table.insertRow(table.rows.length);
+                        var newRow = table.insertRow(rowCount);
 
                         // สร้างเซลล์ในแถว
                         var cell1 = newRow.insertCell(0);
@@ -340,98 +345,120 @@ if (isset($_GET['ID'])) {
                         var cell5 = newRow.insertCell(4);
 
                         // เพิ่ม HTML ลงในเซลล์
-                        cell1.innerHTML = '<input class="form-control" type="text" name="subservice_name[]" placeholder="ชื่อบริการย่อย" required>';
-                        cell2.innerHTML = '<input class="form-control" type="text" name="subservice_detail[]" placeholder="รายละเอียดของบริการย่อย">';
+                        cell1.innerHTML = '<input class="form-control" type="hidden" id="id" name="AssessmentID[]" value="<?php echo $Assessment['AssessmentID']; ?>"> <input class="form-control" type="text" id="QuestionOrder" name="QuestionOrder[]" value="' + rowCount + '" style="width: 50px;">';
+                        cell2.innerHTML = '<input class="form-control" type="text" id="QuestionText" name="QuestionText[]" value="">';
 
                         // สร้าง select ใน cell3 และให้มี id เฉพาะ
-                        // cell3.innerHTML = '<select class="form-select" name="subservice_Access[]" onchange="getUnits2(this)""></select>';
-                        // Create a new select element for the product
-                        var departmentSelect = document.createElement("select");
-                        departmentSelect.className = "form-select";
-                        departmentSelect.name = "subservice_Access[]";
-                        // departmentSelect.onchange = function() {
-                        //   getUnits2(this)
-                        // };
-                        cell3.appendChild(departmentSelect);
+                        var choiceSelect = document.createElement("select");
+                        choiceSelect.className = "form-select";
+                        choiceSelect.name = "QuestionType[]";
+                        cell3.appendChild(choiceSelect);
 
-                        // Fetch product options based on selected company and plant
-                        var selecteddepartment = $('#department_id').val();
-                        $.ajax({
-                            url: '../action/get_unit2.php',
-                            type: 'POST',
-                            data: {
-                                department_id: selecteddepartment
-
+                        // เพิ่มตัวเลือกใน dropdown
+                        var options = [{
+                                value: 'Date',
+                                label: 'วันที่ (Date)'
                             },
-                            success: function(data) {
-                                departmentSelect.innerHTML = data;
-                                // Fetch price for the selected product
-                                // getUnits2(departmentSelect);
+                            {
+                                value: 'Ans',
+                                label: 'คำตอบสั้น (ANS)'
+                            },
+                            {
+                                value: 'Rate',
+                                label: 'ระดับความพึงพอใจ (Rate)'
+                            },
+                            {
+                                value: 'Subservice',
+                                label: 'รายชื่อบริการย่อย'
+                            },
+                            {
+                                value: 'Choice',
+                                label: 'Choice'
+                            }
+                        ];
+
+                        options.forEach(function(option) {
+                            var optionElem = document.createElement("option");
+                            optionElem.value = option.value;
+                            optionElem.text = option.label;
+                            choiceSelect.appendChild(optionElem);
+                        });
+
+                        // เพิ่ม input field สำหรับ chioce_id[] และปรากฏทันที
+                        cell4.innerHTML = '<input type="hidden" name="chioce_id[]" value="0">';
+
+                        // เมื่อมีการเลือก Choice ให้ดึงข้อมูลจากไฟล์ get_choice.php โดยใช้ AJAX
+                        choiceSelect.addEventListener('change', function() {
+                            var secondSelect = cell4.querySelector('select[name="chioce_id[]"]');
+                            var inputSelect = cell4.querySelector('input[name="chioce_id[]"]')
+                            cell4.removeChild(inputSelect);
+                            
+                            if (this.value === 'Choice') {
+                                // ตรวจสอบว่ามี select อันสองอยู่แล้วหรือไม่
+                                if (secondSelect) {
+                                    // ถ้ามีให้ลบออก
+                                    cell4.removeChild(secondSelect);
+                                    
+                                }
+                                // สร้าง element select ใหม่
+                                var newSelect = document.createElement("select");
+                                newSelect.className = "form-select";
+                                newSelect.name = "chioce_id[]";
+
+                                // ส่งคำขอ AJAX เพื่อดึงข้อมูลจากไฟล์ get_choice.php
+                                var xhr = new XMLHttpRequest();
+                                xhr.open('POST', '../action/get_choice.php', true);
+                                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState == 4 && xhr.status == 200) {
+                                        var choices = JSON.parse(xhr.responseText);
+                                        createChoiceOptions(choices, newSelect);
+                                    }
+                                };
+                                xhr.send();
+
+                                // เพิ่ม dropdown select ใหม่ลงใน cell4
+                                cell4.appendChild(newSelect);
+                            } else {
+                                // ถ้าไม่ได้เลือก 'Choice' ให้ตรวจสอบว่ามี select อันสองอยู่แล้วหรือไม่ แล้วลบออก
+                                if (secondSelect) {
+                                    cell4.removeChild(secondSelect);
+                                }
+                                cell4.innerHTML = '<input type="hidden" name="chioce_id[]" value="0">';
                             }
                         });
 
-                        // สร้าง select ใน cell4
-                        cell4.innerHTML = '<select class="form-select" name="subservice_status[]"><option value="1">เปิด</option><option value="0">ปิด</option></select>';
-
-                        // สร้างปุ่มลบใน cell5
+                        // สร้างปุ่มลบใน cell4
                         cell5.innerHTML = '<button type="button" class="delBtn" onclick="deleteRow(this)" style="font-size: small;" >ลบแถว</button>';
-
                     }
 
                     // ฟังก์ชันลบแถว
                     function deleteRow(row) {
                         var index = row.parentNode.parentNode.rowIndex;
-                        document.getElementById("subservices").deleteRow(index);
+                        document.getElementById("question").deleteRow(index);
                     }
 
+                    // ฟังก์ชันสำหรับสร้างตัวเลือก Choice จากข้อมูลที่ได้จาก AJAX
+                    function createChoiceOptions(choices, selectElement) {
+                        // เริ่มต้นด้วยการลบตัวเลือกทั้งหมดที่มีอยู่
+                        selectElement.innerHTML = "";
 
+                        // เพิ่มตัวเลือก Choice ไว้ที่ตัวแรก
+                        var defaultOption = document.createElement("option");
+                        defaultOption.value = '0'; // ตั้งค่าค่าเริ่มต้นเป็น 0
+                        defaultOption.text = 'Choice';
+                        selectElement.appendChild(defaultOption);
 
-                    // ฟังก์ชันสำหรับลบข้อมูลบริการย่อย
-                    function deleteSubservices(button) {
-                        // ดึงข้อมูลที่ต้องการลบ (subservicesID) จากปุ่มที่ถูกคลิก
-                        var subservicesID = $(button).closest('tr').find('input[name="subservice_ID[]"]').val();
-
-                        // แสดง SweetAlert 2 สำหรับยืนยันการลบ
-                        Swal.fire({
-                            title: 'คุณต้องการลบข้อมูลหรือไม่?',
-                            text: "ลบบริการย่อย",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'ใช่, ลบ!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // ทำการลบในฐานข้อมูลด้วย Ajax
-                                $.ajax({
-                                    url: '../action/delete_subservices.php',
-                                    type: 'POST',
-                                    data: {
-                                        subservicesID: subservicesID
-                                    },
-                                    dataType: 'json', // รับข้อมูลเป็น JSON
-                                    success: function(response) {
-                                        if (response.status === 'success') {
-                                            // ลบแถวที่ต้องการในตาราง
-                                            $(button).closest('tr').remove();
-
-                                            Swal.fire(
-                                                'ลบข้อมูลเรียบร้อย!',
-                                                'ข้อมูลถูกลบออกจากระบบแล้ว.',
-                                                'success'
-                                            );
-                                        } else {
-                                            Swal.fire(
-                                                'เกิดข้อผิดพลาด!',
-                                                'เกิดข้อผิดพลาดในการลบข้อมูล.',
-                                                'error'
-                                            );
-                                        }
-                                    }
-                                });
-                            }
+                        // เพิ่มตัวเลือกจากข้อมูลที่ได้จาก AJAX
+                        choices.forEach(function(choice) {
+                            var optionElem = document.createElement("option");
+                            optionElem.value = choice.ID;
+                            optionElem.text = "Choice " + choice.choice_name;
+                            selectElement.appendChild(optionElem);
                         });
                     }
+
+                    
                 </script>
             </body>
 

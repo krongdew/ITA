@@ -33,7 +33,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $position_c = $_POST['position_c'];
     $email_other = $_POST['email_other'];
     $tell = $_POST['tell'];
-
+    $UserType = $_POST['UserType'];
+    $image = $_POST['image'];
 
 
 
@@ -63,33 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // ตรวจสอบรหัสผ่าน
     if (password_verify($ConfirmPassword, $hashedPassword)) {
 
-        // ตรวจสอบว่ามีไฟล์รูปถูกอัพโหลดหรือไม่
-        if (isset($_FILES['image'])) {
-            $uploadDir = '../upload/';
-            $uploadFile = $uploadDir . $Username . '.' . pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-
-            // ตรวจสอบขนาดและประเภทของไฟล์
-            if ($_FILES['image']['size'] > 5242880) { // 5 MB
-                echo "Error: File size exceeds the maximum allowed size (5 MB)";
-                exit;
-            }
-
-            $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif');
-            $fileExtension = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-            if (!in_array($fileExtension, $allowedExtensions)) {
-                echo "Error: Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.";
-                exit;
-            }
-
-            // อัพโหลดไฟล์
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
-                // echo "File is valid, and was successfully uploaded.\n";
-            } else {
-                echo "Possible file upload attack!\n";
-                exit;
-            }
-        }
-
+        
         // Password ถูกต้อง
         // เข้ารหัสข้อมูล
         $hashedNameSurname = encryptData($name_surname, $key);
@@ -98,8 +73,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $hashedTell = encryptData($tell, $key);
         // จะใช้ฟังก์ชัน encryptData ที่ได้แสดงให้เห็นในตัวอย่างก่อนหน้านี้
         // เตรียมคำสั่ง SQL ด้วย prepared statement
-        $sql = "INSERT INTO sa_users (Username, Password, name_surname, department, unit, position, position_c, email, email_other, tell, phone, image) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO sa_users (Username, Password, name_surname, department, unit, position, position_c, email, email_other, tell, phone, image, UserType) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             // สร้าง prepared statement
@@ -117,7 +92,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bindParam(9, $hashedEmailOther);
             $stmt->bindParam(10, $hashedTell);
             $stmt->bindParam(11, $phone);
-            $stmt->bindParam(12, $uploadFile);
+            $stmt->bindParam(12, $image);
+            $stmt->bindParam(13, $UserType);
 
             // ทำการเพิ่มข้อมูล
             $stmt->execute();

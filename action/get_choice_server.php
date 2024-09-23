@@ -4,7 +4,7 @@ include 'connect.php';
 $userdepartment = isset($_POST['userdepartment']) ? $_POST['userdepartment'] : 0;
 
 // Columns
-$columns = array('choice_id','choice_name', 'choice_item');
+$columns = array('ID','Assessment_ID', 'choice_name');
 
 // ตรวจสอบและกำหนดค่า start และ length
 $start = isset($_POST['start']) ? intval($_POST['start']) : 0;
@@ -38,7 +38,7 @@ if (!empty($searchValue)) {
 $userDepartmentCondition = ($userdepartment == 0) ? '' : " AND service_Access = $userdepartment";
 
 // SQL query
-$sql = "SELECT * FROM sa_choice_item WHERE 1 $searchQuery $userDepartmentCondition ORDER BY $orderColumn $orderDirection LIMIT $start, $length";
+$sql = "SELECT * FROM sa_choice_name WHERE 1 $searchQuery $userDepartmentCondition ORDER BY $orderColumn $orderDirection LIMIT $start, $length";
 
 // Execute the query
 $result = $conn->query($sql);
@@ -50,10 +50,10 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 }
 
 // Total records
-$totalRecords = $conn->query("SELECT COUNT(*) FROM sa_choice_item")->fetchColumn();
+$totalRecords = $conn->query("SELECT COUNT(*) FROM sa_choice_name")->fetchColumn();
 
 // Total filtered records (for pagination)
-$totalFiltered = $conn->query("SELECT COUNT(*) FROM sa_choice_item WHERE 1 $searchQuery $userDepartmentCondition")->fetchColumn();
+$totalFiltered = $conn->query("SELECT COUNT(*) FROM sa_choice_name WHERE 1 $searchQuery $userDepartmentCondition")->fetchColumn();
 
 // Convert the array to JSON
 $jsonData = array(

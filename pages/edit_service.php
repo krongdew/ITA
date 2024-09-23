@@ -4,7 +4,7 @@ include '../action/connect.php';
 
 if (!isset($_SESSION['user'])) {
     // ถ้าไม่มี session user แสดงว่ายังไม่ได้ Login
-    header("Location: http://localhost:8080/index.php");
+    header("Location:/index.php");
 }
 
 // ดึงข้อมูลผู้ใช้จาก session
@@ -197,13 +197,7 @@ if (isset($_POST['ID'])) {
                     include '../components/sidebar.php';
                 } ?>
                 <?php include '../components/navbar.php' ?>
-                <? include '../action/connect.php';
-
-                // ใช้ PDO เพื่อดึงข้อมูลจากฐานข้อมูล
-                // $sql = "SELECT * FROM sa_department";
-                // $stmt = $conn->prepare($sql);
-                // $stmt->execute();
-                ?>
+               
 
                 <div class="container-fluid py-4">
                     <div class="row">
@@ -242,6 +236,10 @@ if (isset($_POST['ID'])) {
                                                                         <div class="form-group">
                                                                             <label for="example-text-input" class="form-control-label">รายละเอียดของบริการ : </label>
                                                                             <input class="form-control" type="text" name="service_detail" placeholder="รายละเอียดของบริการ" value="<?php echo $service['service_detail']; ?>">
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label for="example-text-input" class="form-control-label">หน่วยนับของจำนวนผู้ใช้บริการ : </label>
+                                                                            <input class="form-control" type="text" id="service_ea" name="service_ea" placeholder="คน / ชั่วโมง" value="<?php echo $service['service_ea']; ?>">
                                                                         </div>
                                                                         <div class="form-group">
                                                                             <label for="example-text-input" class="form-control-label">สังกัดงาน : </label>
@@ -285,7 +283,7 @@ if (isset($_POST['ID'])) {
                                                                         <div class="form-group">
                                                                             <label for="example-text-input" class="form-control-label">สถานะของบริการ :</label><br>
                                                                             <label>ปิด</label>
-                                                                            <?
+                                                                            <?php
                                                                             echo "<label class='switch'>";
                                                                             echo "<input type='checkbox' name='service_status[]'";
 
@@ -312,6 +310,7 @@ if (isset($_POST['ID'])) {
                                                                                         <tr>
                                                                                             <th style="font-size: smaller; padding:10px">ชื่อบริการย่อย</th>
                                                                                             <th style="font-size: smaller; padding:10px">รายละเอียดของบริการย่อย</th>
+                                                                                            <th style="font-size: smaller; padding:10px">หน่วยนับ</th>
                                                                                             <th style="font-size: smaller; padding:10px">หน่วยงานที่ดูแล</th>
                                                                                             <th style="font-size: smaller; padding:10px">สถานะของบริการย่อย</th>
                                                                                             <th style="font-size: smaller; padding:10px">Action</th>
@@ -345,6 +344,7 @@ if (isset($_POST['ID'])) {
                                                                                                     echo "<tr>";
                                                                                                     echo "<td style='font-size: smaller;'> <input class='form-control' type='hidden' name='subservice_ID[]' placeholder='ชื่อบริการย่อย' value='" . $subservice['ID'] . "'><input class='form-control' type='text' name='subservice_name[]' placeholder='ชื่อบริการย่อย' value='" . $subservice['subservice_name'] . "'></td>";
                                                                                                     echo "<td style='font-size: smaller;'> <input class='form-control' type='text' name='subservice_detail[]' placeholder='รายละเอียดบริการย่อย' value='" . $subservice['subservice_detail'] . "'></td>";
+                                                                                                    echo "<td style='font-size: smaller;'> <input class='form-control' type='text' id='sub_ea' name='sub_ea[]' placeholder='หน่วยนับ' value='" . $subservice['sub_ea'] . "'></td>";
                                                                                                     // ทำการตรวจสอบว่ามีข้อมูลหน่วยหรือไม่
                                                                                                     echo "<td style='font-size: smaller;'>";
                                                                                                     $departmentId = $service['service_Access'];
@@ -510,11 +510,12 @@ if (isset($_POST['ID'])) {
                         var cell3 = newRow.insertCell(2);
                         var cell4 = newRow.insertCell(3);
                         var cell5 = newRow.insertCell(4);
+                        var cell6 = newRow.insertCell(5);
 
                         // เพิ่ม HTML ลงในเซลล์
                         cell1.innerHTML = '<input class="form-control" type="text" name="subservice_name[]" placeholder="ชื่อบริการย่อย" required>';
                         cell2.innerHTML = '<input class="form-control" type="text" name="subservice_detail[]" placeholder="รายละเอียดของบริการย่อย">';
-
+                        cell3.innerHTML = '<input class="form-control" type="text" id="sub_ea" name="sub_ea[]" placeholder="หน่วยนับ">';
                         // สร้าง select ใน cell3 และให้มี id เฉพาะ
                         // cell3.innerHTML = '<select class="form-select" name="subservice_Access[]" onchange="getUnits2(this)""></select>';
                         // Create a new select element for the product
@@ -524,7 +525,7 @@ if (isset($_POST['ID'])) {
                         // departmentSelect.onchange = function() {
                         //   getUnits2(this)
                         // };
-                        cell3.appendChild(departmentSelect);
+                        cell4.appendChild(departmentSelect);
 
                         // Fetch product options based on selected company and plant
                         var selecteddepartment = $('#department_id').val();
@@ -543,10 +544,10 @@ if (isset($_POST['ID'])) {
                         });
 
                         // สร้าง select ใน cell4
-                        cell4.innerHTML = '<select class="form-select" name="subservice_status[]"><option value="1">เปิด</option><option value="0">ปิด</option></select>';
+                        cell5.innerHTML = '<select class="form-select" name="subservice_status[]"><option value="1">เปิด</option><option value="0">ปิด</option></select>';
 
                         // สร้างปุ่มลบใน cell5
-                        cell5.innerHTML = '<button type="button" class="delBtn" onclick="deleteRow(this)" style="font-size: small;" >ลบแถว</button>';
+                        cell6.innerHTML = '<button type="button" class="delBtn" onclick="deleteRow(this)" style="font-size: small;" >ลบแถว</button>';
 
                     }
 
@@ -604,6 +605,23 @@ if (isset($_POST['ID'])) {
                             }
                         });
                     }
+                    
+
+// เรียกใช้งานฟังก์ชันเมื่อมีการพิมพ์ใน input id="service_ea"
+document.getElementById('service_ea').addEventListener('input', function() {
+    // ดึงค่าที่พิมพ์ลงใน input id="service_ea"
+    var serviceEaValue = this.value;
+
+    // เลือกทุก element ที่มี id ขึ้นต้นด้วย "sub_ea"
+    var subEaInputs = document.querySelectorAll('[id^="sub_ea"]');
+
+    // วนลูปผ่านทุก subEaInput และกำหนดค่าให้กับแต่ละอัน
+    subEaInputs.forEach(function(input) {
+        input.value = serviceEaValue;
+    });
+});
+
+
                 </script>
             </body>
 
